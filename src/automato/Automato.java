@@ -1,27 +1,39 @@
 package automato;
 
+import conjunto.ConjuntoAlfabeto;
 import conjunto.ConjuntoEstado;
 import conjunto.ConjuntoObject;
+import expressao.DeSimone;
+import expressao.Expressao;
+import gramatica.Gramatica;
 
 public class Automato {
 	private String nome;
 	private Estado estadoInicial;
 	
 	private ConjuntoEstado estados, estadosFinais;
-	private ConjuntoObject<Character> alfabeto;
+	private ConjuntoAlfabeto alfabeto;
 	private ConjuntoObject<Transicao> transicoes;
 	
+	public Automato() {
+		this("sem_nome");
+	}
 	public Automato(String nome) {
 		this.nome = nome;
 		this.estadoInicial = null;
 		
 		this.estados = new ConjuntoEstado();
 		this.estadosFinais = new ConjuntoEstado();
-		this.alfabeto = new ConjuntoObject<Character>();
+		this.alfabeto = new ConjuntoAlfabeto();
 		this.transicoes = new ConjuntoObject<Transicao>();
 	}
-	public Automato() {
-		this("sem_nome");
+	public Automato(Gramatica gramatica) {
+		this();
+		this.gerarAutomato(gramatica);
+	}
+	public Automato(Expressao expressao) {
+		this();
+		this.gerarAutomato(expressao);
 	}
 	// Metodos Add
 	public Estado addEstado(Estado estado) {
@@ -72,7 +84,7 @@ public class Automato {
 	public void setEstadosFinais(ConjuntoEstado estadosFinais) {
 		this.estadosFinais = estadosFinais;
 	}
-	public void setAlfabeto(ConjuntoObject<Character> alfabeto) {
+	public void setAlfabeto(ConjuntoAlfabeto alfabeto) {
 		this.alfabeto = alfabeto;
 	}
 	public void setTransicoes(ConjuntoObject<Transicao> transicoes) {
@@ -81,6 +93,12 @@ public class Automato {
 	// Metodos Getters
 	public String getNome() {
 		return nome;
+	}
+	@Override
+	public Automato clone() {
+		// IMPLEMENTAR
+		
+		return null;
 	}
 	public Estado getEstadoInicial() {
 		return estadoInicial;
@@ -91,7 +109,7 @@ public class Automato {
 	public ConjuntoEstado getEstadosFinais() {
 		return estadosFinais;
 	}
-	public ConjuntoObject<Character> getAlfabeto() {
+	public ConjuntoAlfabeto getAlfabeto() {
 		return alfabeto;
 	}
 	public ConjuntoObject<Transicao> getTransicoes() {
@@ -104,5 +122,22 @@ public class Automato {
 	public boolean equals(Automato automato) {
 		
 		return false;
+	}
+	
+	private void gerarAutomato(Gramatica gramatica) {
+		
+	}
+	private void gerarAutomato(Expressao expressao) {
+		DeSimone deSimone;
+		deSimone = new DeSimone();
+		
+		Automato gerado;
+		gerado = deSimone.gerarAutomato(expressao);
+		
+		this.estados = gerado.estados;
+		this.alfabeto = gerado.alfabeto;
+		this.transicoes = gerado.transicoes;
+		this.estadosFinais = gerado.estadosFinais;
+		this.estadoInicial = gerado.estadoInicial;
 	}
 }

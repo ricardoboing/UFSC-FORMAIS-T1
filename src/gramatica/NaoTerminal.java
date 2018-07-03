@@ -40,8 +40,25 @@ public class NaoTerminal {
 		return producoes;
 	}
 	
-	public boolean equals(NaoTerminal naoTerminal) {
+	@Override
+	public boolean equals(Object object) {
+		NaoTerminal naoTerminal;
+		naoTerminal = (NaoTerminal) object;
+		
+		String simbolo;
+		simbolo = naoTerminal.getSimbolo();
+		
+		if (this.simbolo.equals(simbolo)) {
+			return true;
+		}
 		
 		return false;
+	}
+	
+	@Override
+	public NaoTerminal clone() {
+		
+		
+		return null;
 	}
 }

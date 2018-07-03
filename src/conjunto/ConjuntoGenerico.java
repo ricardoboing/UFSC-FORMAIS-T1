@@ -1,6 +1,7 @@
 package conjunto;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 abstract class ConjuntoGenerico<T> {
 	protected ArrayList<T> array;
@@ -53,7 +54,10 @@ abstract class ConjuntoGenerico<T> {
 	public T get(int c) {
 		return this.array.get(c);
 	}
-	public ArrayList<T> get_arrayList() {
+	public ArrayList<T> getArrayList() {
 		return this.array;
+	}
+	public Iterator<T> getIterador() {
+		return this.array.iterator();
 	}
 }

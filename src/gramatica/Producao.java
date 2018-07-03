@@ -5,8 +5,11 @@ public class Producao {
 	private NaoTerminal naoTerminal;
 	
 	public Producao() {
-		this.terminal = null;
-		this.naoTerminal = null;
+		this(null, null);
+	}
+	public Producao(Terminal terminal, NaoTerminal naoTerminal) {
+		this.terminal = terminal;
+		this.naoTerminal = naoTerminal;
 	}
 	
 	public void setTerminal(Terminal terminal) {
@@ -21,5 +24,10 @@ public class Producao {
 	}
 	public NaoTerminal getNaoTerminal() {
 		return naoTerminal;
+	}
+	
+	@Override
+	public Producao clone() {
+		return new Producao(this.terminal, this.naoTerminal.clone());
 	}
 }
