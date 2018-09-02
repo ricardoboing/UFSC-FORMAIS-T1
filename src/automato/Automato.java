@@ -11,9 +11,9 @@ public class Automato {
 	private String nome;
 	private Estado estadoInicial;
 	
-	private ConjuntoEstado estados, estadosFinais;
-	private ConjuntoAlfabeto alfabeto;
-	private ConjuntoObject<Transicao> transicoes;
+	private ConjuntoEstado conjuntoEstado, conjuntoEstadoFinal;
+	private ConjuntoAlfabeto conjuntoAlfabeto;
+	private ConjuntoObject<Transicao> conjuntoTransicao;
 	
 	public Automato() {
 		this("sem_nome");
@@ -22,10 +22,10 @@ public class Automato {
 		this.nome = nome;
 		this.estadoInicial = null;
 		
-		this.estados = new ConjuntoEstado();
-		this.estadosFinais = new ConjuntoEstado();
-		this.alfabeto = new ConjuntoAlfabeto();
-		this.transicoes = new ConjuntoObject<Transicao>();
+		this.conjuntoEstado = new ConjuntoEstado();
+		this.conjuntoEstadoFinal = new ConjuntoEstado();
+		this.conjuntoAlfabeto = new ConjuntoAlfabeto();
+		this.conjuntoTransicao = new ConjuntoObject<Transicao>();
 	}
 	public Automato(Gramatica gramatica) {
 		this();
@@ -35,61 +35,64 @@ public class Automato {
 		this();
 		this.gerarAutomato(expressao);
 	}
+	
 	// Metodos Add
 	public Estado addEstado(Estado estado) {
-		return this.estados.add(estado);
+		return this.conjuntoEstado.add(estado);
 	}
-	public Estado addEstadoFinal(Estado estado) {
+	public Estado addEstadoFinal(Estado estadoFinal) {
 		Estado adicionado;
-		adicionado = this.estadosFinais.add(estado);
+		adicionado = this.conjuntoEstadoFinal.add(estadoFinal);
 		adicionado.setFinal(true);
 		
 		return adicionado;
 	}
-	public Character addEntrada(char entrada) {
-		return this.alfabeto.add(entrada);
+	public Character addSimboloEntrada(char simboloEntrada) {
+		return this.conjuntoAlfabeto.add(simboloEntrada);
 	}
 	public Transicao addTransicao(Transicao transicao) {
-		return this.transicoes.add(transicao);
+		return this.conjuntoTransicao.add(transicao);
 	}
-	public void addEstados(ConjuntoEstado estados) {
-		this.estados.add(estados);
+	public void addConjuntoEstado(ConjuntoEstado conjuntoEstado) {
+		this.conjuntoEstado.add(conjuntoEstado);
 	}
-	public void addEstadosFinais(ConjuntoEstado estados) {
-		this.estadosFinais.add(estados);
+	public void addConjuntoEstadoFinal(ConjuntoEstado conjuntoEstadoFinal) {
+		this.conjuntoEstadoFinal.add(conjuntoEstadoFinal);
 	}
-	public void addTransicoes(ConjuntoObject<Transicao> transicoes) {
-		this.transicoes.add(transicoes);
+	public void addConjuntoTransicao(ConjuntoObject<Transicao> conjuntoTransicao) {
+		this.conjuntoTransicao.add(conjuntoTransicao);
 	}
+	
 	// Metodos Setters
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-	public void setEstadoInicial(Estado estado) {
-		this.estadoInicial = estado;
+	public void setEstadoInicial(Estado estadoInicial) {
+		this.estadoInicial = estadoInicial;
 		this.estadoInicial.setInicial(true);
 	}
-	public boolean addEstadoInicial(Estado estado) {
+	public boolean addEstadoInicial(Estado estadoInicial) {
 		if (this.possuiEstadoInicial()) {
 			return false;
 		}
 		
-		this.setEstadoInicial(estado);
+		this.setEstadoInicial(estadoInicial);
 		
 		return true;
 	}
-	public void setEstados(ConjuntoEstado estados) {
-		this.estados = estados;
+	public void setConjuntoEstado(ConjuntoEstado conjuntoEstado) {
+		this.conjuntoEstado = conjuntoEstado;
 	}
-	public void setEstadosFinais(ConjuntoEstado estadosFinais) {
-		this.estadosFinais = estadosFinais;
+	public void setConjuntoEstadoFinal(ConjuntoEstado conjuntoEstadoFinal) {
+		this.conjuntoEstadoFinal = conjuntoEstadoFinal;
 	}
-	public void setAlfabeto(ConjuntoAlfabeto alfabeto) {
-		this.alfabeto = alfabeto;
+	public void setConjuntoAlfabeto(ConjuntoAlfabeto conjuntoAlfabeto) {
+		this.conjuntoAlfabeto = conjuntoAlfabeto;
 	}
-	public void setTransicoes(ConjuntoObject<Transicao> transicoes) {
-		this.transicoes = transicoes;
+	public void setConjuntoTransicao(ConjuntoObject<Transicao> conjuntoTransicao) {
+		this.conjuntoTransicao = conjuntoTransicao;
 	}
+	
 	// Metodos Getters
 	public String getNome() {
 		return nome;
@@ -103,17 +106,29 @@ public class Automato {
 	public Estado getEstadoInicial() {
 		return estadoInicial;
 	}
-	public ConjuntoEstado getEstados() {
-		return estados;
+	public ConjuntoEstado getConjuntoEstado() {
+		return conjuntoEstado;
 	}
-	public ConjuntoEstado getEstadosFinais() {
-		return estadosFinais;
+	public ConjuntoEstado getConjuntoEstadoFinal() {
+		return conjuntoEstadoFinal;
 	}
-	public ConjuntoAlfabeto getAlfabeto() {
-		return alfabeto;
+	public ConjuntoAlfabeto getConjuntoAlfabeto() {
+		return conjuntoAlfabeto;
 	}
-	public ConjuntoObject<Transicao> getTransicoes() {
-		return transicoes;
+	public ConjuntoObject<Transicao> getConjuntoTransicao() {
+		return conjuntoTransicao;
+	}
+	public Estado getEstado(String simbolo) {
+		for (int c = 0; c < this.conjuntoEstado.size(); c++) {
+			Estado estado;
+			estado = this.conjuntoEstado.get(c);
+			
+			if (simbolo.equals(estado.getSimbolo())) {
+				return estado;
+			}
+		}
+		
+		return null;
 	}
 	
 	public boolean possuiEstadoInicial() {
@@ -134,10 +149,10 @@ public class Automato {
 		Automato gerado;
 		gerado = deSimone.gerarAutomato(expressao);
 		
-		this.estados = gerado.estados;
-		this.alfabeto = gerado.alfabeto;
-		this.transicoes = gerado.transicoes;
-		this.estadosFinais = gerado.estadosFinais;
+		this.conjuntoEstado = gerado.conjuntoEstado;
+		this.conjuntoAlfabeto = gerado.conjuntoAlfabeto;
+		this.conjuntoTransicao = gerado.conjuntoTransicao;
+		this.conjuntoEstadoFinal = gerado.conjuntoEstadoFinal;
 		this.estadoInicial = gerado.estadoInicial;
 	}
 }

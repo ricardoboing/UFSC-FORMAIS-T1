@@ -8,11 +8,11 @@ import conjunto.ConjuntoNaoTerminal;
 import conjunto.ConjuntoObject;
 
 public class Gramatica {
-	private ConjuntoNaoTerminal naoTerminais;
-	private ConjuntoAlfabeto alfabeto;
-	private ConjuntoObject<Producao> producoes;
+	private ConjuntoNaoTerminal conjuntoNaoTerminal;
+	private ConjuntoAlfabeto conjuntoAlfabeto;
+	private ConjuntoObject<Producao> conjuntoProducao;
 	
-	private NaoTerminal simboloInicial;
+	private NaoTerminal naoTerminalInicial;
 	private String nome;
 	
 	public Gramatica(Automato automato) {
@@ -31,114 +31,118 @@ public class Gramatica {
 	}
 	private Gramatica() {
 		this.nome = "sem_nome";
-		this.simboloInicial = null;
+		this.naoTerminalInicial = null;
 		
-		this.alfabeto = new ConjuntoAlfabeto();
-		this.naoTerminais = new ConjuntoNaoTerminal();
-		this.producoes = new ConjuntoObject<Producao>();
+		this.conjuntoAlfabeto = new ConjuntoAlfabeto();
+		this.conjuntoNaoTerminal = new ConjuntoNaoTerminal();
+		this.conjuntoProducao = new ConjuntoObject<Producao>();
 	}
+	
 	// Metodos Setters
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-	public void setSimboloInicial(NaoTerminal simboloInicial) {
-		this.simboloInicial = simboloInicial;
+	public void setNaoTerminalInicial(NaoTerminal naoTerminalInicial) {
+		this.naoTerminalInicial = naoTerminalInicial;
 	}
-	public void setAlfabeto(ConjuntoAlfabeto alfabeto) {
-		this.alfabeto = alfabeto;
+	public void setConjuntoAlfabeto(ConjuntoAlfabeto conjuntoAlfabeto) {
+		this.conjuntoAlfabeto = conjuntoAlfabeto;
 	}
-	public void setProducoes(ConjuntoObject<Producao> producoes) {
-		this.producoes = producoes;
+	public void setConjuntoProducao(ConjuntoObject<Producao> conjuntoProducao) {
+		this.conjuntoProducao = conjuntoProducao;
 	}
-	public void setNaoTerminais(ConjuntoNaoTerminal naoTerminais) {
-		this.naoTerminais = naoTerminais;
+	public void setNaoTerminais(ConjuntoNaoTerminal conjuntoNaoTerminal) {
+		this.conjuntoNaoTerminal = conjuntoNaoTerminal;
 	}
+	
 	// Metodos Getters
 	public String getNome() {
 		return nome;
 	}
-	public NaoTerminal getSimboloInicial() {
-		return simboloInicial;
+	public NaoTerminal getNaoTerminalInicial() {
+		return naoTerminalInicial;
 	}
-	public ConjuntoNaoTerminal getNaoTerminais() {
-		return naoTerminais;
+	public ConjuntoNaoTerminal getConjuntoNaoTerminal() {
+		return conjuntoNaoTerminal;
 	}
-	public ConjuntoAlfabeto getAlfabeto() {
-		return alfabeto;
+	public ConjuntoAlfabeto getConjuntoAlfabeto() {
+		return conjuntoAlfabeto;
 	}
-	public ConjuntoObject<Producao> getProducoes() {
-		return producoes;
+	public ConjuntoObject<Producao> getConjuntoProducao() {
+		return conjuntoProducao;
 	}
 	@Override
 	public Gramatica clone() {
-		return new Gramatica(this.getProducoesString());
+		return new Gramatica(this.getStringConjuntoProducao());
 	}
-	public String getProducoesString() {
-		String producoesString;
-		producoesString = "";
+	public String getStringConjuntoProducao() {
+		String stringConjuntoProducaoCompleto;
+		stringConjuntoProducaoCompleto = "";
 		
-		Iterator<NaoTerminal> naoTerminais;
-		naoTerminais = this.naoTerminais.getIterador();
+		Iterator<NaoTerminal> iteratorConjuntoNaoTerminal;
+		iteratorConjuntoNaoTerminal = this.conjuntoNaoTerminal.getIterador();
 		
-		/* Percorre todas as producoes de todos naoTerminais e, para
-		 * cada uma, concatena a producao em formato de string.
+		/* Percorre o ConjuntoProducao de todo naoTerminal do ConjuntoNaoTerminal
+		 * e, para cada uma, concatena a producao em uma string.
 		 * Ex: S -> aS | a
 		 */
-		while (naoTerminais.hasNext()) {
+		while (iteratorConjuntoNaoTerminal.hasNext()) {
 			NaoTerminal naoTerminal;
-			naoTerminal = naoTerminais.next();
+			naoTerminal = iteratorConjuntoNaoTerminal.next();
 			
-			Iterator<Producao> producoes;
-			producoes = naoTerminal.getProducoes().getIterador();
+			Iterator<Producao> iteratorConjuntoProducaoDoNaoTerminal;
+			iteratorConjuntoProducaoDoNaoTerminal = naoTerminal.getConjuntoProducao().getIterador();
 			
-			String naoTerminalProducoes;
-			naoTerminalProducoes = "";
+			String stringConjuntoProducaoDoNaoTerminal;
+			stringConjuntoProducaoDoNaoTerminal = "";
 			
-			// Percorre as producoes
-			while (producoes.hasNext()) {
-				// Se alguma outra producao ja foi concatenada
-				if (!naoTerminalProducoes.equals("")) {
-					naoTerminalProducoes += "|";
+			/* Percorre o conjuntoProducao do NaoTerminal e concatena
+			 * cada producao em uma string
+			 */
+			while (iteratorConjuntoProducaoDoNaoTerminal.hasNext()) {
+				// Concatena "|" a partir da segunda producao
+				if (!stringConjuntoProducaoDoNaoTerminal.equals("")) {
+					stringConjuntoProducaoDoNaoTerminal += "|";
 				}
 				
 				Producao producao;
-				producao = producoes.next();
+				producao = iteratorConjuntoProducaoDoNaoTerminal.next();
 				
-				// Concatena terminal
-				naoTerminalProducoes += producao.getTerminal().getSimbolo();
+				// Concatena o terminal
+				stringConjuntoProducaoDoNaoTerminal += producao.getTerminal().getCharSimbolo();
 				
-				// Se houver naoTerminal entao concatena
+				// Concatena o naoTerminal caso exista na producao
 				if (producao.getNaoTerminal() != null) {
-					naoTerminalProducoes += producao.getNaoTerminal().getSimbolo();
+					stringConjuntoProducaoDoNaoTerminal += producao.getNaoTerminal().getSimbolo();
 				}
 			}
 			
-			// Se algum outro naoTerminal ja foi concatenado
-			if (!producoesString.equals("")) {
-				producoesString += "\n";
+			// Concatena "\n" a partir do segundo naoTerminal
+			if (!stringConjuntoProducaoCompleto.equals("")) {
+				stringConjuntoProducaoCompleto += "\n";
 			}
 			
-			// Concatena naoTerminal com suas producoes
-			producoesString += naoTerminal.getSimbolo();
-			producoesString += "->";
-			producoesString += naoTerminalProducoes;
+			// Concatena o naoTerminal com suas producoes na string global
+			stringConjuntoProducaoCompleto += naoTerminal.getSimbolo();
+			stringConjuntoProducaoCompleto += "->";
+			stringConjuntoProducaoCompleto += stringConjuntoProducaoDoNaoTerminal;
 		}
 		
-		return producoesString;
+		return stringConjuntoProducaoCompleto;
 	}
 	
 	// Metodos Privados
-	private boolean gerarGramatica(String producoes) {
-		// Formata a string de producoes, removendo espacos em branco, etc
-		producoes = this.formataProducoes(producoes);
+	private boolean gerarGramatica(String stringConjuntoProducao) {
+		// Remove espacos em branco
+		stringConjuntoProducao = this.formatarStringConjuntoProducao(stringConjuntoProducao);
 		
-		// Se a string for vazia entao a gramatica eh invalida
-		if (producoes.equals("")) {
+		// String vazia eh invalida
+		if (stringConjuntoProducao.equals("")) {
 			return false;
 		}
 		
-		/* Percorre toda a string e, para cada \n encontrado, quebra a string
-		 * em duas para obter as producoes de um dado naoTerminal (e gera-lo).
+		/* Para cada \n encontrado, a string eh quebrada em duas para
+		 * obter o conjuntoProducao de um dado naoTerminal (e gera-lo).
 		 * Ex: S -> aS | b\nA -> b | B\nB -> c eh dividido em tres por duas iteracoes:
 		 * S -> aS
 		 * A -> b
@@ -149,19 +153,19 @@ public class Gramatica {
 			continuar = false;
 			
 			int fimNaoTerminal;
-			fimNaoTerminal = producoes.indexOf("\n");
+			fimNaoTerminal = stringConjuntoProducao.indexOf("\n");
 			
 			// Caso nao possua \n: obtem a string inteira
 			if (fimNaoTerminal < 0) {
-				fimNaoTerminal = producoes.length();
+				fimNaoTerminal = stringConjuntoProducao.length();
 			}
 			
 			String naoTerminal;
-			naoTerminal = producoes.substring(0, fimNaoTerminal);
+			naoTerminal = stringConjuntoProducao.substring(0, fimNaoTerminal);
 			
 			// Verifica se existe mais algum naoTerminal apos o \n encontrado
-			if (producoes.length() > fimNaoTerminal) {
-				producoes = producoes.substring(fimNaoTerminal+1);
+			if (stringConjuntoProducao.length() > fimNaoTerminal) {
+				stringConjuntoProducao = stringConjuntoProducao.substring(fimNaoTerminal+1);
 				continuar = true;
 			}
 			
@@ -170,78 +174,79 @@ public class Gramatica {
 		
 		return true;
 	}
-	private void gerarNaoTerminal(String producoes) {
+	private void gerarNaoTerminal(String stringConjuntoProducao) {
 		// Obtem indice do final do naoTerminal, ou seja, inicio das producoes
 		int indiceProducoes;
-		indiceProducoes = producoes.indexOf("->");
+		indiceProducoes = stringConjuntoProducao.indexOf("->");
 		
-		String naoTerminalSimbolo;
-		naoTerminalSimbolo = producoes.substring(0, indiceProducoes);
-		producoes = producoes.substring(indiceProducoes+2);
+		String stringSimboloNaoTerminal;
+		stringSimboloNaoTerminal = stringConjuntoProducao.substring(0, indiceProducoes);
+		stringConjuntoProducao = stringConjuntoProducao.substring(indiceProducoes+2);
 		
-		// NaoTerminal a qual as producoes pertencem
+		// Cria o NaoTerminal
 		NaoTerminal naoTerminal;
-		naoTerminal = new NaoTerminal(naoTerminalSimbolo);
-		naoTerminal = this.naoTerminais.add(naoTerminal);
+		naoTerminal = new NaoTerminal(stringSimboloNaoTerminal);
+		naoTerminal = this.conjuntoNaoTerminal.add(naoTerminal);
 		
-		boolean continuar;
+		boolean existeProducao;
 		do {
-			continuar = false;
+			existeProducao = false;
 			
-			int fim;
-			fim = producoes.indexOf("|");
+			int indiceFimConjuntoProducao;
+			indiceFimConjuntoProducao = stringConjuntoProducao.indexOf("|");
 			
-			if (fim < 0) {
-				fim = producoes.length();
+			if (indiceFimConjuntoProducao < 0) {
+				indiceFimConjuntoProducao = stringConjuntoProducao.length();
 			}
 			
 			String producao;
-			producao = producoes.substring(0, fim);
+			producao = stringConjuntoProducao.substring(0, indiceFimConjuntoProducao);
 			
-			char producaoTerminalSimbolo;
-			producaoTerminalSimbolo = producao.charAt(0);
-			producaoTerminalSimbolo = this.alfabeto.add(producaoTerminalSimbolo);
+			char simboloTerminalDaProducao;
+			simboloTerminalDaProducao = producao.charAt(0);
+			simboloTerminalDaProducao = this.conjuntoAlfabeto.add(simboloTerminalDaProducao);
 			
-			String producaoNaoTerminalSimbolo;
-			producaoNaoTerminalSimbolo = producao.substring(1);
+			Terminal terminalDaProducao;
+			terminalDaProducao = new Terminal(simboloTerminalDaProducao);
 			
-			Terminal producaoTerminal;
-			producaoTerminal = new Terminal(producaoTerminalSimbolo);
+			String simboloNaoTerminalDaProducao;
+			simboloNaoTerminalDaProducao = producao.substring(1);
 			
-			NaoTerminal producaoNaoTerminal;
-			producaoNaoTerminal = null;
+			NaoTerminal naoTerminalDaProducao;
+			naoTerminalDaProducao = null;
 			
 			// Verifica se producao deriva um naoTerminal
-			if (!producaoNaoTerminalSimbolo.equals("")) {
-				producaoNaoTerminal = new NaoTerminal(producaoNaoTerminalSimbolo);
-				producaoNaoTerminal = this.naoTerminais.add(producaoNaoTerminal);
+			if (!simboloNaoTerminalDaProducao.equals("")) {
+				naoTerminalDaProducao = new NaoTerminal(simboloNaoTerminalDaProducao);
+				naoTerminalDaProducao = this.conjuntoNaoTerminal.add(naoTerminalDaProducao);
 			}
-			naoTerminal.addProducao(producaoTerminal, producaoNaoTerminal);
+			naoTerminal.addProducao(terminalDaProducao, naoTerminalDaProducao);
 			
-			// Verifica se existe mais alguma producao depois do "|"
-			if (producoes.length() > fim) {
-				producoes = producoes.substring(fim+1);
-				continuar = true;
+			// Verifica se existe mais alguma producao (depois do "|")
+			if (stringConjuntoProducao.length() > indiceFimConjuntoProducao) {
+				stringConjuntoProducao = stringConjuntoProducao.substring(indiceFimConjuntoProducao+1);
+				existeProducao = true;
 			}
 			
-			System.out.println(producao+"|"+producaoTerminalSimbolo+"|"+producaoNaoTerminalSimbolo+"|");
-		} while (continuar);
+			//System.out.println(producao+", T: "+simboloTerminalDaProducao+", NT: "+simboloNaoTerminalDaProducao);
+		} while (existeProducao);
 	}
-	private String formataProducoes(String producoes) {
-		producoes = producoes.replaceAll(" ", "");
+	private String formatarStringConjuntoProducao(String stringConjuntoProducao) {
+		// Descarta espacos em branco
+		stringConjuntoProducao = stringConjuntoProducao.replaceAll(" ", "");
 		
-		int fim;
-		fim = producoes.length();
+		int indiceFimConjuntoProducao;
+		indiceFimConjuntoProducao = stringConjuntoProducao.length();
 		
-		String ultimosChar;
-		ultimosChar = producoes.substring(fim-1, fim);
+		String doisUltimosCharDaProducao;
+		doisUltimosCharDaProducao = stringConjuntoProducao.substring(indiceFimConjuntoProducao-1, indiceFimConjuntoProducao);
 		
-		// Remove o \n no final da string, caso possua
-		if (ultimosChar.equals("\n")) {
-			producoes = producoes.substring(0, fim-1);
+		// Remove os doisUltimosCharDaProducao caso sejam o \n
+		if (doisUltimosCharDaProducao.equals("\n")) {
+			stringConjuntoProducao = stringConjuntoProducao.substring(0, indiceFimConjuntoProducao-1);
 		}
 		
-		return producoes;
+		return stringConjuntoProducao;
 	}
 	
 	private void gerarGramatica(Automato automato) {

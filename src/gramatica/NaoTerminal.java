@@ -4,11 +4,11 @@ import conjunto.ConjuntoObject;
 
 public class NaoTerminal {
 	private String simbolo;
-	private ConjuntoObject<Producao> producoes;
+	private ConjuntoObject<Producao> conjuntoProducao;
 	
 	public NaoTerminal(String simbolo) {
 		this.simbolo = simbolo;
-		this.producoes = new ConjuntoObject<Producao>();
+		this.conjuntoProducao = new ConjuntoObject<Producao>();
 	}
 	// Metodos Add
 	public Producao addProducao(Terminal terminal, NaoTerminal naoTerminal) {
@@ -17,27 +17,27 @@ public class NaoTerminal {
 		producao.setTerminal(terminal);
 		producao.setNaoTerminal(naoTerminal);
 		
-		return this.producoes.add(producao);
+		return this.conjuntoProducao.add(producao);
 	}
 	public Producao addProducao(Producao producao) {
-		return this.producoes.add(producao);
+		return this.conjuntoProducao.add(producao);
 	}
-	public void addProducoes(ConjuntoObject<Producao> producoes) {
-		this.producoes.add(producoes);
+	public void addConjuntoProducao(ConjuntoObject<Producao> conjuntoProducao) {
+		this.conjuntoProducao.add(conjuntoProducao);
 	}
 	// Metodos Setters
 	public void setSimbolo(String simbolo) {
 		this.simbolo = simbolo;
 	}
-	public void setProducoes(ConjuntoObject<Producao> producoes) {
-		this.producoes = producoes;
+	public void setConjuntoProducao(ConjuntoObject<Producao> conjuntoProducao) {
+		this.conjuntoProducao = conjuntoProducao;
 	}
 	// Metodos Getters
 	public String getSimbolo() {
 		return simbolo;
 	}
-	public ConjuntoObject<Producao> getProducoes() {
-		return producoes;
+	public ConjuntoObject<Producao> getConjuntoProducao() {
+		return conjuntoProducao;
 	}
 	
 	@Override

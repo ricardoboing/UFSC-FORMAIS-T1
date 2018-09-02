@@ -1,45 +1,53 @@
 package automato;
 
-import gramatica.NaoTerminal;
-
 public class Transicao {
-	private Estado partida, destino;
-	private Character entrada;
+	private Estado estadoOrigem, estadoDestino;
+	private Character simboloEntrada;
 	
 	public Transicao() {
-		this.partida = null;
-		this.destino = null;
-		this.entrada = null;
+		this.estadoOrigem = null;
+		this.estadoDestino = null;
+		this.simboloEntrada = null;
 	}
 	// Metodos Setters
-	public void setEntrada(char terminal) {
-		this.entrada = terminal;
+	public void setSimboloEntrada(char simboloEntrada) {
+		this.simboloEntrada = simboloEntrada;
 	}
-	public void setPartida(Estado partida) {
-		this.partida = partida;
+	public void setEstadoOrigem(Estado estadoOrigem) {
+		this.estadoOrigem = estadoOrigem;
 	}
-	public void setDestino(Estado destino) {
-		this.destino = destino;
-	}
-	// Metodos Getters
-	public char getTerminal() {
-		return entrada;
-	}
-	public Estado getPartida() {
-		return partida;
-	}
-	public Estado getDestino() {
-		return destino;
+	public void setEstadoDestino(Estado estadoDestino) {
+		this.estadoDestino = estadoDestino;
 	}
 	
-	public boolean reconhece(char entrada) {
-		return this.entrada.equals(entrada);
+	// Metodos Getters
+	public char getSimboloEntrada() {
+		return simboloEntrada;
 	}
-	public boolean destino(Estado destino) {
-		return this.destino.equals(destino);
+	public Estado getEstadoOrigem() {
+		return estadoOrigem;
 	}
-	public boolean equals(NaoTerminal naoTerminal) {
+	public Estado getEstadoDestino() {
+		return estadoDestino;
+	}
+	
+	public boolean reconhecerEntrada(char entrada) {
+		return this.simboloEntrada.equals(entrada);
+	}
+	public boolean isEstadoDestino(Estado estadoDestino) {
+		return this.estadoDestino.equals(estadoDestino);
+	}
+	public boolean equals(Transicao transicao) {
+		if (!this.estadoOrigem.equals(transicao.estadoOrigem)) {
+			return false;
+		}
+		if (!this.estadoDestino.equals(transicao.estadoDestino)) {
+			return false;
+		}
+		if (!this.simboloEntrada.equals(transicao.simboloEntrada)) {
+			return false;
+		}
 		
-		return false;
+		return true;
 	}
 }

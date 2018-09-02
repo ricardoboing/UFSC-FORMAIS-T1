@@ -3,13 +3,13 @@ package automato;
 import conjunto.ConjuntoObject;
 
 public class Estado {
-	private String nome;
+	private String simbolo;
 	private boolean isInicial, isFinal;
 	
 	private ConjuntoObject<Transicao> transicoes;
 	
 	public Estado(String nome) {
-		this.nome = nome;
+		this.simbolo = nome;
 		this.isInicial = false;
 		this.isFinal = false;
 		
@@ -22,9 +22,9 @@ public class Estado {
 	public Transicao addTransicao(char entrada, Estado destino) {
 		Transicao transicao;
 		transicao = new Transicao();
-		transicao.setEntrada(entrada);
-		transicao.setPartida(this);
-		transicao.setDestino(destino);
+		transicao.setSimboloEntrada(entrada);
+		transicao.setEstadoOrigem(this);
+		transicao.setEstadoDestino(destino);
 		
 		return this.transicoes.add(transicao);
 	}
@@ -32,8 +32,8 @@ public class Estado {
 		this.transicoes.add(transicoes);
 	}
 	// Metodos Setters
-	public void setNome(String nome) {
-		this.nome = nome;
+	public void setSimbolo(String simbolo) {
+		this.simbolo = simbolo;
 	}
 	public void setInicial(boolean isInicial) {
 		this.isInicial = isInicial;
@@ -42,8 +42,8 @@ public class Estado {
 		this.isFinal = isFinal;
 	}
 	// Metodos Getters
-	public String getNome() {
-		return nome;
+	public String getSimbolo() {
+		return simbolo;
 	}
 	public boolean isInicial() {
 		return isInicial;
@@ -64,7 +64,7 @@ public class Estado {
 			Transicao transicao;
 			transicao = this.transicoes.get(c);
 			
-			if (transicao.reconhece(entrada)) {
+			if (transicao.reconhecerEntrada(entrada)) {
 				reconhecedores.add(transicao);
 			}
 		}
@@ -80,7 +80,7 @@ public class Estado {
 			Transicao transicao;
 			transicao = this.transicoes.get(c);
 			
-			if (transicao.reconhece(entrada)) {
+			if (transicao.reconhecerEntrada(entrada)) {
 				return true;
 			}
 		}

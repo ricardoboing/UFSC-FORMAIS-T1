@@ -9,6 +9,6 @@ public class Main {
 		gramatica = new Gramatica(producoes);
 		
 		System.out.println("\n\n");
-		System.out.println(gramatica.getProducoesString());
+		System.out.println(gramatica.getStringConjuntoProducao());
 	}
 }

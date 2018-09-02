@@ -9,53 +9,56 @@ import gramatica.Gramatica;
 public class ManagerLinguagem {
 	public static final char EPSILON = '&';
 	
-	private int nomeAutomato;
-	private int nomeGramatica;
-	private int nomeExpressao;
+	private int contadorNomeNovoAutomato;
+	private int contadorNomeNovoGramatica;
+	private int contadorNomeNovoExpressao;
 	
-	private ArrayList<Automato> automatos;
-	private ArrayList<Gramatica> gramaticas;
-	private ArrayList<Expressao> expressoes;
+	private ArrayList<Automato> conjuntoAutomato;
+	private ArrayList<Gramatica> conjuntoGramatica;
+	private ArrayList<Expressao> conjuntoExpressao;
 	
 	public ManagerLinguagem() {
-		this.nomeAutomato = 0;
-		this.nomeGramatica = 0;
-		this.nomeExpressao = 0;
+		this.contadorNomeNovoAutomato = 0;
+		this.contadorNomeNovoGramatica = 0;
+		this.contadorNomeNovoExpressao = 0;
 		
-		this.automatos = new ArrayList<Automato>();
-		this.gramaticas = new ArrayList<Gramatica>();
-		this.expressoes = new ArrayList<Expressao>();
+		this.conjuntoAutomato = new ArrayList<Automato>();
+		this.conjuntoGramatica = new ArrayList<Gramatica>();
+		this.conjuntoExpressao = new ArrayList<Expressao>();
 	}
+	
 	// Metodos Add
 	public void addAutomato(Automato automato) {
-		this.automatos.add(automato);
+		this.conjuntoAutomato.add(automato);
 	}
 	public void addGramatica(Gramatica gramatica) {
-		this.gramaticas.add(gramatica);
+		this.conjuntoGramatica.add(gramatica);
 	}
 	public void addExpressao(Expressao expressao) {
-		this.expressoes.add(expressao);
+		this.conjuntoExpressao.add(expressao);
 	}
+	
 	// Metodos Getters
-	public ArrayList<Automato> getAutomatos() {
-		return automatos;
+	public ArrayList<Automato> getConjuntoAutomato() {
+		return conjuntoAutomato;
 	}
-	public ArrayList<Gramatica> getGramaticas() {
-		return gramaticas;
+	public ArrayList<Gramatica> getConjuntoGramatica() {
+		return conjuntoGramatica;
 	}
-	public ArrayList<Expressao> getExpressoes() {
-		return expressoes;
+	public ArrayList<Expressao> getConjuntoExpressao() {
+		return conjuntoExpressao;
 	}
-	public String novoNomeAutomato() {
-		this.nomeAutomato++;
-		return "A"+this.nomeAutomato;
+	
+	public String nomeNovoAutomato() {
+		this.contadorNomeNovoAutomato++;
+		return "A"+this.contadorNomeNovoAutomato;
 	}
-	public String novoNomeGramatica() {
-		this.nomeGramatica++;
-		return "G"+this.nomeGramatica;
+	public String nomeNovoGramatica() {
+		this.contadorNomeNovoGramatica++;
+		return "G"+this.contadorNomeNovoGramatica;
 	}
-	public String novoNomeExpressao() {
-		this.nomeExpressao++;
-		return "E"+this.nomeExpressao;
+	public String nomeNovoExpressao() {
+		this.contadorNomeNovoExpressao++;
+		return "E"+this.contadorNomeNovoExpressao;
 	}
 }

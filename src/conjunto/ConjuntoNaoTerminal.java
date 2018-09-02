@@ -18,9 +18,9 @@ public class ConjuntoNaoTerminal extends ConjuntoObject<NaoTerminal> {
 		 */
 		if (adicionado != naoTerminal) {
 			ConjuntoObject<Producao> producoes;
-			producoes = naoTerminal.getProducoes();
+			producoes = naoTerminal.getConjuntoProducao();
 			
-			adicionado.addProducoes(producoes);
+			adicionado.addConjuntoProducao(producoes);
 		}
 		
 		return adicionado;
