@@ -8,13 +8,14 @@ public class Estado {
 	
 	private ConjuntoObject<Transicao> transicoes;
 	
-	public Estado(String nome) {
-		this.simbolo = nome;
+	public Estado(String simbolo) {
+		this.simbolo = simbolo;
 		this.isInicial = false;
 		this.isFinal = false;
 		
 		this.transicoes = new ConjuntoObject<Transicao>();
 	}
+	
 	// Metodos Add
 	public Transicao addTransicao(Transicao transicao) {
 		return this.transicoes.add(transicao);
@@ -28,9 +29,10 @@ public class Estado {
 		
 		return this.transicoes.add(transicao);
 	}
-	public void addTransicoes(ConjuntoObject<Transicao> transicoes) {
+	public void addConjuntoTransicao(ConjuntoObject<Transicao> transicoes) {
 		this.transicoes.add(transicoes);
 	}
+	
 	// Metodos Setters
 	public void setSimbolo(String simbolo) {
 		this.simbolo = simbolo;
@@ -41,6 +43,7 @@ public class Estado {
 	public void setFinal(boolean isFinal) {
 		this.isFinal = isFinal;
 	}
+	
 	// Metodos Getters
 	public String getSimbolo() {
 		return simbolo;
@@ -51,10 +54,10 @@ public class Estado {
 	public boolean isFinal() {
 		return isFinal;
 	}
-	public ConjuntoObject<Transicao> getTransicoes() {
+	public ConjuntoObject<Transicao> getConjuntoTransicao() {
 		return transicoes;
 	}
-	public ConjuntoObject<Transicao> getTransicoes(char entrada) {
+	public ConjuntoObject<Transicao> getConjuntoTransicao(char entrada) {
 		ConjuntoObject<Transicao> reconhecedores;
 		reconhecedores = new ConjuntoObject<Transicao>();
 		/* Percorre todas as producoes e add no conjunto aquelas
@@ -87,8 +90,15 @@ public class Estado {
 		
 		return false;
 	}
-	public boolean equals(Estado estado) {
+	@Override
+	public boolean equals(Object object) {
+		Estado estado;
+		estado = (Estado)object;
 		
-		return false;
+		if (!estado.simbolo.equals(this.simbolo)) {
+			return false;
+		}
+		
+		return true;
 	}
 }

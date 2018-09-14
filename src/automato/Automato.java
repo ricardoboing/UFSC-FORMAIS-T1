@@ -11,7 +11,7 @@ public class Automato {
 	private String nome;
 	private Estado estadoInicial;
 	
-	private ConjuntoEstado conjuntoEstado, conjuntoEstadoFinal;
+	private ConjuntoEstado conjuntoEstado;
 	private ConjuntoAlfabeto conjuntoAlfabeto;
 	private ConjuntoObject<Transicao> conjuntoTransicao;
 	
@@ -23,7 +23,6 @@ public class Automato {
 		this.estadoInicial = null;
 		
 		this.conjuntoEstado = new ConjuntoEstado();
-		this.conjuntoEstadoFinal = new ConjuntoEstado();
 		this.conjuntoAlfabeto = new ConjuntoAlfabeto();
 		this.conjuntoTransicao = new ConjuntoObject<Transicao>();
 	}
@@ -40,24 +39,14 @@ public class Automato {
 	public Estado addEstado(Estado estado) {
 		return this.conjuntoEstado.add(estado);
 	}
-	public Estado addEstadoFinal(Estado estadoFinal) {
-		Estado adicionado;
-		adicionado = this.conjuntoEstadoFinal.add(estadoFinal);
-		adicionado.setFinal(true);
-		
-		return adicionado;
-	}
-	public Character addSimboloEntrada(char simboloEntrada) {
-		return this.conjuntoAlfabeto.add(simboloEntrada);
+	public Character addEntradaAlfabeto(char entradaAlfabeto) {
+		return this.conjuntoAlfabeto.add(entradaAlfabeto);
 	}
 	public Transicao addTransicao(Transicao transicao) {
 		return this.conjuntoTransicao.add(transicao);
 	}
 	public void addConjuntoEstado(ConjuntoEstado conjuntoEstado) {
 		this.conjuntoEstado.add(conjuntoEstado);
-	}
-	public void addConjuntoEstadoFinal(ConjuntoEstado conjuntoEstadoFinal) {
-		this.conjuntoEstadoFinal.add(conjuntoEstadoFinal);
 	}
 	public void addConjuntoTransicao(ConjuntoObject<Transicao> conjuntoTransicao) {
 		this.conjuntoTransicao.add(conjuntoTransicao);
@@ -70,6 +59,8 @@ public class Automato {
 	public void setEstadoInicial(Estado estadoInicial) {
 		this.estadoInicial = estadoInicial;
 		this.estadoInicial.setInicial(true);
+		
+		this.conjuntoEstado.add(estadoInicial);
 	}
 	public boolean addEstadoInicial(Estado estadoInicial) {
 		if (this.possuiEstadoInicial()) {
@@ -82,9 +73,6 @@ public class Automato {
 	}
 	public void setConjuntoEstado(ConjuntoEstado conjuntoEstado) {
 		this.conjuntoEstado = conjuntoEstado;
-	}
-	public void setConjuntoEstadoFinal(ConjuntoEstado conjuntoEstadoFinal) {
-		this.conjuntoEstadoFinal = conjuntoEstadoFinal;
 	}
 	public void setConjuntoAlfabeto(ConjuntoAlfabeto conjuntoAlfabeto) {
 		this.conjuntoAlfabeto = conjuntoAlfabeto;
@@ -99,24 +87,106 @@ public class Automato {
 	}
 	@Override
 	public Automato clone() {
-		// IMPLEMENTAR
+		Automato automatoClone;
+		automatoClone = new Automato();
+		automatoClone.conjuntoAlfabeto = this.conjuntoAlfabeto;
 		
-		return null;
+		// Clona todos os estadoOriginal do automatoOriginal para o automatoClone
+		for (int c = 0; c < this.conjuntoEstado.size(); c++) {
+			Estado estadoOriginal;
+			estadoOriginal = this.conjuntoEstado.get(c);
+			
+			Estado estadoClone;
+			estadoClone = new Estado(estadoOriginal.getSimbolo());
+			
+			if (estadoOriginal.isInicial()) {
+				automatoClone.setEstadoInicial(estadoClone);
+			}
+			if (estadoOriginal.isFinal()) {
+				estadoClone.setFinal(true);
+			}
+			
+			automatoClone.addEstado(estadoClone);
+		}
+		
+		// Clona as transicoes do estadoOriginal para o estadoClone
+		for (int c = 0; c < this.conjuntoEstado.size(); c++) {
+			// Busca estadoOriginal
+			Estado estadoOriginal;
+			estadoOriginal = this.conjuntoEstado.get(c);
+			
+			// Busca estadoClone
+			Estado estadoClone;
+			estadoClone = automatoClone.conjuntoEstado.get(c);
+			
+			ConjuntoObject<Transicao> conjuntoTransicaoDoEstadoOriginal;
+			conjuntoTransicaoDoEstadoOriginal = estadoOriginal.getConjuntoTransicao();
+			
+			/* Todas transicoes do automatoOriginal sao repassadas ao
+			 * automatoClone, porem o estadoOrigem e estadoDestino das
+			 * transicoes clonadas fazem referencia a estados do automatoClone
+			 * 
+			 */
+			for (int i = 0; i < conjuntoTransicaoDoEstadoOriginal.size(); i++) {
+				Transicao transicaoDoEstadoOriginal;
+				transicaoDoEstadoOriginal = conjuntoTransicaoDoEstadoOriginal.get(i);
+				
+				Estado estadoDestinoOriginal;
+				estadoDestinoOriginal = transicaoDoEstadoOriginal.getEstadoDestino();
+				
+				// Busca estadoDestinoClone equivalente ao estadoDestinoOriginal
+				Estado estadoDestinoClone;
+				estadoDestinoClone = automatoClone.getEstado(estadoDestinoOriginal.getSimbolo());
+				
+				// Cria transicaoClone
+				estadoClone.addTransicao(transicaoDoEstadoOriginal.getSimboloEntrada(), estadoDestinoClone);
+			}
+		}
+		
+		return automatoClone;
 	}
 	public Estado getEstadoInicial() {
-		return estadoInicial;
+		return this.estadoInicial;
 	}
 	public ConjuntoEstado getConjuntoEstado() {
-		return conjuntoEstado;
+		return this.conjuntoEstado;
 	}
 	public ConjuntoEstado getConjuntoEstadoFinal() {
+		ConjuntoEstado conjuntoEstadoFinal;
+		conjuntoEstadoFinal = new ConjuntoEstado();
+		
+		for (int c = 0; c < this.conjuntoEstado.size(); c++) {
+			Estado estado;
+			estado = this.conjuntoEstado.get(c);
+			
+			if (estado.isFinal()) {
+				conjuntoEstadoFinal.add(estado);
+			}
+		}
+		
 		return conjuntoEstadoFinal;
 	}
+	public ConjuntoEstado getConjuntoEstadoNaoFinal() {
+		ConjuntoEstado conjuntoEstadoNaoFinal;
+		conjuntoEstadoNaoFinal = new ConjuntoEstado();
+		
+		for (int c = 0; c < this.conjuntoEstado.size(); c++) {
+			Estado estado;
+			estado = this.conjuntoEstado.get(c);
+			
+			if (!estado.isFinal()) {
+				conjuntoEstadoNaoFinal.add(estado);
+			}
+		}
+		
+		return conjuntoEstadoNaoFinal;
+	}
+	
 	public ConjuntoAlfabeto getConjuntoAlfabeto() {
-		return conjuntoAlfabeto;
+		return this.conjuntoAlfabeto;
 	}
 	public ConjuntoObject<Transicao> getConjuntoTransicao() {
-		return conjuntoTransicao;
+		return this.conjuntoTransicao;
 	}
 	public Estado getEstado(String simbolo) {
 		for (int c = 0; c < this.conjuntoEstado.size(); c++) {
@@ -134,7 +204,12 @@ public class Automato {
 	public boolean possuiEstadoInicial() {
 		return (this.estadoInicial != null);
 	}
-	public boolean equals(Automato automato) {
+	@Override
+	public boolean equals(Object object) {
+		Automato automato;
+		automato = (Automato)object;
+		
+		
 		
 		return false;
 	}
@@ -152,7 +227,44 @@ public class Automato {
 		this.conjuntoEstado = gerado.conjuntoEstado;
 		this.conjuntoAlfabeto = gerado.conjuntoAlfabeto;
 		this.conjuntoTransicao = gerado.conjuntoTransicao;
-		this.conjuntoEstadoFinal = gerado.conjuntoEstadoFinal;
 		this.estadoInicial = gerado.estadoInicial;
+	}
+	
+	public void print() {
+		for (int c = 0; c < this.conjuntoEstado.size(); c++) {
+			Estado estado;
+			estado = this.conjuntoEstado.get(c);
+			
+			ConjuntoObject<Transicao> conjuntoTransicao;
+			conjuntoTransicao = estado.getConjuntoTransicao();
+			
+			if (conjuntoTransicao.size() == 0) {
+				if (estado.isInicial()) {
+					System.out.print("->");
+				}
+				if (estado.isFinal()) {
+					System.out.print("*");
+				}
+				
+				System.out.println(estado.getSimbolo()+": ");
+			}
+			
+			for (int i = 0; i < conjuntoTransicao.size(); i++) {
+				Transicao transicao;
+				transicao = conjuntoTransicao.get(i);
+				
+				if (transicao.getEstadoOrigem().isInicial()) {
+					System.out.print("->");
+				}
+				if (transicao.getEstadoOrigem().isFinal()) {
+					System.out.print("*");
+				}
+				
+				System.out.print(transicao.getEstadoOrigem().getSimbolo()+": ");
+				System.out.print("("+transicao.getEstadoOrigem().getSimbolo());
+				System.out.print(", "+transicao.getSimboloEntrada());
+				System.out.println(") -> "+transicao.getEstadoDestino().getSimbolo());
+			}
+		}
 	}
 }

@@ -86,4 +86,15 @@ public class ConjuntoObject<T> extends ConjuntoGenerico<T> {
 		
 		return true;
 	}
+	@Override
+	public ConjuntoObject<T> clone() {
+		ConjuntoObject<T> clone;
+		clone = new ConjuntoObject<T>();
+		
+		for (int c = 0; c < this.array.size(); c++) {
+			clone.array.add(this.array.get(c));
+		}
+		
+		return clone;
+	}
 }

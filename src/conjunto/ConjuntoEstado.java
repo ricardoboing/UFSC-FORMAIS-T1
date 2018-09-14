@@ -18,11 +18,16 @@ public class ConjuntoEstado extends ConjuntoObject<Estado> {
 		 */
 		if (adicionado != estado) {
 			ConjuntoObject<Transicao> transicoes;
-			transicoes = estado.getTransicoes();
+			transicoes = estado.getConjuntoTransicao();
 			
-			adicionado.addTransicoes(transicoes);
+			adicionado.addConjuntoTransicao(transicoes);
 		}
 		
 		return adicionado;
+	}
+	
+	@Override
+	public ConjuntoEstado clone() {
+		return (ConjuntoEstado) super.clone();
 	}
 }
