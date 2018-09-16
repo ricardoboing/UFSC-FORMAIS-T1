@@ -141,6 +141,8 @@ public class OperarAutomato {
 			}
 		}
 		
+		this.eliminarTransicoesInutil(conjuntoEstadoAlcansavel);
+		
 		return automatoSemEstadoInalcansavel;
 	}
 	public Automato eliminarEstadosMortos(Automato automatoOriginal) {
@@ -193,10 +195,31 @@ public class OperarAutomato {
 			// Continuar enquanto novos estados forem adicionados como vivo
 		} while (numeroTotalEstadoVivoAnterior != conjuntoEstadoVivo.size());
 		
+		this.eliminarTransicoesInutil(conjuntoEstadoVivo);
+		
 		return automatoSemEstadoMorto;
 	}
-	
-	public void eliminarEstadosDuplicados(Automato automatoOriginal) {
+	private void eliminarTransicoesInutil(ConjuntoEstado conjuntoEstado) {
+		for (int c = 0; c < conjuntoEstado.size(); c++) {
+			Estado estadoAlcansavel;
+			estadoAlcansavel = conjuntoEstado.get(c);
+			
+			ConjuntoObject<Transicao> conjuntoTransicaoDoEstadoAlcansavel;
+			conjuntoTransicaoDoEstadoAlcansavel = estadoAlcansavel.getConjuntoTransicao();
+			
+			// Percorre as transicoes
+			for (int i = 0; i < conjuntoTransicaoDoEstadoAlcansavel.size(); i++) {
+				Transicao transicaoDoEstadoAlcansavel;
+				transicaoDoEstadoAlcansavel = conjuntoTransicaoDoEstadoAlcansavel.get(i);
+				
+				if (!conjuntoEstado.contains(transicaoDoEstadoAlcansavel.getEstadoDestino())) {
+					conjuntoTransicaoDoEstadoAlcansavel.remove(transicaoDoEstadoAlcansavel);
+					i--;
+				}
+			}
+		}
+	}
+	public Automato eliminarEstadosDuplicados(Automato automatoOriginal) {
 		Automato automatoClone;
 		automatoClone = automatoOriginal.clone();
 		
@@ -225,24 +248,21 @@ public class OperarAutomato {
 				ConjuntoEstado conjuntoEstadoAnterior;
 				conjuntoEstadoAnterior = arrayConjuntoEstadoAnterior.get(c);
 				
-				Estado primeiroEstadoDoConjuntoEstado;
-				primeiroEstadoDoConjuntoEstado = conjuntoEstadoAnterior.get(0);
-				
-				ConjuntoEstado conjuntoEstadoNovo;
+				ConjuntoEstado conjuntoEstadoNovo, conjuntoEstadoAnteriorClone;
 				conjuntoEstadoNovo = new ConjuntoEstado();
-				
-				arrayConjuntoEstadoNovo.add(conjuntoEstadoNovo);
-				
-				ConjuntoEstado conjuntoEstadoAnteriorClone;
 				conjuntoEstadoAnteriorClone = conjuntoEstadoAnterior.clone();
 				
+				arrayConjuntoEstadoNovo.add(conjuntoEstadoNovo);
 				arrayConjuntoEstadoNovo.add(conjuntoEstadoAnteriorClone);
+				
+				Estado primeiroEstadoDoConjuntoEstado;
+				primeiroEstadoDoConjuntoEstado = conjuntoEstadoAnteriorClone.get(0);
 				
 				for (int i = 1; i < conjuntoEstadoAnteriorClone.size(); i++) {
 					Estado estadoDoConjuntoEstadoAnteriorClone;
 					estadoDoConjuntoEstadoAnteriorClone = conjuntoEstadoAnteriorClone.get(i);
 					
-					if (arrayConjuntoEstadoAnterior.conjuntoTransicaoEquivalente(primeiroEstadoDoConjuntoEstado, estadoDoConjuntoEstadoAnteriorClone)) {
+					if (!arrayConjuntoEstadoAnterior.conjuntoTransicaoEquivalente(primeiroEstadoDoConjuntoEstado, estadoDoConjuntoEstadoAnteriorClone)) {
 						conjuntoEstadoAnteriorClone.remove(estadoDoConjuntoEstadoAnteriorClone);
 						conjuntoEstadoNovo.add(estadoDoConjuntoEstadoAnteriorClone);
 						i--;
@@ -260,6 +280,9 @@ public class OperarAutomato {
 		novoAutomato = new Automato();
 		novoAutomato.setConjuntoAlfabeto( automatoClone.getConjuntoAlfabeto() );
 		
+		/* Adiciona os estados no novoAutomato, define o inicial e os finais e
+		 * altera o estadoDestino de cada transicao para o primeiro estado de cada conjuntoDeEstado
+		 */
 		for (int c = 0; c < arrayConjuntoEstadoNovo.size(); c++) {
 			ConjuntoEstado conjuntoEstado;
 			conjuntoEstado = arrayConjuntoEstadoNovo.get(c);
@@ -279,6 +302,7 @@ public class OperarAutomato {
 			ConjuntoObject<Transicao> conjuntoTransicao;
 			conjuntoTransicao = primeiroEstadoDoConjuntoEstado.getConjuntoTransicao();
 			
+			// Percorre as transicoes para atualizar o estadoDestino
 			for (int i = 0; i < conjuntoTransicao.size(); i++) {
 				Transicao transicao;
 				transicao = conjuntoTransicao.get(i);
@@ -293,6 +317,8 @@ public class OperarAutomato {
 				transicao.setEstadoDestino(estadoDestinoDaTransicaoNovo);
 			}
 		}
+		
+		return novoAutomato;
 		
 		/* 	Clonar automatoClone = automatoOriginal
 		 * 	Criar arrayConjuntoEstadoAnterior, arrayConjuntoEstadoNovo

@@ -49,11 +49,9 @@ public class ArrayConjuntoEstado {
 		return null;
 	}
 	public boolean conjuntoTransicaoEquivalente(Estado estado1, Estado estado2) {
-		ConjuntoObject<Transicao> conjuntoTransicaoEstado1;
+		ConjuntoObject<Transicao> conjuntoTransicaoEstado1, conjuntoTransicaoEstado2;
 		conjuntoTransicaoEstado1 = estado1.getConjuntoTransicao();
-		
-		ConjuntoObject<Transicao> conjuntoTransicaoEstado2;
-		conjuntoTransicaoEstado2 = estado1.getConjuntoTransicao();
+		conjuntoTransicaoEstado2 = estado2.getConjuntoTransicao();
 		
 		// Verifica se um estado possui mais transicoes do que o outro
 		if (conjuntoTransicaoEstado1.size() != conjuntoTransicaoEstado2.size()) {
@@ -62,23 +60,31 @@ public class ArrayConjuntoEstado {
 		
 		// Verifica se todas transicoes levam para um estadoDestino pertencente ao mesmo ConjuntoEstado
 		for (int c = 0; c < conjuntoTransicaoEstado1.size(); c++) {
-			Transicao transicao;
-			transicao = conjuntoTransicaoEstado1.get(c);
+			Transicao transicaoDoEstado1;
+			transicaoDoEstado1 = conjuntoTransicaoEstado1.get(c);
 			
-			ConjuntoObject<Transicao> conjuntoTransicaoEstado2ParaUmaDadaEntrada;
-			conjuntoTransicaoEstado2ParaUmaDadaEntrada = estado2.getConjuntoTransicao(transicao.getSimboloEntrada());
+			ConjuntoObject<Transicao> conjuntoTransicaoDoEstado2PorEntrada;
+			conjuntoTransicaoDoEstado2PorEntrada = estado2.getConjuntoTransicao(transicaoDoEstado1.getSimboloEntrada());
+			
+			// Considera-se que o automato seja deterministico (possui apenas uma transicao por entrada)
+			Estado estadoDestinoDoEstado1, estadoDestinoDoEstado2;
+			estadoDestinoDoEstado1 = transicaoDoEstado1.getEstadoDestino();
+			estadoDestinoDoEstado2 = conjuntoTransicaoDoEstado2PorEntrada.get(0).getEstadoDestino();
+			
+			if (estadoDestinoDoEstado1 == null && estadoDestinoDoEstado2 == null) {
+				continue;
+			}
+			if (estadoDestinoDoEstado1 == null || estadoDestinoDoEstado2 == null) {
+				return false;
+			}
 			
 			ConjuntoEstado conjuntoEstadoDoEstadoDestinoDoEstado1;
-			conjuntoEstadoDoEstadoDestinoDoEstado1 = this.getConjuntoEstado(transicao.getEstadoDestino());
-			
-			// Considera-se que o automato seja deterministico (transita apenas para um estado por entrada)
-			Estado estadoDestinoDoEstado2ParaUmaDadaEntrada;
-			estadoDestinoDoEstado2ParaUmaDadaEntrada = conjuntoTransicaoEstado2ParaUmaDadaEntrada.get(0).getEstadoDestino();
+			conjuntoEstadoDoEstadoDestinoDoEstado1 = this.getConjuntoEstado(transicaoDoEstado1.getEstadoDestino());
 			
 			/* Se alguma transicao do estado1 levar para um estado diferente
 			 * da transicao do estado 2, entao os estados nao sao equivalentes
 			 */
-			if (!conjuntoEstadoDoEstadoDestinoDoEstado1.contains(estadoDestinoDoEstado2ParaUmaDadaEntrada)) {
+			if (!conjuntoEstadoDoEstadoDestinoDoEstado1.contains(estadoDestinoDoEstado2)) {
 				return false;
 			}
 		}

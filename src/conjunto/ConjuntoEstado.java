@@ -28,6 +28,10 @@ public class ConjuntoEstado extends ConjuntoObject<Estado> {
 	
 	@Override
 	public ConjuntoEstado clone() {
-		return (ConjuntoEstado) super.clone();
+		ConjuntoEstado clone;
+		clone = new ConjuntoEstado();
+		clone.array = super.clone().array;
+		
+		return clone;
 	}
 }
