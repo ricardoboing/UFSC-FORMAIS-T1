@@ -1,4 +1,4 @@
-# Trabalho Prático I - 2018.1
+# Trabalho Prático I - 2018.2
 
 ## 1. Objetivo do Trabalho:
 O objetivo deste trabalho é o desenvolvimento dos algoritmos básicos para tratamento de linguagens regulares. Trata-se da implementação de algoritmos para manipulação de linguagens regulares e transformações entre mecanismos geradores e reconhecedores. Tais algoritmos serão utilizados no trabalho II (desenvolvimento de um analisador Léxico).
