@@ -3,8 +3,8 @@ package automato;
 import conjunto.ConjuntoAlfabeto;
 import conjunto.ConjuntoEstado;
 import conjunto.ConjuntoObject;
-import expressao.DeSimone;
 import expressao.Expressao;
+import expressao.NoDeSimone;
 import gramatica.Gramatica;
 
 public class Automato {
@@ -218,8 +218,8 @@ public class Automato {
 		
 	}
 	private void gerarAutomato(Expressao expressao) {
-		DeSimone deSimone;
-		deSimone = new DeSimone();
+		NoDeSimone deSimone;
+		deSimone = new NoDeSimone(null);
 		
 		Automato gerado;
 		gerado = deSimone.gerarAutomato(expressao);
