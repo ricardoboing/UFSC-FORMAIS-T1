@@ -1,5 +1,7 @@
 package automato;
 
+import java.util.Iterator;
+
 import conjunto.ConjuntoAlfabeto;
 import conjunto.ConjuntoEstado;
 import conjunto.ConjuntoNaoTerminal;
@@ -8,10 +10,9 @@ import gramatica.Gramatica;
 import gramatica.NaoTerminal;
 import gramatica.Producao;
 import gramatica.Terminal;
+import manager.ManagerLinguagem;
 
 public class Automato {
-	public static final char EPSILON = '&';
-	
 	private String nome;
 	private Estado estadoInicial;
 	
@@ -33,6 +34,135 @@ public class Automato {
 	public Automato(String nome, Gramatica gramatica) {
 		this(nome);
 		this.gerarAutomato(gramatica);
+	}
+	// Construtor para facilitar a criacao de Automatos em testes JUnit
+	public Automato(String nome, String stringAutomato) {
+		this(nome);
+		this.gerarAutomato(stringAutomato);
+	}
+	
+	// Metodo para facilitar a criacao de Automatos em testes JUnit
+	private void gerarAutomato(String stringAutomato) {
+		stringAutomato = stringAutomato.replaceAll(" ", "");
+		
+		/*	Transforma stringAutomato em array de estados.
+		 * 	Ex: array[0] = "S-> a | bA"; array[1] = "A -> b";
+		 */
+		String[] arrayNaoTerminal;
+		arrayNaoTerminal = stringAutomato.split("\n");
+		
+		// Cria os naoTerminais, um a um, e cria suas producoes
+		for (int c = 0; c < arrayNaoTerminal.length; c++) {
+			String stringEstado;
+			stringEstado = arrayNaoTerminal[c];
+			
+			char isFinal, isInicial;
+			isFinal = stringEstado.charAt(0);
+			isInicial = stringEstado.charAt(1);
+			
+			String simboloEstado;
+			simboloEstado = stringEstado.substring(2,3);
+			
+			Estado estado;
+			estado = new Estado(simboloEstado);
+			estado = this.addEstado(estado);
+			
+			if (isFinal == '*') {
+				estado.setFinal(true);
+			}
+			if (isInicial == '>') {
+				estado.setInicial(true);
+				this.setEstadoInicial(estado);
+			}
+			
+			String stringTransicoes;
+			stringTransicoes = stringEstado.substring(5);
+			
+			/*	Transforma stringTransicoes em array de producoes.
+			 * 	Ex (S-> a | bS): array[0] = "a"; array[1] = "bS";
+			 */
+			String[] arrayTransicao;
+			arrayTransicao = stringTransicoes.split("\\|");
+			
+			for (int i = 0; i < arrayTransicao.length; i++) {
+				String stringTransicao;
+				stringTransicao = arrayTransicao[i];
+				
+				char entradaTransicao;
+				entradaTransicao = stringTransicao.charAt(0);
+				
+				this.conjuntoAlfabeto.add(entradaTransicao);
+				
+				Estado estadoTransicao;
+				estadoTransicao = new Estado(stringTransicao.substring(1));
+				estadoTransicao = this.addEstado(estadoTransicao);
+				
+				estado.addTransicao(entradaTransicao, estadoTransicao);
+			}
+		}
+	}
+	// Metodo para facilitar a criacao de Automatos em testes JUnit
+	public String getStringConjuntoTransicao() {
+		String stringConjuntoTransicaoCompleto;
+		stringConjuntoTransicaoCompleto = "";
+		
+		Iterator<Estado> iteratorConjuntoEstado;
+		iteratorConjuntoEstado = this.conjuntoEstado.getIterador();
+		
+		/* Percorre o ConjuntoProducao de todo naoTerminal do ConjuntoNaoTerminal
+		 * e, para cada uma, concatena a producao em uma string.
+		 * Ex: S -> aS | a
+		 */
+		while (iteratorConjuntoEstado.hasNext()) {
+			Estado estado;
+			estado = iteratorConjuntoEstado.next();
+			
+			Iterator<Transicao> iteratorConjuntoTransicao;
+			iteratorConjuntoTransicao = estado.getConjuntoTransicao().getIterador();
+			
+			String stringConjuntoTransicao;
+			stringConjuntoTransicao = "";
+			
+			/* Percorre o conjuntoProducao do NaoTerminal e concatena
+			 * cada producao em uma string
+			 */
+			while (iteratorConjuntoTransicao.hasNext()) {
+				// Concatena "|" a partir da segunda producao
+				if (!stringConjuntoTransicao.equals("")) {
+					stringConjuntoTransicao += "|";
+				}
+				
+				Transicao transicao;
+				transicao = iteratorConjuntoTransicao.next();
+				
+				// Concatena o terminal
+				stringConjuntoTransicao += transicao.getSimboloEntrada();
+				stringConjuntoTransicao += transicao.getEstadoDestino().getSimbolo();
+			}
+			
+			// Concatena "\n" a partir do segundo naoTerminal
+			if (!stringConjuntoTransicaoCompleto.equals("")) {
+				stringConjuntoTransicaoCompleto += "\n";
+			}
+			
+			// Concatena o naoTerminal com suas producoes na string global
+			if (estado.isFinal()) {
+				stringConjuntoTransicaoCompleto += "*";
+			} else {
+				stringConjuntoTransicaoCompleto += "_";
+			}
+			if (estado.isInicial()) {
+				stringConjuntoTransicaoCompleto += ">";
+			} else {
+				stringConjuntoTransicaoCompleto += "_";
+			}
+			
+			stringConjuntoTransicaoCompleto += estado.getSimbolo();
+			stringConjuntoTransicaoCompleto += "->";
+			stringConjuntoTransicaoCompleto += stringConjuntoTransicao;
+		}
+		
+		return stringConjuntoTransicaoCompleto;
 	}
 	
 	private void gerarAutomato(Gramatica gramatica) {
@@ -98,7 +228,7 @@ public class Automato {
 				Terminal terminal;
 				terminal = producao.getTerminal();
 				
-				if (terminal.getCharSimbolo() == Automato.EPSILON) {
+				if (terminal.getCharSimbolo() == ManagerLinguagem.EPSILON) {
 					estado.setFinal(true);
 					continue;
 				}

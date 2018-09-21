@@ -9,11 +9,13 @@ import conjunto.ConjuntoAlfabeto;
 import conjunto.ConjuntoEstado;
 import conjunto.ConjuntoNaoTerminal;
 import conjunto.ConjuntoObject;
+import manager.ManagerLinguagem;
 import util.AlfabetoPortuguesMaiusculo;
 
 public class Gramatica {
 	public static final String SEPARADOR_NT = "\n";
 	public static final String SEPARADOR_PRODUCAO = "|";
+	public static final String SEPARADOR_PRODUCAO_SPLIT = "\\|";
 	public static final String SEPARADOR_NT_PRODUCAO = "->";
 	
 	private ConjuntoNaoTerminal conjuntoNaoTerminal;
@@ -141,121 +143,63 @@ public class Gramatica {
 	}
 	
 	// Metodos Privados
-	private boolean gerarGramatica(String stringConjuntoProducao) {
-		// Remove espacos em branco
-		stringConjuntoProducao = this.formatarStringConjuntoProducao(stringConjuntoProducao);
+	private void gerarGramatica(String stringGramatica) {
+		stringGramatica = stringGramatica.replaceAll(" ", "");
 		
-		// String vazia eh invalida
-		if (stringConjuntoProducao.equals("")) {
-			return false;
-		}
-		
-		/* Para cada \n encontrado, a string eh quebrada em duas para
-		 * obter o conjuntoProducao de um dado naoTerminal (e gera-lo).
-		 * Ex: S -> aS | b\nA -> b | B\nB -> c eh dividido em tres por duas iteracoes:
-		 * S -> aS
-		 * A -> b
-		 * B -> c
+		/*	Transforma stringGramatica em array de naoTerminais.
+		 * 	Ex: array[0] = "S-> a | bA"; array[1] = "A -> b";
 		 */
-		boolean continuar;
-		do {
-			continuar = false;
+		String[] arrayNaoTerminal;
+		arrayNaoTerminal = stringGramatica.split(Gramatica.SEPARADOR_NT);
+		
+		// Cria os naoTerminais, um a um, e cria suas producoes
+		for (int c = 0; c < arrayNaoTerminal.length; c++) {
+			String naoTerminalString;
+			naoTerminalString = arrayNaoTerminal[c];
 			
-			int fimNaoTerminal;
-			fimNaoTerminal = stringConjuntoProducao.indexOf(Gramatica.SEPARADOR_NT);
+			String simboloNaoTerminal;
+			simboloNaoTerminal = naoTerminalString.substring(0,1);
 			
-			// Caso nao possua \n: obtem a string inteira
-			if (fimNaoTerminal < 0) {
-				fimNaoTerminal = stringConjuntoProducao.length();
+			NaoTerminal naoTerminal;
+			naoTerminal = new NaoTerminal(simboloNaoTerminal);
+			naoTerminal = this.addNaoTerminal(naoTerminal);
+			
+			String stringProducoes;
+			stringProducoes = naoTerminalString.substring(Gramatica.SEPARADOR_NT_PRODUCAO.length()+1);
+			
+			/*	Transforma stringProducoes em array de producoes.
+			 * 	Ex (S-> a | bS): array[0] = "a"; array[1] = "bS";
+			 */
+			String[] arrayProducao;
+			arrayProducao = stringProducoes.split(Gramatica.SEPARADOR_PRODUCAO_SPLIT);
+			
+			for (int i = 0; i < arrayProducao.length; i++) {
+				String producaoString;
+				producaoString = arrayProducao[i];
+				
+				char simboloTerminal;
+				simboloTerminal = producaoString.charAt(0);
+				
+				Terminal terminalProducao;
+				terminalProducao = new Terminal(simboloTerminal);
+				
+				// Adiciona os terminais (exceto Epsilon) no alfabeto
+				if (simboloTerminal != ManagerLinguagem.EPSILON) {
+					this.conjuntoAlfabeto.add(simboloTerminal);
+				}
+				
+				NaoTerminal naoTerminalProducao;
+				naoTerminalProducao = null;
+				
+				// Caso seja uma producao do tipo "aA"
+				if (producaoString.length() == 2) {
+					naoTerminalProducao = new NaoTerminal(producaoString.substring(1));
+					naoTerminalProducao = this.addNaoTerminal(naoTerminalProducao);
+				}
+				
+				naoTerminal.addProducao(terminalProducao, naoTerminalProducao);
 			}
-			
-			String naoTerminal;
-			naoTerminal = stringConjuntoProducao.substring(0, fimNaoTerminal);
-			
-			// Verifica se existe mais algum naoTerminal apos o \n encontrado
-			if (stringConjuntoProducao.length() > fimNaoTerminal) {
-				stringConjuntoProducao = stringConjuntoProducao.substring(fimNaoTerminal+1);
-				continuar = true;
-			}
-			
-			this.gerarNaoTerminal(naoTerminal);
-		} while (continuar);
-		
-		return true;
-	}
-	private void gerarNaoTerminal(String stringConjuntoProducao) {
-		// Obtem indice do final do naoTerminal, ou seja, inicio das producoes
-		int indiceProducoes;
-		indiceProducoes = stringConjuntoProducao.indexOf(Gramatica.SEPARADOR_NT_PRODUCAO);
-		
-		String stringSimboloNaoTerminal;
-		stringSimboloNaoTerminal = stringConjuntoProducao.substring(0, indiceProducoes);
-		stringConjuntoProducao = stringConjuntoProducao.substring(indiceProducoes+2);
-		
-		// Cria o NaoTerminal
-		NaoTerminal naoTerminal;
-		naoTerminal = new NaoTerminal(stringSimboloNaoTerminal);
-		naoTerminal = this.conjuntoNaoTerminal.add(naoTerminal);
-		
-		boolean existeProducao;
-		do {
-			existeProducao = false;
-			
-			int indiceFimConjuntoProducao;
-			indiceFimConjuntoProducao = stringConjuntoProducao.indexOf(Gramatica.SEPARADOR_PRODUCAO);
-			
-			if (indiceFimConjuntoProducao < 0) {
-				indiceFimConjuntoProducao = stringConjuntoProducao.length();
-			}
-			
-			String producao;
-			producao = stringConjuntoProducao.substring(0, indiceFimConjuntoProducao);
-			
-			char simboloTerminalDaProducao;
-			simboloTerminalDaProducao = producao.charAt(0);
-			simboloTerminalDaProducao = this.conjuntoAlfabeto.add(simboloTerminalDaProducao);
-			
-			Terminal terminalDaProducao;
-			terminalDaProducao = new Terminal(simboloTerminalDaProducao);
-			
-			String simboloNaoTerminalDaProducao;
-			simboloNaoTerminalDaProducao = producao.substring(1);
-			
-			NaoTerminal naoTerminalDaProducao;
-			naoTerminalDaProducao = null;
-			
-			// Verifica se producao deriva um naoTerminal
-			if (!simboloNaoTerminalDaProducao.equals("")) {
-				naoTerminalDaProducao = new NaoTerminal(simboloNaoTerminalDaProducao);
-				naoTerminalDaProducao = this.conjuntoNaoTerminal.add(naoTerminalDaProducao);
-			}
-			naoTerminal.addProducao(terminalDaProducao, naoTerminalDaProducao);
-			
-			// Verifica se existe mais alguma producao (depois do Gramatica.SEPARADOR_PRODUCAO)
-			if (stringConjuntoProducao.length() > indiceFimConjuntoProducao) {
-				stringConjuntoProducao = stringConjuntoProducao.substring(indiceFimConjuntoProducao+1);
-				existeProducao = true;
-			}
-			
-			//System.out.println(producao+", T: "+simboloTerminalDaProducao+", NT: "+simboloNaoTerminalDaProducao);
-		} while (existeProducao);
-	}
-	private String formatarStringConjuntoProducao(String stringConjuntoProducao) {
-		// Descarta espacos em branco
-		stringConjuntoProducao = stringConjuntoProducao.replaceAll(" ", "");
-		
-		int indiceFimConjuntoProducao;
-		indiceFimConjuntoProducao = stringConjuntoProducao.length();
-		
-		String doisUltimosCharDaProducao;
-		doisUltimosCharDaProducao = stringConjuntoProducao.substring(indiceFimConjuntoProducao-1, indiceFimConjuntoProducao);
-		
-		// Remove os doisUltimosCharDaProducao caso sejam o Gramatica.SEPARADOR_NT
-		if (doisUltimosCharDaProducao.equals(Gramatica.SEPARADOR_NT)) {
-			stringConjuntoProducao = stringConjuntoProducao.substring(0, indiceFimConjuntoProducao-1);
 		}
-		
-		return stringConjuntoProducao;
 	}
 	/*	Cria uma Gramatica a partir de um Automato
 	 */
@@ -321,7 +265,7 @@ public class Gramatica {
 			naoTerminalInicialNovo.setSimbolo("sera_alterado_posteriormente");
 			
 			Terminal terminalEpsilon;
-			terminalEpsilon = new Terminal(Automato.EPSILON);
+			terminalEpsilon = new Terminal(ManagerLinguagem.EPSILON);
 			
 			Producao producaoEpsilon;
 			producaoEpsilon = new Producao();
@@ -335,7 +279,9 @@ public class Gramatica {
 		AlfabetoPortuguesMaiusculo alfabetoPortugues;
 		alfabetoPortugues = new AlfabetoPortuguesMaiusculo();
 		
-		// Altera o simbolo dos NaoTerminal. Essa etapa nao pode ser feita durante o mapeamento dos "Estado" para "NaoTerminal"
+		/* "Renomeia" o simbolo dos NaoTerminal.
+		 *  Essa etapa nao pode ser feita durante o mapeamento dos "Estado" para "NaoTerminal"
+		 */
 		for (int c = 0; c < this.conjuntoNaoTerminal.size(); c++) {
 			NaoTerminal naoTerminal;
 			naoTerminal = this.conjuntoNaoTerminal.get(c);

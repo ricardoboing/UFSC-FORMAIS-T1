@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
+import expressao.Expressao;
 import expressao.NoDeSimone;
 
 public class TesteCriarArvore {
@@ -21,6 +22,29 @@ public class TesteCriarArvore {
 		
 		return simone.arvoreToString(-1);
 	}
+	
+	@Test
+	public void criarExpressao1() {
+		Expressao expressao;
+		expressao = new Expressao("(a | b)");
+		
+		assertEquals("(a | b)", expressao.getToStringOriginal());
+	}
+	@Test
+	public void criarExpressao2() {
+		Expressao expressao;
+		expressao = new Expressao("E1", "(a | b)");
+		
+		assertEquals("E1", expressao.getNome());
+	}
+	@Test
+	public void gerarAutomato() {
+		expressao = "(a | b)";
+		arvore = this.obterArvore(expressao);
+		
+		assertEquals(simone.gerarAutomato(), null);
+	}
+	
 	
 	@Test
 	public void criarArvore1() {
@@ -182,5 +206,10 @@ public class TesteCriarArvore {
 		arvore = this.obterArvore(expressao);
 		
 		assertEquals(arvore, "|.ab.c.?de");
+	}
+	@Test (expected = StringIndexOutOfBoundsException.class)
+	public void criarArvore24() {
+		expressao = "";
+		arvore = this.obterArvore(expressao);
 	}
 }
