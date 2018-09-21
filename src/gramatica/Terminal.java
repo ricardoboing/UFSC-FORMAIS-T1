@@ -29,4 +29,9 @@ public class Terminal {
 	public boolean equals(Terminal terminal) {
 		return this.simbolo.equals(terminal.simbolo);
 	}
+	
+	@Override
+	public Terminal clone() {
+		return new Terminal(this.simbolo);
+	}
 }

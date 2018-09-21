@@ -1,5 +1,7 @@
 package expressao;
 
+import java.util.ArrayList;
+
 import automato.Automato;
 
 public class NoDeSimone {
@@ -17,7 +19,7 @@ public class NoDeSimone {
 		this.noFilhoEsquerdo = null;
 	}
 	
-	public Automato gerarAutomato(Expressao expressao) {
+	public Automato gerarAutomato() {
 		
 		return null;
 	}
@@ -30,20 +32,40 @@ public class NoDeSimone {
 	}
 	
 	public String arvoreToString(int nivel) {
+		ArrayList<NoDeSimone> arrayNoVisitado;
+		arrayNoVisitado = new ArrayList<NoDeSimone>();
+		
+		return this.arvoreToString(arrayNoVisitado, nivel);
+	}
+	private String arvoreToString(ArrayList<NoDeSimone> arrayNoVisitado, int nivel) {
+		if (arrayNoVisitado.contains(this)) {
+			return "";
+		}
+		
+		arrayNoVisitado.add(this);
+		
 		nivel++;
 		
 		String arvore;
 		arvore = this.simbolo;
 		
-		if (this.noFilhoDireito != null) {
-			arvore += this.noFilhoEsquerdo.arvoreToString(nivel);
-			arvore += this.noFilhoDireito.arvoreToString(nivel);
+		if (this.noFilhoEsquerdo != null) {
+			arvore += this.noFilhoEsquerdo.arvoreToString(arrayNoVisitado, nivel);
+			arvore += this.noFilhoDireito.arvoreToString(arrayNoVisitado, nivel);
 		}
 		
 		return arvore;
 	}
-	public void gerarArvoreSintatica(NoDeSimone noPai) {
+	public void gerarArvoreSintatica() {
+		ArrayList<NoDeSimone> arrayPrecedentes;
+		arrayPrecedentes = new ArrayList<NoDeSimone>();
+		
+		this.gerarArvoreSintatica(arrayPrecedentes, null);
+	}
+	private void gerarArvoreSintatica(ArrayList<NoDeSimone> arrayPrecedentes, NoDeSimone noPai) {
 		this.noPai = noPai;
+		
+		arrayPrecedentes.add(this);
 		
 		Expressao expressao;
 		expressao = new Expressao(this.simbolo);
@@ -52,6 +74,8 @@ public class NoDeSimone {
 		
 		// No Folha
 		if (this.simbolo.length() == 1) {
+			// Define o filhoDireito como sendo um no de subida, que corresponde a um noPrecedente na arvore
+			this.noFilhoDireito = arrayPrecedentes.remove(arrayPrecedentes.size()-1);
 			return;
 		}
 		
@@ -78,15 +102,21 @@ public class NoDeSimone {
 				simboloFilhoEsquerdo = expressao.getToStringExplicita().substring(0, indicePrimeiraOcorrencia);
 				simboloFilhoDireito = expressao.getToStringExplicita().substring(indicePrimeiraOcorrencia+1);
 				
-				this.noFilhoEsquerdo = new NoDeSimone(simboloFilhoEsquerdo);
-				this.noFilhoDireito = new NoDeSimone(simboloFilhoDireito);
-				
 				this.simbolo = expressao.getToStringExplicita().charAt(indicePrimeiraOcorrencia) + "";
+				
+				this.noFilhoEsquerdo = new NoDeSimone(simboloFilhoEsquerdo);
+				
+				if (simboloDePrecedencia == '?' || simboloDePrecedencia == '*') {
+					this.noFilhoDireito = arrayPrecedentes.remove(arrayPrecedentes.size()-1);
+				} else {
+					this.noFilhoDireito = new NoDeSimone(simboloFilhoDireito);
+				}
+				
 				break;
 			}
 		}
 		
-		this.noFilhoEsquerdo.gerarArvoreSintatica(this);
-		this.noFilhoDireito.gerarArvoreSintatica(this);
+		this.noFilhoEsquerdo.gerarArvoreSintatica(arrayPrecedentes, this);
+		this.noFilhoDireito.gerarArvoreSintatica(arrayPrecedentes, this);
 	}
 }

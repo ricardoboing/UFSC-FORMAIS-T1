@@ -2,12 +2,16 @@ package automato;
 
 import conjunto.ConjuntoAlfabeto;
 import conjunto.ConjuntoEstado;
+import conjunto.ConjuntoNaoTerminal;
 import conjunto.ConjuntoObject;
-import expressao.Expressao;
-import expressao.NoDeSimone;
 import gramatica.Gramatica;
+import gramatica.NaoTerminal;
+import gramatica.Producao;
+import gramatica.Terminal;
 
 public class Automato {
+	public static final char EPSILON = '&';
+	
 	private String nome;
 	private Estado estadoInicial;
 	
@@ -26,21 +30,119 @@ public class Automato {
 		this.conjuntoAlfabeto = new ConjuntoAlfabeto();
 		this.conjuntoTransicao = new ConjuntoObject<Transicao>();
 	}
-	public Automato(Gramatica gramatica) {
-		this();
+	public Automato(String nome, Gramatica gramatica) {
+		this(nome);
 		this.gerarAutomato(gramatica);
 	}
-	public Automato(Expressao expressao) {
-		this();
-		this.gerarAutomato(expressao);
+	
+	private void gerarAutomato(Gramatica gramatica) {
+		/*	Copiar alfabeto
+		 * 	Criar estadoFinal para as producoes que possuem apenas terminal
+		 * 	estadoFinal = automato.addEstado();
+		 * 	Para cada naoTerminalDaGramatica
+		 * 		Criar estadoDoAutomato
+		 * 		estadoDoAutomato = automato.addEstado();
+		 * 		Se naoTerminalDaGramatica eh inicial
+		 * 			estadoDoAutomato.ehInicial()
+		 * 		Fim
+		 * 		Para cada producaoDoNaoTerminalDaGramatica
+		 * 			Se producaoEpsilon
+		 * 				estadoDoAutomato.ehFinal()
+		 * 				continue
+		 * 			Fim
+		 * 			Criar transicaoDoEstadoDoAutomato
+		 * 			transicaoDoEstadoDoAutomato.simboloDeEntrada = terminalDaProducao
+		 * 			estadoDoAutomato.addTransicao()
+		 * 			transicaoDoEstadoDoAutomato.addEstadoOrigem()
+		 * 			Se producao possui naoTerminal
+		 * 				Criar estadoDestinoDaTransicao
+		 * 				estadoDestinoDaTransicao = automato.addEstado()
+		 * 				transicao.addEstadoDestino()
+		 * 			SeNao
+		 * 				transicao.addEstadoDestino(estadoFinal)
+		 * 			Fim
+		 * 		Fim
+		 * 	Fim
+		 */
+		
+		this.conjuntoAlfabeto = gramatica.getConjuntoAlfabeto().clone();
+		
+		Estado estadoFinal;
+		estadoFinal = new Estado("F");
+		estadoFinal.setFinal(true);
+		estadoFinal = this.addEstado(estadoFinal);
+		
+		ConjuntoNaoTerminal conjuntoNaoTerminal;
+		conjuntoNaoTerminal = gramatica.getConjuntoNaoTerminal();
+		
+		for (int c = 0; c < conjuntoNaoTerminal.size(); c++) {
+			NaoTerminal naoTerminal;
+			naoTerminal = conjuntoNaoTerminal.get(c);
+			
+			Estado estado;
+			estado = new Estado(naoTerminal.getSimbolo());
+			estado = this.addEstado(estado);
+			
+			if (c == 0) {
+				estado.setInicial(true);
+				this.setEstadoInicial(estado);
+			}
+			
+			ConjuntoObject<Producao> conjuntoProducao;
+			conjuntoProducao = naoTerminal.getConjuntoProducao();
+			
+			for (int i = 0; i < conjuntoProducao.size(); i++) {
+				Producao producao;
+				producao = conjuntoProducao.get(i);
+				
+				Terminal terminal;
+				terminal = producao.getTerminal();
+				
+				if (terminal.getCharSimbolo() == Automato.EPSILON) {
+					estado.setFinal(true);
+					continue;
+				}
+				
+				NaoTerminal naoTerminalDaProducao;
+				naoTerminalDaProducao = producao.getNaoTerminal();
+				
+				Estado estadoDestinoDaTransicao;
+				
+				if (naoTerminalDaProducao == null) {
+					estadoDestinoDaTransicao = estadoFinal;
+				} else {
+					estadoDestinoDaTransicao = new Estado(naoTerminalDaProducao.getSimbolo());
+					estadoDestinoDaTransicao = this.addEstado(estadoDestinoDaTransicao);
+				}
+				
+				Transicao transicao;
+				transicao = new Transicao();
+				transicao.setEstadoOrigem(estado);
+				transicao.setEstadoDestino(estadoDestinoDaTransicao);
+				transicao.setSimboloEntrada(terminal.getCharSimbolo());
+				
+				estado.addTransicao(transicao);
+			}
+		}
+		
+		// Altera a ordem dentro do conjunto
+		this.conjuntoEstado.remove(estadoFinal);
+		this.conjuntoEstado.add(estadoFinal);
+		
+		// Altera o simbolo dos estados. Essa etapa nao pode ser realizada durante o mapeamento de "NaoTerminal" para "Estado"
+		for (int c = 0; c < this.conjuntoEstado.size(); c++) {
+			Estado estado;
+			estado = this.conjuntoEstado.get(c);
+			//estado.setSimbolo("q"+c);
+		}
 	}
 	
 	// Metodos Add
 	public Estado addEstado(Estado estado) {
 		return this.conjuntoEstado.add(estado);
 	}
-	public Character addEntradaAlfabeto(char entradaAlfabeto) {
-		return this.conjuntoAlfabeto.add(entradaAlfabeto);
+	public void addEntradaAlfabeto(char entradaAlfabeto) {
+		this.conjuntoAlfabeto.add(entradaAlfabeto);
 	}
 	public Transicao addTransicao(Transicao transicao) {
 		return this.conjuntoTransicao.add(transicao);
@@ -212,22 +314,6 @@ public class Automato {
 		
 		
 		return false;
-	}
-	
-	private void gerarAutomato(Gramatica gramatica) {
-		
-	}
-	private void gerarAutomato(Expressao expressao) {
-		NoDeSimone deSimone;
-		deSimone = new NoDeSimone(null);
-		
-		Automato gerado;
-		gerado = deSimone.gerarAutomato(expressao);
-		
-		this.conjuntoEstado = gerado.conjuntoEstado;
-		this.conjuntoAlfabeto = gerado.conjuntoAlfabeto;
-		this.conjuntoTransicao = gerado.conjuntoTransicao;
-		this.estadoInicial = gerado.estadoInicial;
 	}
 	
 	public void print() {

@@ -3,14 +3,21 @@ package gramatica;
 import java.util.Iterator;
 
 import automato.Automato;
+import automato.Estado;
+import automato.Transicao;
 import conjunto.ConjuntoAlfabeto;
+import conjunto.ConjuntoEstado;
 import conjunto.ConjuntoNaoTerminal;
 import conjunto.ConjuntoObject;
+import util.AlfabetoPortuguesMaiusculo;
 
 public class Gramatica {
+	public static final String SEPARADOR_NT = "\n";
+	public static final String SEPARADOR_PRODUCAO = "|";
+	public static final String SEPARADOR_NT_PRODUCAO = "->";
+	
 	private ConjuntoNaoTerminal conjuntoNaoTerminal;
 	private ConjuntoAlfabeto conjuntoAlfabeto;
-	private ConjuntoObject<Producao> conjuntoProducao;
 	
 	private NaoTerminal naoTerminalInicial;
 	private String nome;
@@ -35,7 +42,6 @@ public class Gramatica {
 		
 		this.conjuntoAlfabeto = new ConjuntoAlfabeto();
 		this.conjuntoNaoTerminal = new ConjuntoNaoTerminal();
-		this.conjuntoProducao = new ConjuntoObject<Producao>();
 	}
 	
 	// Metodos Setters
@@ -47,9 +53,6 @@ public class Gramatica {
 	}
 	public void setConjuntoAlfabeto(ConjuntoAlfabeto conjuntoAlfabeto) {
 		this.conjuntoAlfabeto = conjuntoAlfabeto;
-	}
-	public void setConjuntoProducao(ConjuntoObject<Producao> conjuntoProducao) {
-		this.conjuntoProducao = conjuntoProducao;
 	}
 	public void setNaoTerminais(ConjuntoNaoTerminal conjuntoNaoTerminal) {
 		this.conjuntoNaoTerminal = conjuntoNaoTerminal;
@@ -68,8 +71,14 @@ public class Gramatica {
 	public ConjuntoAlfabeto getConjuntoAlfabeto() {
 		return conjuntoAlfabeto;
 	}
-	public ConjuntoObject<Producao> getConjuntoProducao() {
-		return conjuntoProducao;
+	private NaoTerminal addNaoTerminal(NaoTerminal naoTerminal) {
+		naoTerminal = this.conjuntoNaoTerminal.add(naoTerminal);
+		
+		if (this.naoTerminalInicial == null) {
+			this.naoTerminalInicial = naoTerminal;
+		}
+		
+		return naoTerminal;
 	}
 	@Override
 	public Gramatica clone() {
@@ -102,7 +111,7 @@ public class Gramatica {
 			while (iteratorConjuntoProducaoDoNaoTerminal.hasNext()) {
 				// Concatena "|" a partir da segunda producao
 				if (!stringConjuntoProducaoDoNaoTerminal.equals("")) {
-					stringConjuntoProducaoDoNaoTerminal += "|";
+					stringConjuntoProducaoDoNaoTerminal += Gramatica.SEPARADOR_PRODUCAO;
 				}
 				
 				Producao producao;
@@ -119,12 +128,12 @@ public class Gramatica {
 			
 			// Concatena "\n" a partir do segundo naoTerminal
 			if (!stringConjuntoProducaoCompleto.equals("")) {
-				stringConjuntoProducaoCompleto += "\n";
+				stringConjuntoProducaoCompleto += Gramatica.SEPARADOR_NT;
 			}
 			
 			// Concatena o naoTerminal com suas producoes na string global
 			stringConjuntoProducaoCompleto += naoTerminal.getSimbolo();
-			stringConjuntoProducaoCompleto += "->";
+			stringConjuntoProducaoCompleto += Gramatica.SEPARADOR_NT_PRODUCAO;
 			stringConjuntoProducaoCompleto += stringConjuntoProducaoDoNaoTerminal;
 		}
 		
@@ -153,7 +162,7 @@ public class Gramatica {
 			continuar = false;
 			
 			int fimNaoTerminal;
-			fimNaoTerminal = stringConjuntoProducao.indexOf("\n");
+			fimNaoTerminal = stringConjuntoProducao.indexOf(Gramatica.SEPARADOR_NT);
 			
 			// Caso nao possua \n: obtem a string inteira
 			if (fimNaoTerminal < 0) {
@@ -177,7 +186,7 @@ public class Gramatica {
 	private void gerarNaoTerminal(String stringConjuntoProducao) {
 		// Obtem indice do final do naoTerminal, ou seja, inicio das producoes
 		int indiceProducoes;
-		indiceProducoes = stringConjuntoProducao.indexOf("->");
+		indiceProducoes = stringConjuntoProducao.indexOf(Gramatica.SEPARADOR_NT_PRODUCAO);
 		
 		String stringSimboloNaoTerminal;
 		stringSimboloNaoTerminal = stringConjuntoProducao.substring(0, indiceProducoes);
@@ -193,7 +202,7 @@ public class Gramatica {
 			existeProducao = false;
 			
 			int indiceFimConjuntoProducao;
-			indiceFimConjuntoProducao = stringConjuntoProducao.indexOf("|");
+			indiceFimConjuntoProducao = stringConjuntoProducao.indexOf(Gramatica.SEPARADOR_PRODUCAO);
 			
 			if (indiceFimConjuntoProducao < 0) {
 				indiceFimConjuntoProducao = stringConjuntoProducao.length();
@@ -222,7 +231,7 @@ public class Gramatica {
 			}
 			naoTerminal.addProducao(terminalDaProducao, naoTerminalDaProducao);
 			
-			// Verifica se existe mais alguma producao (depois do "|")
+			// Verifica se existe mais alguma producao (depois do Gramatica.SEPARADOR_PRODUCAO)
 			if (stringConjuntoProducao.length() > indiceFimConjuntoProducao) {
 				stringConjuntoProducao = stringConjuntoProducao.substring(indiceFimConjuntoProducao+1);
 				existeProducao = true;
@@ -241,15 +250,96 @@ public class Gramatica {
 		String doisUltimosCharDaProducao;
 		doisUltimosCharDaProducao = stringConjuntoProducao.substring(indiceFimConjuntoProducao-1, indiceFimConjuntoProducao);
 		
-		// Remove os doisUltimosCharDaProducao caso sejam o \n
-		if (doisUltimosCharDaProducao.equals("\n")) {
+		// Remove os doisUltimosCharDaProducao caso sejam o Gramatica.SEPARADOR_NT
+		if (doisUltimosCharDaProducao.equals(Gramatica.SEPARADOR_NT)) {
 			stringConjuntoProducao = stringConjuntoProducao.substring(0, indiceFimConjuntoProducao-1);
 		}
 		
 		return stringConjuntoProducao;
 	}
-	
+	/*	Cria uma Gramatica a partir de um Automato
+	 */
 	private void gerarGramatica(Automato automato) {
+		this.conjuntoAlfabeto = automato.getConjuntoAlfabeto().clone();
 		
+		ConjuntoEstado conjuntoEstado;
+		conjuntoEstado = automato.getConjuntoEstado();
+		
+		// Para cada estadoDoAutomato eh criado um naoTerminalDaGramatica correspondente.
+		for (int c = 0; c < conjuntoEstado.size(); c++) {
+			Estado estadoDoAutomato;
+			estadoDoAutomato = conjuntoEstado.get(c);
+			
+			NaoTerminal naoTerminalNovo;
+			naoTerminalNovo = new NaoTerminal(estadoDoAutomato.getSimbolo());
+			naoTerminalNovo = this.addNaoTerminal(naoTerminalNovo);
+			
+			ConjuntoObject<Transicao> conjuntoTransicao;
+			conjuntoTransicao = estadoDoAutomato.getConjuntoTransicao();
+			
+			// Para cada transicao dos estadosDoAutomato eh criado uma producao correspondente.
+			for (int i = 0; i < conjuntoTransicao.size(); i++) {
+				Transicao transicaoDoEstadoDoAutomato;
+				transicaoDoEstadoDoAutomato = conjuntoTransicao.get(i);
+				
+				Terminal terminalDaTransicao;
+				terminalDaTransicao = new Terminal(transicaoDoEstadoDoAutomato.getSimboloEntrada());
+				
+				Estado estadoDestinoDaTransicao;
+				estadoDestinoDaTransicao = transicaoDoEstadoDoAutomato.getEstadoDestino();
+				
+				NaoTerminal naoTerminalDaTransicao;
+				naoTerminalDaTransicao = new NaoTerminal(estadoDestinoDaTransicao.getSimbolo());
+				naoTerminalDaTransicao = this.addNaoTerminal(naoTerminalDaTransicao);
+				
+				// Cria uma producao do formato "A -> bB"
+				Producao producaoDoNaoTerminalNovo;
+				producaoDoNaoTerminalNovo = new Producao();
+				producaoDoNaoTerminalNovo.setTerminal(terminalDaTransicao);
+				producaoDoNaoTerminalNovo.setNaoTerminal(naoTerminalDaTransicao);
+				
+				naoTerminalNovo.addProducao(producaoDoNaoTerminalNovo);
+				
+				// Cria uma producao do formato "A -> b"
+				if (estadoDestinoDaTransicao.isFinal()) {
+					Producao producao2DoNaoTerminalNovo;
+					producao2DoNaoTerminalNovo = new Producao();
+					producao2DoNaoTerminalNovo.setTerminal(terminalDaTransicao.clone());
+					
+					naoTerminalNovo.addProducao(producao2DoNaoTerminalNovo);
+				}
+			}
+		}
+		
+		Estado estadoInicialDoAutomato;
+		estadoInicialDoAutomato = automato.getEstadoInicial();
+		
+		// Caso o estado S, inicial, seja final, entao adiciona a producao "S -> epsilon"
+		if (estadoInicialDoAutomato.isFinal()) {
+			NaoTerminal naoTerminalInicialNovo;
+			naoTerminalInicialNovo = this.naoTerminalInicial.clone();
+			naoTerminalInicialNovo.setSimbolo("sera_alterado_posteriormente");
+			
+			Terminal terminalEpsilon;
+			terminalEpsilon = new Terminal(Automato.EPSILON);
+			
+			Producao producaoEpsilon;
+			producaoEpsilon = new Producao();
+			producaoEpsilon.setTerminal(terminalEpsilon);
+			
+			naoTerminalInicialNovo.addProducao(producaoEpsilon);
+			
+			this.naoTerminalInicial = naoTerminalInicialNovo;
+		}
+		
+		AlfabetoPortuguesMaiusculo alfabetoPortugues;
+		alfabetoPortugues = new AlfabetoPortuguesMaiusculo();
+		
+		// Altera o simbolo dos NaoTerminal. Essa etapa nao pode ser feita durante o mapeamento dos "Estado" para "NaoTerminal"
+		for (int c = 0; c < this.conjuntoNaoTerminal.size(); c++) {
+			NaoTerminal naoTerminal;
+			naoTerminal = this.conjuntoNaoTerminal.get(c);
+			//naoTerminal.setSimbolo(alfabetoPortugues.proximaLetra());
+		}
 	}
 }
