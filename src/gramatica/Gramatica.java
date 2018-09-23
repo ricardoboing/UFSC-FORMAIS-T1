@@ -9,10 +9,11 @@ import conjunto.ConjuntoAlfabeto;
 import conjunto.ConjuntoEstado;
 import conjunto.ConjuntoNaoTerminal;
 import conjunto.ConjuntoObject;
-import manager.ManagerLinguagem;
 import util.AlfabetoPortuguesMaiusculo;
+import util.Linguagem;
+import view.principal.ManagerLinguagem;
 
-public class Gramatica {
+public class Gramatica implements Linguagem {
 	public static final String SEPARADOR_NT = "\n";
 	public static final String SEPARADOR_PRODUCAO = "|";
 	public static final String SEPARADOR_PRODUCAO_SPLIT = "\\|";
@@ -61,6 +62,7 @@ public class Gramatica {
 	}
 	
 	// Metodos Getters
+	@Override
 	public String getNome() {
 		return nome;
 	}

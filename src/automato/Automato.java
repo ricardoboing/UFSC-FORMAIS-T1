@@ -10,9 +10,10 @@ import gramatica.Gramatica;
 import gramatica.NaoTerminal;
 import gramatica.Producao;
 import gramatica.Terminal;
-import manager.ManagerLinguagem;
+import util.Linguagem;
+import view.principal.ManagerLinguagem;
 
-public class Automato {
+public class Automato implements Linguagem {
 	private String nome;
 	private Estado estadoInicial;
 	

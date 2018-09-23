@@ -1,4 +1,5 @@
 import automato.Automato;
+import view.principal.Window;
 
 public class Main {
 	/*	[] Determinizacao AFND -> AFD
@@ -31,6 +32,9 @@ public class Main {
 		System.out.println(stringAutomato);
 		System.out.println();
 		System.out.println(automato.getStringConjuntoTransicao());
+		
+		Window w;
+		w = new Window();
 		
 		/*
 		System.out.println("---------------");

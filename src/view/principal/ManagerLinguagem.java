@@ -1,10 +1,11 @@
-package manager;
+package view.principal;
 
 import java.util.ArrayList;
 
 import automato.Automato;
 import expressao.Expressao;
 import gramatica.Gramatica;
+import util.Linguagem;
 
 public class ManagerLinguagem {
 	public static final char EPSILON = '&';
@@ -13,18 +14,18 @@ public class ManagerLinguagem {
 	private int contadorNomeNovoGramatica;
 	private int contadorNomeNovoExpressao;
 	
-	private ArrayList<Automato> conjuntoAutomato;
-	private ArrayList<Gramatica> conjuntoGramatica;
-	private ArrayList<Expressao> conjuntoExpressao;
+	private ArrayList<Linguagem> conjuntoAutomato;
+	private ArrayList<Linguagem> conjuntoGramatica;
+	private ArrayList<Linguagem> conjuntoExpressao;
 	
 	public ManagerLinguagem() {
 		this.contadorNomeNovoAutomato = 0;
 		this.contadorNomeNovoGramatica = 0;
 		this.contadorNomeNovoExpressao = 0;
 		
-		this.conjuntoAutomato = new ArrayList<Automato>();
-		this.conjuntoGramatica = new ArrayList<Gramatica>();
-		this.conjuntoExpressao = new ArrayList<Expressao>();
+		this.conjuntoAutomato = new ArrayList<Linguagem>();
+		this.conjuntoGramatica = new ArrayList<Linguagem>();
+		this.conjuntoExpressao = new ArrayList<Linguagem>();
 	}
 	
 	// Metodos Add
@@ -39,26 +40,33 @@ public class ManagerLinguagem {
 	}
 	
 	// Metodos Getters
-	public ArrayList<Automato> getConjuntoAutomato() {
+	public ArrayList<Linguagem> getConjuntoAutomato() {
 		return conjuntoAutomato;
 	}
-	public ArrayList<Gramatica> getConjuntoGramatica() {
+	public ArrayList<Linguagem> getConjuntoGramatica() {
 		return conjuntoGramatica;
 	}
-	public ArrayList<Expressao> getConjuntoExpressao() {
+	public ArrayList<Linguagem> getConjuntoExpressao() {
 		return conjuntoExpressao;
 	}
 	
-	public String nomeNovoAutomato() {
+	public void gerarNomeNovoAutomato() {
 		this.contadorNomeNovoAutomato++;
+	}
+	public void gerarNomeNovoGramatica() {
+		this.contadorNomeNovoGramatica++;
+	}
+	public void criarNomeNovoExpressao() {
+		this.contadorNomeNovoExpressao++;
+	}
+	
+	public String getNomeNovoAutomato() {
 		return "A"+this.contadorNomeNovoAutomato;
 	}
-	public String nomeNovoGramatica() {
-		this.contadorNomeNovoGramatica++;
+	public String getNomeNovoGramatica() {
 		return "G"+this.contadorNomeNovoGramatica;
 	}
-	public String nomeNovoExpressao() {
-		this.contadorNomeNovoExpressao++;
+	public String getNomeNovoExpressao() {
 		return "E"+this.contadorNomeNovoExpressao;
 	}
 }

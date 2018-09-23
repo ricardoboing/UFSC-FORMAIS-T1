@@ -1,6 +1,8 @@
 package expressao;
 
-public class Expressao {
+import util.Linguagem;
+
+public class Expressao implements Linguagem {
 	private String nome;
 	private String expressaoOriginal;
 	private String expressaoExplicita;
@@ -23,6 +25,7 @@ public class Expressao {
 	public String getToStringExplicita() {
 		return this.expressaoExplicita;
 	}
+	@Override
 	public String getNome() {
 		return this.nome;
 	}
