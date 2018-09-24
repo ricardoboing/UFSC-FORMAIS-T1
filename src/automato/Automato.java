@@ -6,11 +6,13 @@ import conjunto.ConjuntoAlfabeto;
 import conjunto.ConjuntoEstado;
 import conjunto.ConjuntoNaoTerminal;
 import conjunto.ConjuntoObject;
+import expressao.Expressao;
 import gramatica.Gramatica;
 import gramatica.NaoTerminal;
 import gramatica.Producao;
 import gramatica.Terminal;
 import util.Linguagem;
+import util.LinguagemGerador;
 import view.principal.ManagerLinguagem;
 
 public class Automato implements Linguagem {
@@ -32,9 +34,26 @@ public class Automato implements Linguagem {
 		this.conjuntoAlfabeto = new ConjuntoAlfabeto();
 		this.conjuntoTransicao = new ConjuntoObject<Transicao>();
 	}
+	public Automato(String nome, LinguagemGerador linguagemGerador) {
+		this(nome);
+		
+		switch (linguagemGerador.getELinguagem()) {
+			case GRAMATICA:
+				this.gerarAutomato((Gramatica)linguagemGerador);
+				break;
+			case EXPRESSAO:
+				
+				break;
+			default:
+				break;
+		}
+	}
 	public Automato(String nome, Gramatica gramatica) {
 		this(nome);
 		this.gerarAutomato(gramatica);
+	}
+	public Automato(String nome, Expressao expressao) {
+		this(nome);
 	}
 	// Construtor para facilitar a criacao de Automatos em testes JUnit
 	public Automato(String nome, String stringAutomato) {
@@ -42,7 +61,7 @@ public class Automato implements Linguagem {
 		this.gerarAutomato(stringAutomato);
 	}
 	
-	// Metodo para facilitar a criacao de Automatos em testes JUnit
+	// Metodo para gerar um Automato salvo em disco
 	private void gerarAutomato(String stringAutomato) {
 		stringAutomato = stringAutomato.replaceAll(" ", "");
 		
@@ -61,11 +80,11 @@ public class Automato implements Linguagem {
 			isFinal = stringEstado.charAt(0);
 			isInicial = stringEstado.charAt(1);
 			
-			String simboloEstado;
-			simboloEstado = stringEstado.substring(2,3);
+			String simboloDoEstado;
+			simboloDoEstado = stringEstado.substring(2,3);
 			
 			Estado estado;
-			estado = new Estado(simboloEstado);
+			estado = new Estado(simboloDoEstado);
 			estado = this.addEstado(estado);
 			
 			if (isFinal == '*') {
@@ -167,39 +186,10 @@ public class Automato implements Linguagem {
 	}
 	
 	private void gerarAutomato(Gramatica gramatica) {
-		/*	Copiar alfabeto
-		 * 	Criar estadoFinal para as producoes que possuem apenas terminal
-		 * 	estadoFinal = automato.addEstado();
-		 * 	Para cada naoTerminalDaGramatica
-		 * 		Criar estadoDoAutomato
-		 * 		estadoDoAutomato = automato.addEstado();
-		 * 		Se naoTerminalDaGramatica eh inicial
-		 * 			estadoDoAutomato.ehInicial()
-		 * 		Fim
-		 * 		Para cada producaoDoNaoTerminalDaGramatica
-		 * 			Se producaoEpsilon
-		 * 				estadoDoAutomato.ehFinal()
-		 * 				continue
-		 * 			Fim
-		 * 			Criar transicaoDoEstadoDoAutomato
-		 * 			transicaoDoEstadoDoAutomato.simboloDeEntrada = terminalDaProducao
-		 * 			estadoDoAutomato.addTransicao()
-		 * 			transicaoDoEstadoDoAutomato.addEstadoOrigem()
-		 * 			Se producao possui naoTerminal
-		 * 				Criar estadoDestinoDaTransicao
-		 * 				estadoDestinoDaTransicao = automato.addEstado()
-		 * 				transicao.addEstadoDestino()
-		 * 			SeNao
-		 * 				transicao.addEstadoDestino(estadoFinal)
-		 * 			Fim
-		 * 		Fim
-		 * 	Fim
-		 */
-		
 		this.conjuntoAlfabeto = gramatica.getConjuntoAlfabeto().clone();
 		
 		Estado estadoFinal;
-		estadoFinal = new Estado("F");
+		estadoFinal = new Estado("alterado_no_fim_do_metodo");
 		estadoFinal.setFinal(true);
 		estadoFinal = this.addEstado(estadoFinal);
 		
@@ -315,6 +305,7 @@ public class Automato implements Linguagem {
 	}
 	
 	// Metodos Getters
+	@Override
 	public String getNome() {
 		return nome;
 	}
@@ -442,7 +433,7 @@ public class Automato implements Linguagem {
 		Automato automato;
 		automato = (Automato)object;
 		
-		
+		// Implementar... (Necessario???)
 		
 		return false;
 	}
@@ -483,5 +474,10 @@ public class Automato implements Linguagem {
 				System.out.println(") -> "+transicao.getEstadoDestino().getSimbolo());
 			}
 		}
+	}
+	
+	// Implementar...
+	public static boolean entradaValida(Automato automato) {
+		return true;
 	}
 }

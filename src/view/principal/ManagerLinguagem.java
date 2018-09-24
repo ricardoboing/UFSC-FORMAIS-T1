@@ -50,13 +50,56 @@ public class ManagerLinguagem {
 		return conjuntoExpressao;
 	}
 	
+	public Automato getAutomato(String nome) {
+		Linguagem linguagem;
+		linguagem = this.getLinguagem(this.conjuntoAutomato, nome);
+		
+		if (linguagem == null) {
+			return null;
+		}
+		
+		return (Automato)linguagem;
+	}
+	public Gramatica getGramatica(String nome) {
+		Linguagem linguagem;
+		linguagem = this.getLinguagem(this.conjuntoGramatica, nome);
+		
+		if (linguagem == null) {
+			return null;
+		}
+		
+		return (Gramatica)linguagem;
+	}
+	public Expressao getExpressao(String nome) {
+		Linguagem linguagem;
+		linguagem = this.getLinguagem(this.conjuntoExpressao, nome);
+		
+		if (linguagem == null) {
+			return null;
+		}
+		
+		return (Expressao)linguagem;
+	}
+	private Linguagem getLinguagem(ArrayList<Linguagem> arrayLinguagem, String nomeLinguagem) {
+		for (int c = 0; c < arrayLinguagem.size(); c++) {
+			Linguagem linguagem;
+			linguagem = arrayLinguagem.get(c);
+			
+			if (linguagem.getNome().equals(nomeLinguagem)) {
+				return linguagem;
+			}
+		}
+		
+		return null;
+	}
+	
 	public void gerarNomeNovoAutomato() {
 		this.contadorNomeNovoAutomato++;
 	}
 	public void gerarNomeNovoGramatica() {
 		this.contadorNomeNovoGramatica++;
 	}
-	public void criarNomeNovoExpressao() {
+	public void gerarNomeNovoExpressao() {
 		this.contadorNomeNovoExpressao++;
 	}
 	

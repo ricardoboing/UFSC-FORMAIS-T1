@@ -50,4 +50,5 @@ public abstract class View {
 	protected void addComponent(Component component) {
 		this.jPanel.add(component);
 	}
+	public void atualizar() {}
 }

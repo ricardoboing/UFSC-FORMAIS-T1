@@ -3,6 +3,9 @@ package view.gerador;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 
+import automato.Automato;
+import expressao.Expressao;
+import gramatica.Gramatica;
 import util.ELinguagem;
 import util.LinguagemGerador;
 import view.IViewEditar;
@@ -11,6 +14,7 @@ import view.component.MenuLateral;
 import view.component.TextArea;
 import view.event.EventViewEditarGerador;
 import view.principal.ManagerLinguagem;
+import view.principal.Window;
 
 public class ViewEditarGerador extends View implements IViewEditar {
 	private ManagerLinguagem managerLinguagem;
@@ -74,16 +78,47 @@ public class ViewEditarGerador extends View implements IViewEditar {
 		this.addComponent(this.buttonCancelar);
 		this.addComponent(this.buttonGerarAF);
 		
-		this.cancelar();
+		this.disableComponents();
 	}
 	
 	@Override
 	public void setLinguagem(String nome) {
+		switch (this.eLinguagem) {
+			case GRAMATICA:
+				Gramatica gramatica;
+				gramatica = this.managerLinguagem.getGramatica(nome);
+				
+				this.geradorSelecionado = gramatica;
+				
+				this.textArea.setText(gramatica.getStringConjuntoProducao());
+				break;
+			case EXPRESSAO:
+				Expressao expressao;
+				expressao = this.managerLinguagem.getExpressao(nome);
+				
+				this.geradorSelecionado = expressao;
+				
+				this.textArea.setText(expressao.getToStringOriginal());
+			default:
+				break;
+		}
 		
+		this.cancelar();
 	}
 	
+	public void gerarAf() {
+		String nomeAutomato;
+		nomeAutomato = "G."+this.managerLinguagem.getNomeNovoAutomato();
+		this.managerLinguagem.gerarNomeNovoAutomato();
+		
+		Automato novoAutomato;
+		novoAutomato = new Automato(nomeAutomato, this.geradorSelecionado);
+		
+		this.managerLinguagem.addAutomato(novoAutomato);
+		
+		Window.insertMessage("Automato gerado com sucesso!", "Sucesso!");
+	}
 	public void editar() {
-		//this.editando = true;
 		this.buttonSalvar.setVisible(true);
 		this.buttonCancelar.setVisible(true);
 		
@@ -93,7 +128,34 @@ public class ViewEditarGerador extends View implements IViewEditar {
 		this.textArea.setEnable(true);
 	}
 	public void salvar() {
-		//this.editando = false;
+		String stringTextArea;
+		stringTextArea = this.textArea.getText();
+		
+		switch (this.eLinguagem) {
+			case GRAMATICA:
+				if (!Gramatica.entradaValida(stringTextArea)) {
+					Window.insertMessageEntradaInvalida();
+					break;
+				}
+				
+				Gramatica gramaticaEditando;
+				gramaticaEditando = (Gramatica)this.geradorSelecionado;
+				gramaticaEditando.gerarGramatica(stringTextArea);
+				
+				Window.insertMessage("Gramatica salva com sucesso!", "Sucesso!");
+				break;
+			case EXPRESSAO:
+				if (!Expressao.entradaValida(stringTextArea)) {
+					Window.insertMessageEntradaInvalida();
+					break;
+				}
+				
+				Window.insertMessage("Expressao salva com sucesso!", "Sucesso!");
+				break;
+			default:
+				break;
+		}
+		
 		this.buttonSalvar.setVisible(false);
 		this.buttonCancelar.setVisible(false);
 		
@@ -103,7 +165,6 @@ public class ViewEditarGerador extends View implements IViewEditar {
 		this.textArea.setEnable(false);
 	}
 	public void cancelar() {
-		//this.editando = false;
 		this.buttonSalvar.setVisible(false);
 		this.buttonCancelar.setVisible(false);
 		
@@ -113,18 +174,28 @@ public class ViewEditarGerador extends View implements IViewEditar {
 		this.textArea.setEnable(false);
 	}
 	
-	public void reload() {
+	private void disableComponents() {
+		this.buttonSalvar.setVisible(false);
+		this.buttonCancelar.setVisible(false);
+		this.buttonEditar.setVisible(false);
+		this.buttonGerarAF.setVisible(false);
+		
+		this.textArea.setEnable(false);
+		this.textArea.setText("");
+	}
+	@Override
+	public void atualizar() {
 		switch (this.eLinguagem) {
-		case EXPRESSAO:
-			this.menuLateral.setMenu( this.managerLinguagem.getConjuntoExpressao() );
-			break;
-		case GRAMATICA:
-			this.menuLateral.setMenu( this.managerLinguagem.getConjuntoGramatica() );
-			break;
-		default:
-			break;
+			case EXPRESSAO:
+				this.menuLateral.setMenu( this.managerLinguagem.getConjuntoExpressao() );
+				break;
+			case GRAMATICA:
+				this.menuLateral.setMenu( this.managerLinguagem.getConjuntoGramatica() );
+				break;
+			default:
+				break;
 		}
 		
-		this.menuLateral.repaint();
+		this.disableComponents();
 	}
 }

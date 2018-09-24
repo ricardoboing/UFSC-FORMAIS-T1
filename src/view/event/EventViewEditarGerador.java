@@ -20,12 +20,19 @@ public class EventViewEditarGerador implements ActionListener {
 		switch (actionCommand) {
 			case "SALVAR":
 				this.view.salvar();
+				
 				break;
 			case "EDITAR":
 				this.view.editar();
+				
 				break;
 			case "CANCELAR":
 				this.view.cancelar();
+				
+				break;
+			case "GERAR_AF":
+				this.view.gerarAf();
+				
 				break;
 			default:
 				break;

@@ -10,10 +10,11 @@ import conjunto.ConjuntoEstado;
 import conjunto.ConjuntoNaoTerminal;
 import conjunto.ConjuntoObject;
 import util.AlfabetoPortuguesMaiusculo;
-import util.Linguagem;
+import util.ELinguagem;
+import util.LinguagemGerador;
 import view.principal.ManagerLinguagem;
 
-public class Gramatica implements Linguagem {
+public class Gramatica implements LinguagemGerador {
 	public static final String SEPARADOR_NT = "\n";
 	public static final String SEPARADOR_PRODUCAO = "|";
 	public static final String SEPARADOR_PRODUCAO_SPLIT = "\\|";
@@ -41,6 +42,9 @@ public class Gramatica implements Linguagem {
 	}
 	private Gramatica() {
 		this.nome = "sem_nome";
+		this.load();
+	}
+	private void load() {
 		this.naoTerminalInicial = null;
 		
 		this.conjuntoAlfabeto = new ConjuntoAlfabeto();
@@ -89,8 +93,8 @@ public class Gramatica implements Linguagem {
 		return new Gramatica(this.getStringConjuntoProducao());
 	}
 	public String getStringConjuntoProducao() {
-		String stringConjuntoProducaoCompleto;
-		stringConjuntoProducaoCompleto = "";
+		String stringConjuntoProducao;
+		stringConjuntoProducao = "";
 		
 		Iterator<NaoTerminal> iteratorConjuntoNaoTerminal;
 		iteratorConjuntoNaoTerminal = this.conjuntoNaoTerminal.getIterador();
@@ -103,8 +107,8 @@ public class Gramatica implements Linguagem {
 			NaoTerminal naoTerminal;
 			naoTerminal = iteratorConjuntoNaoTerminal.next();
 			
-			Iterator<Producao> iteratorConjuntoProducaoDoNaoTerminal;
-			iteratorConjuntoProducaoDoNaoTerminal = naoTerminal.getConjuntoProducao().getIterador();
+			Iterator<Producao> iteratorConjuntoProducao;
+			iteratorConjuntoProducao = naoTerminal.getConjuntoProducao().getIterador();
 			
 			String stringConjuntoProducaoDoNaoTerminal;
 			stringConjuntoProducaoDoNaoTerminal = "";
@@ -112,14 +116,14 @@ public class Gramatica implements Linguagem {
 			/* Percorre o conjuntoProducao do NaoTerminal e concatena
 			 * cada producao em uma string
 			 */
-			while (iteratorConjuntoProducaoDoNaoTerminal.hasNext()) {
+			while (iteratorConjuntoProducao.hasNext()) {
 				// Concatena "|" a partir da segunda producao
 				if (!stringConjuntoProducaoDoNaoTerminal.equals("")) {
 					stringConjuntoProducaoDoNaoTerminal += Gramatica.SEPARADOR_PRODUCAO;
 				}
 				
 				Producao producao;
-				producao = iteratorConjuntoProducaoDoNaoTerminal.next();
+				producao = iteratorConjuntoProducao.next();
 				
 				// Concatena o terminal
 				stringConjuntoProducaoDoNaoTerminal += producao.getTerminal().getCharSimbolo();
@@ -131,21 +135,21 @@ public class Gramatica implements Linguagem {
 			}
 			
 			// Concatena "\n" a partir do segundo naoTerminal
-			if (!stringConjuntoProducaoCompleto.equals("")) {
-				stringConjuntoProducaoCompleto += Gramatica.SEPARADOR_NT;
+			if (!stringConjuntoProducao.equals("")) {
+				stringConjuntoProducao += Gramatica.SEPARADOR_NT;
 			}
 			
 			// Concatena o naoTerminal com suas producoes na string global
-			stringConjuntoProducaoCompleto += naoTerminal.getSimbolo();
-			stringConjuntoProducaoCompleto += Gramatica.SEPARADOR_NT_PRODUCAO;
-			stringConjuntoProducaoCompleto += stringConjuntoProducaoDoNaoTerminal;
+			stringConjuntoProducao += naoTerminal.getSimbolo();
+			stringConjuntoProducao += Gramatica.SEPARADOR_NT_PRODUCAO;
+			stringConjuntoProducao += stringConjuntoProducaoDoNaoTerminal;
 		}
 		
-		return stringConjuntoProducaoCompleto;
+		return stringConjuntoProducao;
 	}
 	
-	// Metodos Privados
-	private void gerarGramatica(String stringGramatica) {
+	public void gerarGramatica(String stringGramatica) {
+		this.load();
 		stringGramatica = stringGramatica.replaceAll(" ", "");
 		
 		/*	Transforma stringGramatica em array de naoTerminais.
@@ -156,18 +160,18 @@ public class Gramatica implements Linguagem {
 		
 		// Cria os naoTerminais, um a um, e cria suas producoes
 		for (int c = 0; c < arrayNaoTerminal.length; c++) {
-			String naoTerminalString;
-			naoTerminalString = arrayNaoTerminal[c];
+			String stringNaoTerminal;
+			stringNaoTerminal = arrayNaoTerminal[c];
 			
 			String simboloNaoTerminal;
-			simboloNaoTerminal = naoTerminalString.substring(0,1);
+			simboloNaoTerminal = stringNaoTerminal.substring(0,1);
 			
 			NaoTerminal naoTerminal;
 			naoTerminal = new NaoTerminal(simboloNaoTerminal);
 			naoTerminal = this.addNaoTerminal(naoTerminal);
 			
 			String stringProducoes;
-			stringProducoes = naoTerminalString.substring(Gramatica.SEPARADOR_NT_PRODUCAO.length()+1);
+			stringProducoes = stringNaoTerminal.substring(Gramatica.SEPARADOR_NT_PRODUCAO.length()+1);
 			
 			/*	Transforma stringProducoes em array de producoes.
 			 * 	Ex (S-> a | bS): array[0] = "a"; array[1] = "bS";
@@ -176,30 +180,30 @@ public class Gramatica implements Linguagem {
 			arrayProducao = stringProducoes.split(Gramatica.SEPARADOR_PRODUCAO_SPLIT);
 			
 			for (int i = 0; i < arrayProducao.length; i++) {
-				String producaoString;
-				producaoString = arrayProducao[i];
+				String stringProducao;
+				stringProducao = arrayProducao[i];
 				
 				char simboloTerminal;
-				simboloTerminal = producaoString.charAt(0);
+				simboloTerminal = stringProducao.charAt(0);
 				
-				Terminal terminalProducao;
-				terminalProducao = new Terminal(simboloTerminal);
+				Terminal terminalDaProducao;
+				terminalDaProducao = new Terminal(simboloTerminal);
 				
 				// Adiciona os terminais (exceto Epsilon) no alfabeto
 				if (simboloTerminal != ManagerLinguagem.EPSILON) {
 					this.conjuntoAlfabeto.add(simboloTerminal);
 				}
 				
-				NaoTerminal naoTerminalProducao;
-				naoTerminalProducao = null;
+				NaoTerminal naoTerminalDaProducao;
+				naoTerminalDaProducao = null;
 				
 				// Caso seja uma producao do tipo "aA"
-				if (producaoString.length() == 2) {
-					naoTerminalProducao = new NaoTerminal(producaoString.substring(1));
-					naoTerminalProducao = this.addNaoTerminal(naoTerminalProducao);
+				if (stringProducao.length() == 2) {
+					naoTerminalDaProducao = new NaoTerminal(stringProducao.substring(1));
+					naoTerminalDaProducao = this.addNaoTerminal(naoTerminalDaProducao);
 				}
 				
-				naoTerminal.addProducao(terminalProducao, naoTerminalProducao);
+				naoTerminal.addProducao(terminalDaProducao, naoTerminalDaProducao);
 			}
 		}
 	}
@@ -213,26 +217,26 @@ public class Gramatica implements Linguagem {
 		
 		// Para cada estadoDoAutomato eh criado um naoTerminalDaGramatica correspondente.
 		for (int c = 0; c < conjuntoEstado.size(); c++) {
-			Estado estadoDoAutomato;
-			estadoDoAutomato = conjuntoEstado.get(c);
+			Estado estado;
+			estado = conjuntoEstado.get(c);
 			
 			NaoTerminal naoTerminalNovo;
-			naoTerminalNovo = new NaoTerminal(estadoDoAutomato.getSimbolo());
+			naoTerminalNovo = new NaoTerminal(estado.getSimbolo());
 			naoTerminalNovo = this.addNaoTerminal(naoTerminalNovo);
 			
 			ConjuntoObject<Transicao> conjuntoTransicao;
-			conjuntoTransicao = estadoDoAutomato.getConjuntoTransicao();
+			conjuntoTransicao = estado.getConjuntoTransicao();
 			
 			// Para cada transicao dos estadosDoAutomato eh criado uma producao correspondente.
 			for (int i = 0; i < conjuntoTransicao.size(); i++) {
-				Transicao transicaoDoEstadoDoAutomato;
-				transicaoDoEstadoDoAutomato = conjuntoTransicao.get(i);
+				Transicao transicaoDoEstado;
+				transicaoDoEstado = conjuntoTransicao.get(i);
 				
 				Terminal terminalDaTransicao;
-				terminalDaTransicao = new Terminal(transicaoDoEstadoDoAutomato.getSimboloEntrada());
+				terminalDaTransicao = new Terminal(transicaoDoEstado.getSimboloEntrada());
 				
 				Estado estadoDestinoDaTransicao;
-				estadoDestinoDaTransicao = transicaoDoEstadoDoAutomato.getEstadoDestino();
+				estadoDestinoDaTransicao = transicaoDoEstado.getEstadoDestino();
 				
 				NaoTerminal naoTerminalDaTransicao;
 				naoTerminalDaTransicao = new NaoTerminal(estadoDestinoDaTransicao.getSimbolo());
@@ -289,5 +293,14 @@ public class Gramatica implements Linguagem {
 			naoTerminal = this.conjuntoNaoTerminal.get(c);
 			//naoTerminal.setSimbolo(alfabetoPortugues.proximaLetra());
 		}
+	}
+	@Override
+	public ELinguagem getELinguagem() {
+		return ELinguagem.GRAMATICA;
+	}
+	
+	// Implementar...
+	public static boolean entradaValida(String gramatica) {
+		return true;
 	}
 }

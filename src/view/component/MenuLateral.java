@@ -36,13 +36,6 @@ public class MenuLateral {
 		this.panel.setBounds(10, 20, 200, 560);
 		
 		this.load();
-		
-		
-		TableRow row;
-		row = new TableRow();
-		row.addColumn("oi");
-		this.table.addRow(row);
-		this.viewTable.reloadModel();
 	}
 	
 	private void load() {

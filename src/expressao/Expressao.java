@@ -1,11 +1,12 @@
 package expressao;
 
-import util.Linguagem;
+import util.ELinguagem;
+import util.LinguagemGerador;
 
-public class Expressao implements Linguagem {
+public class Expressao implements LinguagemGerador {
 	private String nome;
 	private String expressaoOriginal;
-	private String expressaoExplicita;
+	private String expressaoConcatenacaoExplicita;
 	
 	public Expressao(String expressao) {
 		this("sem_nome", expressao);
@@ -13,7 +14,7 @@ public class Expressao implements Linguagem {
 	public Expressao(String nome, String expressao) {
 		this.nome = nome;
 		this.expressaoOriginal = expressao;
-		this.expressaoExplicita = expressao.replaceAll(" ", "");
+		this.expressaoConcatenacaoExplicita = expressao.replaceAll(" ", "");
 		
 		this.explicitarExpressao();
 		this.explicitarConcatenacao();
@@ -23,7 +24,7 @@ public class Expressao implements Linguagem {
 		return this.expressaoOriginal;
 	}
 	public String getToStringExplicita() {
-		return this.expressaoExplicita;
+		return this.expressaoConcatenacaoExplicita;
 	}
 	@Override
 	public String getNome() {
@@ -38,7 +39,7 @@ public class Expressao implements Linguagem {
 		expressaoExplicita = expressaoExplicita.replaceAll(" ", "");
 		
 		if (expressaoExplicita.equals("()")) {
-			this.expressaoExplicita = this.expressaoExplicita.substring(1, this.expressaoExplicita.length()-1);
+			this.expressaoConcatenacaoExplicita = this.expressaoConcatenacaoExplicita.substring(1, this.expressaoConcatenacaoExplicita.length()-1);
 			this.explicitarExpressao();
 		}
 	}
@@ -52,12 +53,12 @@ public class Expressao implements Linguagem {
 		char[] caracteresAtual = {'(', '|', '.'};
 		char[] caracteresPosterior = {')', '|', '?', '*', '.', '+'};
 		
-		for (int c = 0; c < this.expressaoExplicita.length()-1; c++) {
-			expressaoExplicita += this.expressaoExplicita.charAt(c);
+		for (int c = 0; c < this.expressaoConcatenacaoExplicita.length()-1; c++) {
+			expressaoExplicita += this.expressaoConcatenacaoExplicita.charAt(c);
 			
 			char caracterAtual, caracterPosterior;
-			caracterAtual = this.expressaoExplicita.charAt(c);
-			caracterPosterior = this.expressaoExplicita.charAt(c+1);
+			caracterAtual = this.expressaoConcatenacaoExplicita.charAt(c);
+			caracterPosterior = this.expressaoConcatenacaoExplicita.charAt(c+1);
 			
 			if (!this.containsCaracter(caracteresPosterior, caracterPosterior) &&
 				!this.containsCaracter(caracteresAtual, caracterAtual)) {
@@ -65,9 +66,9 @@ public class Expressao implements Linguagem {
 			}
 		}
 		
-		expressaoExplicita += this.expressaoExplicita.charAt(this.expressaoExplicita.length()-1);
+		expressaoExplicita += this.expressaoConcatenacaoExplicita.charAt(this.expressaoConcatenacaoExplicita.length()-1);
 		
-		this.expressaoExplicita = expressaoExplicita;
+		this.expressaoConcatenacaoExplicita = expressaoExplicita;
 	}
 	/*	Busca um "(". Caso encontrar, substitui os caracteres
 	 * 	posteriores por espacos em branco, ate que se encontre
@@ -76,7 +77,7 @@ public class Expressao implements Linguagem {
 	 */
 	public String explicitarMenorPrecedencia() {
 		char[] expressaoExplicita;
-		expressaoExplicita = this.expressaoExplicita.toCharArray();
+		expressaoExplicita = this.expressaoConcatenacaoExplicita.toCharArray();
 		
 		int contadorParentesesAberto;
 		contadorParentesesAberto = 0;
@@ -109,5 +110,14 @@ public class Expressao implements Linguagem {
 		}
 		
 		return false;
+	}
+	@Override
+	public ELinguagem getELinguagem() {
+		return ELinguagem.EXPRESSAO;
+	}
+	
+	// Implementar...
+	public static boolean entradaValida(String expressao) {
+		return true;
 	}
 }

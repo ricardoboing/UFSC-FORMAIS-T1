@@ -113,12 +113,12 @@ public class OperarAutomato {
 		Automato automatoOriginalClone;
 		automatoOriginalClone = automatoOriginal.clone();
 		
-		Automato automatoSemEstadoInalcansavel;
-		automatoSemEstadoInalcansavel = new Automato();
-		automatoSemEstadoInalcansavel.setEstadoInicial(automatoOriginalClone.getEstadoInicial());
+		Automato automatoEstadoAlcansavel;
+		automatoEstadoAlcansavel = new Automato();
+		automatoEstadoAlcansavel.setEstadoInicial(automatoOriginalClone.getEstadoInicial());
 		
 		ConjuntoEstado conjuntoEstadoAlcansavel;
-		conjuntoEstadoAlcansavel = automatoSemEstadoInalcansavel.getConjuntoEstado();
+		conjuntoEstadoAlcansavel = automatoEstadoAlcansavel.getConjuntoEstado();
 		conjuntoEstadoAlcansavel.add(automatoOriginalClone.getEstadoInicial());
 		
 		/* Percorre as transicoes de cada estadoAlcansavel e adiciona
@@ -143,7 +143,7 @@ public class OperarAutomato {
 		
 		this.eliminarTransicoesInutil(conjuntoEstadoAlcansavel);
 		
-		return automatoSemEstadoInalcansavel;
+		return automatoEstadoAlcansavel;
 	}
 	public Automato eliminarEstadosMortos(Automato automatoOriginal) {
 		Automato automatoClone;
@@ -152,14 +152,14 @@ public class OperarAutomato {
 		ConjuntoEstado conjuntoEstadoClone;
 		conjuntoEstadoClone = automatoClone.getConjuntoEstado();
 		
-		Automato automatoSemEstadoMorto;
-		automatoSemEstadoMorto = new Automato();
-		automatoSemEstadoMorto.setEstadoInicial(automatoClone.getEstadoInicial());
+		Automato automatoEstadoVivo;
+		automatoEstadoVivo = new Automato();
+		automatoEstadoVivo.setEstadoInicial(automatoClone.getEstadoInicial());
 		
 		ConjuntoEstado conjuntoEstadoVivo;
-		conjuntoEstadoVivo = automatoSemEstadoMorto.getConjuntoEstado();
+		conjuntoEstadoVivo = automatoEstadoVivo.getConjuntoEstado();
 		conjuntoEstadoVivo.add(automatoClone.getConjuntoEstadoFinal());
-		conjuntoEstadoVivo.add(automatoSemEstadoMorto.getEstadoInicial());
+		conjuntoEstadoVivo.add(automatoEstadoVivo.getEstadoInicial());
 		
 		int numeroTotalEstadoVivoAnterior;
 		numeroTotalEstadoVivoAnterior = -1;
@@ -197,7 +197,7 @@ public class OperarAutomato {
 		
 		this.eliminarTransicoesInutil(conjuntoEstadoVivo);
 		
-		return automatoSemEstadoMorto;
+		return automatoEstadoVivo;
 	}
 	private void eliminarTransicoesInutil(ConjuntoEstado conjuntoEstado) {
 		for (int c = 0; c < conjuntoEstado.size(); c++) {
@@ -319,53 +319,5 @@ public class OperarAutomato {
 		}
 		
 		return novoAutomato;
-		
-		/* 	Clonar automatoClone = automatoOriginal
-		 * 	Criar arrayConjuntoEstadoAnterior, arrayConjuntoEstadoNovo
-		 * 	Criar conjuntoEstadoFinal e conjuntoEstadoNaoFinal
-		 * 	Adiciona os conjuntos no arrayConjuntoEstadoNovo
-		 * 	Enquanto alterouArrayConjuntoEstado == true (arrayConjuntoEstadoAnterior != arrayConjuntoEstadoNovo)
-		 * 		alterouArrayConjuntoEstado = false
-		 * 		arrayConjuntoEstadoAnterior = arrayConjuntoEstadoNovo
-		 * 		arrayConjuntoEstadoNovo = new
-		 * 		Para cada conjuntoEstadoAnterior do arrayConjuntoEstadoAnterior
-		 * 			Obtem primeiroEstadoDoConjuntoEstado
-		 * 			Cria novoConjuntoEstado
-		 * 			Adiciona novoConjuntoEstado no arrayConjuntoEstadoNovo
-		 * 			Clona conjuntoEstado = conjuntoEstadoAnterior
-		 * 			Adiciona conjuntoEstado no arrayConjuntoEstadoNovo
-		 * 			Para cada estadoDoConjuntoEstado a partir do segundo
-		 * 				Verifica se as transicoes do estadoDoConjuntoEstadoAnteriorClone sao equivalentes as do
-		 * 					.. primeiroEstadoDoConjuntoEstadoAnteriorClone, com base nas transicoes do arrayConjuntoEstadoAnterior
-		 * 				Se as transicoes nao forem equivalentes
-		 * 					Remove o estadoDoConjuntoEstado do conjuntoEstado
-		 * 					Adiciona o estadoDoConjuntoEstado no novoConjuntoEstado
-		 * 					Decrementa o indice do laço para-faca
-		 * 					alterouArrayConjuntoEstado = true
-		 * 				FIM
-		 * 			FIM
-		 * 			Se novoConjuntoEstado estiver vazio
-		 * 				Remove novoConjuntoEstado do arrayConjuntoEstadoNovo
-		 *			FIM
-		 * 		FIM
-		 * 	FIM
-		 * 	Criar novoAutomato
-		 * 	Copiar alfabeto do automatoClone para o novoAutomato
-		 * 	Para cada conjuntoEstado do arrayConjuntoEstadoNovo
-		 * 		Obtem primeiroEstadoDoConjuntoEstado
-		 * 		Adiciona o primeiroEstadoDoConjuntoEstado no novoAutomato 
-		 * 		Se algum estadoDoConjuntoEstado for inicial
-		 * 			primeiroEstadoDoConjuntoEstado vira inicial
-		 * 		FIM
-		 * 		Se algum estadoDoConjuntoEstado for final
-		 * 			primeiroEstadoDoConjuntoEstado vira final
-		 * 		FIM
-		 * 		Para cada transicao do primeiroEstadoDoConjuntoEstado
-		 * 			Obtem conjuntoDestino do estadoDestinoDaTransicao
-		 * 			Obtem o primeiroEstadoDoConjuntoDestino
-		 * 			Altera o destino da transicao para o primeiroEstadoDoConjuntoDestino
-		 * 		FIM
-		 * 	FIM
-		 */
 	}
 }

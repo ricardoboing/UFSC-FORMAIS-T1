@@ -1,9 +1,8 @@
 package view.principal;
 
-import javax.swing.JPanel;
-
 import util.ELinguagem;
 import view.EView;
+import view.View;
 import view.ViewInicio;
 import view.automato.ViewCriarAutomato;
 import view.automato.ViewEditarAutomato;
@@ -42,37 +41,41 @@ public class ManagerInterface {
 		this.viewInicio = new ViewInicio();
 	}
 	
-	public JPanel alterarView(EView eView) {
+	public View alterarView(EView eView) {
+		View view;
+		
 		switch (eView) {
 			/* AUTOMATO */
 			case AF_CRIAR:
-				
-				return this.viewCriarAutomato.getJPanel();
+				view = this.viewCriarAutomato;
+				break;
 			case AF_EDITAR:
-				
-				return this.viewEditarAutomato.getJPanel();
+				view = this.viewEditarAutomato;
+				break;
 			case AF_OPERAR:
-				
-				return this.viewOperarAutomato.getJPanel();
+				view = this.viewOperarAutomato;
+				break;
 				
 			// GRAMATICA
 			case GR_CRIAR:
-				
-				return this.viewCriarGeradorGR.getJPanel();
+				view = this.viewCriarGeradorGR;
+				break;
 			case GR_EDITAR:
-				this.viewEditarGeradorGR.reload();
-				return this.viewEditarGeradorGR.getJPanel();
+				view = this.viewEditarGeradorGR;
+				break;
 			
 			// EXPRESSAO
 			case ER_CRIAR:
-				
-				return this.viewCriarGeradorER.getJPanel();
+				view = this.viewCriarGeradorER;
+				break;
 			case ER_EDITAR:
-				
-				return this.viewEditarGeradorER.getJPanel();
+				view = this.viewEditarGeradorER;
+				break;
 			default:
-				
-				return this.viewInicio.getJPanel();
+				view = this.viewInicio;
+				break;
 		}
+		
+		return view;
 	}
 }

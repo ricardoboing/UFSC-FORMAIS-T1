@@ -6,6 +6,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import view.EView;
+import view.View;
 import view.component.MenuBar;
 import view.event.EventMenuBar;
 
@@ -53,17 +54,25 @@ public class Window {
 	}
 	
 	public void alterarView(EView eView) {
+		View view;
+		view = this.managerInterface.alterarView(eView);
+		
 		JPanel jPanel;
-		jPanel = this.managerInterface.alterarView(eView);
+		jPanel = view.getJPanel();
 		
 		this.contentPane.removeAll();
 		this.contentPane.add(jPanel);
 		this.frame.repaint();
 		this.contentPane.repaint();
+		
 		jPanel.repaint();
+		view.atualizar();
 	}
 	
 	public static void insertMessage(String message, String title) {
 		JOptionPane.showMessageDialog(null, message, title, JOptionPane.INFORMATION_MESSAGE);
+	}
+	public static void insertMessageEntradaInvalida() {
+		JOptionPane.showMessageDialog(null, "Entrada invalida!", "Falha!", JOptionPane.WARNING_MESSAGE);
 	}
 }

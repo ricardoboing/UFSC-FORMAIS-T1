@@ -1,10 +1,13 @@
 package view.automato;
 
+import java.util.ArrayList;
+
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import automato.Automato;
+import util.Linguagem;
 import view.IViewEditar;
 import view.View;
 import view.component.MenuLateral;
@@ -67,7 +70,7 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		this.addComponent(this.inputGerador1);
 		this.addComponent(this.inputGerador2);
 		this.addComponent(this.menuLateral.getJPanel());
-		this.addComponent(this.tableAutomato.get_jScrollPane());
+		this.addComponent(this.tableAutomato.getjScrollPane());
 	}
 	private void loadButton() {
 		EventViewEditarAutomato event;
@@ -96,13 +99,24 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		this.buttonEditar.setBounds(350, 519, 120, 35);
 		this.buttonMinimizar.setBounds(480, 519, 140, 35);
 		this.buttonDeterminizar.setBounds(629, 519, 160, 35);
-		
-		this.cancelar();
 	}
 	
 	@Override
 	public void setLinguagem(String nome) {
+		System.out.println("ooooooooooi "+nome);
+		Automato automato;
+		automato = this.managerLinguagem.getAutomato(nome);
 		
+		if (automato == null) {
+			return;
+		}
+		
+		automato.print();
+		
+		this.inputNome.setText(automato.getNome());
+		this.tableAutomato.montarTable(automato);
+		
+		this.jPanel.repaint();
 	}
 	
 	public void minimizar() {
@@ -146,7 +160,8 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		this.buttonDeterminizar.setVisible(true);
 		this.buttonMinimizar.setVisible(true);
 		
-		this.jPanel.repaint();
+		this.atualizar();
+		this.setLinguagem(this.automatoSelecionado.getNome());
 	}
 	public void cancelar() {
 		this.editando = false;
@@ -164,6 +179,14 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		this.buttonDeterminizar.setVisible(true);
 		this.buttonMinimizar.setVisible(true);
 		
-		this.jPanel.repaint();
+		this.atualizar();
+		this.setLinguagem(this.automatoSelecionado.getNome());
+	}
+	@Override
+	public void atualizar() {
+		ArrayList<Linguagem> arrayAutomato;
+		arrayAutomato = this.managerLinguagem.getConjuntoAutomato();
+		
+		this.menuLateral.setMenu(arrayAutomato);
 	}
 }

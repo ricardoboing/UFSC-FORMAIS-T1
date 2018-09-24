@@ -10,6 +10,7 @@ import view.View;
 import view.component.TextArea;
 import view.event.EventViewCriarGerador;
 import view.principal.ManagerLinguagem;
+import view.principal.Window;
 
 public class ViewCriarGerador extends View {
 	private ManagerLinguagem managerLinguagem;
@@ -71,32 +72,53 @@ public class ViewCriarGerador extends View {
 	}
 	
 	public void salvar() {
-		String conteudo;
-		conteudo = this.textArea.getText();
+		String stringTextArea;
+		stringTextArea = this.textArea.getText();
 		
 		String nome;
 		nome = this.inputNome.getText();
 		
 		switch (this.eLinguagem) {
-			case EXPRESSAO:
-				System.out.println("salvar expressao");
-				Expressao expressao;
-				expressao = new Expressao(nome, conteudo);
-				
-				this.managerLinguagem.addExpressao(expressao);
-				break;
 			case GRAMATICA:
-				System.out.println("salvar gramatica");
+				if (!Gramatica.entradaValida(stringTextArea)) {
+					Window.insertMessageEntradaInvalida();
+					break;
+				}
+				
 				Gramatica gramatica;
-				gramatica = new Gramatica(nome, conteudo);
+				gramatica = new Gramatica(nome, stringTextArea);
 				
 				this.managerLinguagem.addGramatica(gramatica);
+				this.managerLinguagem.gerarNomeNovoGramatica();
+				
+				Window.insertMessage("Gramatica inserida com sucesso!", "Sucesso!");
+				break;
+			case EXPRESSAO:
+				if (!Expressao.entradaValida(stringTextArea)) {
+					Window.insertMessageEntradaInvalida();
+					break;
+				}
+				
+				Expressao expressao;
+				expressao = new Expressao(nome, stringTextArea);
+				
+				this.managerLinguagem.addExpressao(expressao);
+				this.managerLinguagem.gerarNomeNovoExpressao();
+				
+				Window.insertMessage("Expressao inserida com sucesso!", "Sucesso!");
 				break;
 			default:
 				break;
 		}
+		
+		this.atualizar();
 	}
 	public void limpar() {
 		this.textArea.setText("");
+	}
+	@Override
+	public void atualizar() {
+		this.atualizarNome();
+		this.jPanel.repaint();
 	}
 }
