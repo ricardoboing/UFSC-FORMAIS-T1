@@ -254,7 +254,7 @@ public class Automato implements Linguagem {
 		for (int c = 0; c < this.conjuntoEstado.size(); c++) {
 			Estado estado;
 			estado = this.conjuntoEstado.get(c);
-			//estado.setSimbolo("q"+c);
+			estado.setSimbolo("q"+c);
 		}
 	}
 	
@@ -448,10 +448,14 @@ public class Automato implements Linguagem {
 			
 			if (conjuntoTransicao.size() == 0) {
 				if (estado.isInicial()) {
-					System.out.print("->");
+					System.out.print(">");
+				} else {
+					System.out.print(" ");
 				}
 				if (estado.isFinal()) {
 					System.out.print("*");
+				} else {
+					System.out.print(" ");
 				}
 				
 				System.out.println(estado.getSimbolo()+": ");
@@ -462,10 +466,14 @@ public class Automato implements Linguagem {
 				transicao = conjuntoTransicao.get(i);
 				
 				if (transicao.getEstadoOrigem().isInicial()) {
-					System.out.print("->");
+					System.out.print(">");
+				} else {
+					System.out.print(" ");
 				}
 				if (transicao.getEstadoOrigem().isFinal()) {
 					System.out.print("*");
+				} else {
+					System.out.print(" ");
 				}
 				
 				System.out.print(transicao.getEstadoOrigem().getSimbolo()+": ");

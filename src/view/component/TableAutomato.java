@@ -92,11 +92,11 @@ public class TableAutomato {
 			char simboloAlfabeto;
 			simboloAlfabeto = alfabeto.get(i);
 			
-			boolean possuiTransicao;
-			possuiTransicao = false;
-			
 			ConjuntoObject<Transicao> conjuntoTransicao;
 			conjuntoTransicao = estado.getConjuntoTransicao();
+			
+			String stringColumn;
+			stringColumn = "";
 			
 			for (int j = 0; j < conjuntoTransicao.size(); j++) {
 				Transicao transicao;
@@ -106,14 +106,18 @@ public class TableAutomato {
 					Estado destino;
 					destino = transicao.getEstadoDestino();
 					
-					row.addColumn(destino.getSimbolo());
-					possuiTransicao = true;
-					break;
+					if (!stringColumn.equals("")) {
+						stringColumn += ", ";
+					}
+					
+					stringColumn += destino.getSimbolo();
 				}
 			}
 			
-			if (!possuiTransicao) {
+			if (stringColumn.equals("")) {
 				row.addColumn(this.simboloEstadoErro);
+			} else {
+				row.addColumn(stringColumn);
 			}
 		}
 		

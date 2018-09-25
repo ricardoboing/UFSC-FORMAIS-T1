@@ -3,6 +3,9 @@ package expressao;
 import java.util.ArrayList;
 
 import automato.Automato;
+import automato.Estado;
+import conjunto.ConjuntoAlfabeto;
+import conjunto.ConjuntoObject;
 
 public class NoDeSimone {
 	private String simbolo;
@@ -10,39 +13,151 @@ public class NoDeSimone {
 	private NoDeSimone noPai;
 	private NoDeSimone noFilhoDireito;
 	private NoDeSimone noFilhoEsquerdo;
+	private boolean nodoFimDaArvore;
 	
 	public NoDeSimone(String simbolo) {
+		this(simbolo, false);
+	}
+	private NoDeSimone(String simbolo, boolean nodoFimDaArvore) {
 		this.simbolo = simbolo;
-		
 		this.noPai = null;
 		this.noFilhoDireito = null;
 		this.noFilhoEsquerdo = null;
+		this.nodoFimDaArvore = nodoFimDaArvore;
 	}
 	
 	public Automato gerarAutomato() {
+		// Alterar nome depois
+		Automato novoAutomato;
+		novoAutomato = new Automato();
 		
-		return null;
+		ConjuntoAlfabeto conjuntoAlfabeto;
+		conjuntoAlfabeto = novoAutomato.getConjuntoAlfabeto();
+		
+		ComposicaoDeSimone composicaoInicial;
+		composicaoInicial = new ComposicaoDeSimone(0, true);
+		
+		ConjuntoObject<ComposicaoDeSimone> conjuntoComposicao;
+		conjuntoComposicao = new ConjuntoObject<ComposicaoDeSimone>();
+		conjuntoComposicao.add(composicaoInicial);
+		
+		this.descer(conjuntoAlfabeto, composicaoInicial);
+		composicaoInicial.atualizarConjuntoComposicao(conjuntoComposicao);
+		
+		// Cria as composicoes
+		for (int c = 0; c < conjuntoComposicao.size(); c++) {
+			ComposicaoDeSimone composicaoDoConjunto;
+			composicaoDoConjunto = conjuntoComposicao.get(c);
+			
+			ConjuntoObject<NoDeSimone> conjuntoNoDeSimone;
+			conjuntoNoDeSimone = composicaoDoConjunto.getConjuntoNoDeSimone();
+			
+			for (int i = 0; i < conjuntoNoDeSimone.size(); i++) {
+				NoDeSimone noDeSimone;
+				noDeSimone = conjuntoNoDeSimone.get(i);
+				noDeSimone.subir(conjuntoAlfabeto, composicaoDoConjunto);
+			}
+			
+			composicaoDoConjunto.atualizarConjuntoComposicao(conjuntoComposicao);
+		}
+		
+		// Cria o automato
+		for (int c = 0; c < conjuntoComposicao.size(); c++) {
+			ComposicaoDeSimone composicaoDoConjunto;
+			composicaoDoConjunto = conjuntoComposicao.get(c);
+			
+			Estado estadoComposicao;
+			estadoComposicao = composicaoDoConjunto.gerarEstado();
+			
+			novoAutomato.addEstado(estadoComposicao);
+		}
+		
+		return novoAutomato;
 	}
 	
-	public void subir() {
-		
-	}
-	public void descer() {
-		
+	public boolean nodoFimDaArvore() {
+		return this.nodoFimDaArvore;
 	}
 	
-	public String arvoreToString(int nivel) {
-		ArrayList<NoDeSimone> arrayNoVisitado;
-		arrayNoVisitado = new ArrayList<NoDeSimone>();
-		
-		return this.arvoreToString(arrayNoVisitado, nivel);
+	String getSimbolo() {
+		return this.simbolo;
 	}
-	private String arvoreToString(ArrayList<NoDeSimone> arrayNoVisitado, int nivel) {
-		if (arrayNoVisitado.contains(this)) {
+	
+	private void descer(ConjuntoAlfabeto conjuntoAlfabeto, ComposicaoDeSimone composicao) {
+		if (this.nodoFimDaArvore) {
+			return;
+		}
+		
+		//System.out.println("descer "+this.simbolo);
+		
+		switch (this.simbolo) {
+			case "|":
+				this.noFilhoEsquerdo.descer(conjuntoAlfabeto, composicao);
+				this.noFilhoDireito.descer(conjuntoAlfabeto, composicao);
+				break;
+			case ".":
+				this.noFilhoEsquerdo.descer(conjuntoAlfabeto, composicao);
+				break;
+			case "?":
+				this.noFilhoEsquerdo.descer(conjuntoAlfabeto, composicao);
+				this.noFilhoDireito.subir(conjuntoAlfabeto, composicao);
+				break;
+			case "*":
+				this.noFilhoEsquerdo.descer(conjuntoAlfabeto, composicao);
+				this.noFilhoDireito.subir(conjuntoAlfabeto, composicao);
+				break;
+			default:
+				conjuntoAlfabeto.add(this.simbolo.charAt(0));
+				composicao.addNoDeSimone(this);
+				break;
+		}
+	}
+	private void subir(ConjuntoAlfabeto conjuntoAlfabeto, ComposicaoDeSimone composicao) {
+		if (this.nodoFimDaArvore) {
+			return;
+		}
+		
+		//System.out.println("subir "+this.simbolo);
+		
+		switch (this.simbolo) {
+			case "|":
+				this.noFilhoDireito.descerAteOFim(conjuntoAlfabeto, composicao);
+				break;
+			case ".":
+				this.noFilhoDireito.descer(conjuntoAlfabeto, composicao);
+				break;
+			case "?":
+				this.noFilhoDireito.subir(conjuntoAlfabeto, composicao);
+				break;
+			case "*":
+				this.noFilhoEsquerdo.descer(conjuntoAlfabeto, composicao);
+				this.noFilhoDireito.subir(conjuntoAlfabeto, composicao);
+				break;
+			default:
+				this.noFilhoDireito.subir(conjuntoAlfabeto, composicao);
+				break;
+		}
+	}
+	private void descerAteOFim(ConjuntoAlfabeto conjuntoAlfabeto, ComposicaoDeSimone composicao) {
+		if (this.noFilhoDireito != null && !this.nodoFimDaArvore) {
+			this.noFilhoDireito.descerAteOFim(conjuntoAlfabeto, composicao);
+		} if (this.nodoFimDaArvore) {
+			composicao.addNoDeSimone(this);
+		}
+	}
+	
+	public String arvoreToString() {
+		ArrayList<NoDeSimone> arrayVisitados;
+		arrayVisitados = new ArrayList<NoDeSimone>();
+		
+		return this.arvoreToString(arrayVisitados, -1);
+	}
+	private String arvoreToString(ArrayList<NoDeSimone> arrayVisitados, int nivel) {
+		if (this.nodoFimDaArvore || arrayVisitados.contains(this)) {
 			return "";
 		}
 		
-		arrayNoVisitado.add(this);
+		arrayVisitados.add(this);
 		
 		nivel++;
 		
@@ -50,22 +165,55 @@ public class NoDeSimone {
 		arvore = this.simbolo;
 		
 		if (this.noFilhoEsquerdo != null) {
-			arvore += this.noFilhoEsquerdo.arvoreToString(arrayNoVisitado, nivel);
-			arvore += this.noFilhoDireito.arvoreToString(arrayNoVisitado, nivel);
+			arvore += this.noFilhoEsquerdo.arvoreToString(arrayVisitados, nivel);
+		}
+		if (this.noFilhoDireito != null) {
+			arvore += this.noFilhoDireito.arvoreToString(arrayVisitados, nivel);
 		}
 		
 		return arvore;
 	}
 	public void gerarArvoreSintatica() {
-		ArrayList<NoDeSimone> arrayPrecedentes;
+		ArrayList<NoDeSimone> arrayPrecedentes, arrayVisitados;
 		arrayPrecedentes = new ArrayList<NoDeSimone>();
+		arrayVisitados = new ArrayList<NoDeSimone>();
 		
-		this.gerarArvoreSintatica(arrayPrecedentes, null);
+		this.gerarArvoreSintatica(null);
+		this.criarCostura(arrayPrecedentes, arrayVisitados);
+		
+		System.out.println("Preced: "+arrayPrecedentes.size());
 	}
-	private void gerarArvoreSintatica(ArrayList<NoDeSimone> arrayPrecedentes, NoDeSimone noPai) {
-		this.noPai = noPai;
+	private void criarCostura(ArrayList<NoDeSimone> arrayPrecedentes, ArrayList<NoDeSimone> arrayVisitados) {
+		if (arrayVisitados.contains(this) || this.nodoFimDaArvore) {
+			return;
+		}
+		System.out.println(simbolo);
+		arrayVisitados.add(this);
 		
-		arrayPrecedentes.add(this);
+		char simbolo;
+		simbolo = this.simbolo.charAt(0);
+		
+		if (simbolo != '|' && simbolo != '.') {
+			// Caso * que leva ao nodo final
+			if (arrayPrecedentes.size() == 0) {
+				this.noFilhoDireito = new NoDeSimone("#", true);
+			} else {
+				this.noFilhoDireito = arrayPrecedentes.remove(arrayPrecedentes.size()-1);
+			}
+		}
+		if (simbolo == '*' || simbolo == '.' || simbolo == '|' || simbolo == '?') {
+			arrayPrecedentes.add(this);
+		}
+		
+		if (this.noFilhoEsquerdo != null) {
+			this.noFilhoEsquerdo.criarCostura(arrayPrecedentes, arrayVisitados);
+		}
+		if (this.noFilhoDireito != null) {
+			this.noFilhoDireito.criarCostura(arrayPrecedentes, arrayVisitados);
+		}
+	}
+	private void gerarArvoreSintatica(NoDeSimone noPai) {
+		this.noPai = noPai;
 		
 		Expressao expressao;
 		expressao = new Expressao(this.simbolo);
@@ -75,7 +223,7 @@ public class NoDeSimone {
 		// No Folha
 		if (this.simbolo.length() == 1) {
 			// Define o filhoDireito como sendo um no de subida, que corresponde a um noPrecedente na arvore
-			this.noFilhoDireito = arrayPrecedentes.remove(arrayPrecedentes.size()-1);
+			this.noFilhoDireito = null;
 			return;
 		}
 		
@@ -106,9 +254,7 @@ public class NoDeSimone {
 				
 				this.noFilhoEsquerdo = new NoDeSimone(simboloFilhoEsquerdo);
 				
-				if (simboloDePrecedencia == '?' || simboloDePrecedencia == '*') {
-					this.noFilhoDireito = arrayPrecedentes.remove(arrayPrecedentes.size()-1);
-				} else {
+				if (simboloDePrecedencia != '?' && simboloDePrecedencia != '*') {
 					this.noFilhoDireito = new NoDeSimone(simboloFilhoDireito);
 				}
 				
@@ -116,7 +262,9 @@ public class NoDeSimone {
 			}
 		}
 		
-		this.noFilhoEsquerdo.gerarArvoreSintatica(arrayPrecedentes, this);
-		this.noFilhoDireito.gerarArvoreSintatica(arrayPrecedentes, this);
+		this.noFilhoEsquerdo.gerarArvoreSintatica(this);
+		if (this.noFilhoDireito != null) {
+			this.noFilhoDireito.gerarArvoreSintatica(this);
+		}
 	}
 }

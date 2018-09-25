@@ -58,7 +58,6 @@ public class ConjuntoObject<T> extends ConjuntoGenerico<T> {
 				return true;
 			}
 		}
-		
 		// O objeto nao existe e nao possui um equivalente
 		return false;
 	}

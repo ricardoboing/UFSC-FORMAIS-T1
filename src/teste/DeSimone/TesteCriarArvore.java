@@ -1,5 +1,6 @@
 package teste.DeSimone;
 
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.Before;
@@ -20,7 +21,7 @@ public class TesteCriarArvore {
 		simone = new NoDeSimone(expressao);
 		simone.gerarArvoreSintatica();
 		
-		return simone.arvoreToString(-1);
+		return simone.arvoreToString();
 	}
 	
 	@Test
@@ -42,7 +43,7 @@ public class TesteCriarArvore {
 		expressao = "(a | b)";
 		arvore = this.obterArvore(expressao);
 		
-		assertEquals(simone.gerarAutomato(), null);
+		assertNotEquals(simone.gerarAutomato(), null);
 	}
 	
 	
