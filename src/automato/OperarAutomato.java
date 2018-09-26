@@ -103,8 +103,10 @@ public class OperarAutomato {
 	public Automato minimizar(Automato automato) {
 		Automato novoAutomato;
 		novoAutomato = automato.clone();
-		
-		
+		novoAutomato = this.determinizar(novoAutomato);
+		novoAutomato = this.eliminarEstadosInalcansaveis(novoAutomato);
+		novoAutomato = this.eliminarEstadosMortos(novoAutomato);
+		novoAutomato = this.eliminarEstadosMortos(novoAutomato);
 		
 		return novoAutomato;
 	}
@@ -116,6 +118,7 @@ public class OperarAutomato {
 		Automato automatoEstadoAlcansavel;
 		automatoEstadoAlcansavel = new Automato();
 		automatoEstadoAlcansavel.setEstadoInicial(automatoOriginalClone.getEstadoInicial());
+		automatoEstadoAlcansavel.setConjuntoAlfabeto(automatoOriginalClone.getConjuntoAlfabeto());
 		
 		ConjuntoEstado conjuntoEstadoAlcansavel;
 		conjuntoEstadoAlcansavel = automatoEstadoAlcansavel.getConjuntoEstado();
@@ -155,6 +158,7 @@ public class OperarAutomato {
 		Automato automatoEstadoVivo;
 		automatoEstadoVivo = new Automato();
 		automatoEstadoVivo.setEstadoInicial(automatoClone.getEstadoInicial());
+		automatoEstadoVivo.setConjuntoAlfabeto(automatoClone.getConjuntoAlfabeto());
 		
 		ConjuntoEstado conjuntoEstadoVivo;
 		conjuntoEstadoVivo = automatoEstadoVivo.getConjuntoEstado();

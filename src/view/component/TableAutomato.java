@@ -64,7 +64,6 @@ public class TableAutomato {
 		TableRow row_head;
 		row_head = new TableRow();
 		row_head.addColumn("");
-		row_head.addColumn("𝛅");
 		
 		for (int j = 0; j < alfabeto.size(); j++) {
 			row_head.addColumn(alfabeto.get(j)+"");
@@ -78,15 +77,18 @@ public class TableAutomato {
 		
 		if (estado.isFinal()) {
 			inicialFinal += "*";
+		} else {
+			inicialFinal += " ";
 		}
 		if (estado.isInicial()) {
-			inicialFinal += "->";
+			inicialFinal += ">";
+		} else {
+			inicialFinal += " ";
 		}
 		
 		TableRow row;
 		row = new TableRow();
-		row.addColumn(inicialFinal);
-		row.addColumn(estado.getSimbolo());
+		row.addColumn(inicialFinal+estado.getSimbolo());
 		
 		for (int i = 0; i < alfabeto.size(); i++) {
 			char simboloAlfabeto;

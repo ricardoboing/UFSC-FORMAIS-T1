@@ -7,6 +7,7 @@ import conjunto.ConjuntoEstado;
 import conjunto.ConjuntoNaoTerminal;
 import conjunto.ConjuntoObject;
 import expressao.Expressao;
+import expressao.NoDeSimone;
 import gramatica.Gramatica;
 import gramatica.NaoTerminal;
 import gramatica.Producao;
@@ -23,12 +24,19 @@ public class Automato implements Linguagem {
 	private ConjuntoAlfabeto conjuntoAlfabeto;
 	private ConjuntoObject<Transicao> conjuntoTransicao;
 	
+	private String nomePai1, nomePai2;
+	private String nomeOperacaoGerador1;
+	
 	public Automato() {
 		this("sem_nome");
 	}
 	public Automato(String nome) {
 		this.nome = nome;
 		this.estadoInicial = null;
+		
+		this.nomePai1 = "";
+		this.nomeOperacaoGerador1 = "";
+		this.nomePai2 = "";
 		
 		this.conjuntoEstado = new ConjuntoEstado();
 		this.conjuntoAlfabeto = new ConjuntoAlfabeto();
@@ -42,7 +50,7 @@ public class Automato implements Linguagem {
 				this.gerarAutomato((Gramatica)linguagemGerador);
 				break;
 			case EXPRESSAO:
-				
+				this.gerarAutomato((Expressao)linguagemGerador);
 				break;
 			default:
 				break;
@@ -257,6 +265,20 @@ public class Automato implements Linguagem {
 			estado.setSimbolo("q"+c);
 		}
 	}
+	private void gerarAutomato(Expressao expressao) {
+		NoDeSimone no;
+		no = new NoDeSimone(expressao);
+		no.gerarArvoreSintatica();
+		
+		Automato automato;
+		automato = no.gerarAutomato();
+		
+		this.estadoInicial = automato.estadoInicial;
+		
+		this.conjuntoAlfabeto = automato.conjuntoAlfabeto;
+		this.conjuntoTransicao = automato.conjuntoTransicao;
+		this.conjuntoEstado = automato.conjuntoEstado;
+	}
 	
 	// Metodos Add
 	public Estado addEstado(Estado estado) {
@@ -437,6 +459,27 @@ public class Automato implements Linguagem {
 		
 		return false;
 	}
+	
+	public void setNomePai1(String nomePai) {
+		this.nomePai1 = nomePai;
+	}
+	public void setNomePai2(String nomePai2) {
+		this.nomePai2 = nomePai2;
+	}
+	public void setNomeOperacaoGerador1(String nomeOperacaoGerador1) {
+		this.nomeOperacaoGerador1 = nomeOperacaoGerador1;
+	}
+	
+	public String getNomePai1() {
+		return this.nomePai1;
+	}
+	public String getNomePai2() {
+		return this.nomePai2;
+	}
+	public String getGeradorPor1() {
+		return this.nomeOperacaoGerador1;
+	}
+	
 	
 	public void print() {
 		for (int c = 0; c < this.conjuntoEstado.size(); c++) {

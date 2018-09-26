@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import automato.Automato;
 import automato.Estado;
 import conjunto.ConjuntoAlfabeto;
+import conjunto.ConjuntoEstado;
 import conjunto.ConjuntoObject;
 
 public class NoDeSimone {
@@ -18,6 +19,9 @@ public class NoDeSimone {
 	public NoDeSimone(String simbolo) {
 		this(simbolo, false);
 	}
+	public NoDeSimone(Expressao expressao) {
+		this(expressao.getToStringOriginal());
+	}
 	private NoDeSimone(String simbolo, boolean nodoFimDaArvore) {
 		this.simbolo = simbolo;
 		this.noPai = null;
@@ -26,6 +30,16 @@ public class NoDeSimone {
 		this.nodoFimDaArvore = nodoFimDaArvore;
 	}
 	
+	private void atualizarEstadoDeSimoneEquivalente(ConjuntoObject<ComposicaoDeSimone> conjuntoComposicao, EstadoDeSimone estadoEquivalente) {
+		for (int i = 0; i < conjuntoComposicao.size(); i++) {
+			ComposicaoDeSimone composicao;
+			composicao = conjuntoComposicao.get(i);
+			
+			if (estadoEquivalente.equals(composicao.getEstadoDeSimone())) {
+				composicao.setEstadoDeSimone(estadoEquivalente);
+			}
+		}
+	}
 	public Automato gerarAutomato() {
 		// Alterar nome depois
 		Automato novoAutomato;
@@ -34,42 +48,75 @@ public class NoDeSimone {
 		ConjuntoAlfabeto conjuntoAlfabeto;
 		conjuntoAlfabeto = novoAutomato.getConjuntoAlfabeto();
 		
-		ComposicaoDeSimone composicaoInicial;
-		composicaoInicial = new ComposicaoDeSimone(0, true);
+		EstadoDeSimone estadoInicial;
+		estadoInicial = new EstadoDeSimone(true);
+		
+		ConjuntoObject<EstadoDeSimone> conjuntoEstadoDeSimone;
+		conjuntoEstadoDeSimone = new ConjuntoObject<EstadoDeSimone>();
+		conjuntoEstadoDeSimone.add(estadoInicial);
 		
 		ConjuntoObject<ComposicaoDeSimone> conjuntoComposicao;
 		conjuntoComposicao = new ConjuntoObject<ComposicaoDeSimone>();
-		conjuntoComposicao.add(composicaoInicial);
 		
-		this.descer(conjuntoAlfabeto, composicaoInicial);
-		composicaoInicial.atualizarConjuntoComposicao(conjuntoComposicao);
+		ConjuntoObject<NoDeSimone> conjuntoNoVisitado;
+		conjuntoNoVisitado = new ConjuntoObject<NoDeSimone>();
+		
+		this.descer(conjuntoNoVisitado, conjuntoAlfabeto, estadoInicial);
+		estadoInicial.atualizarConjuntoComposicao(conjuntoComposicao);
 		
 		// Cria as composicoes
 		for (int c = 0; c < conjuntoComposicao.size(); c++) {
-			ComposicaoDeSimone composicaoDoConjunto;
-			composicaoDoConjunto = conjuntoComposicao.get(c);
+			ComposicaoDeSimone composicao;
+			composicao = conjuntoComposicao.get(c);
 			
 			ConjuntoObject<NoDeSimone> conjuntoNoDeSimone;
-			conjuntoNoDeSimone = composicaoDoConjunto.getConjuntoNoDeSimone();
+			conjuntoNoDeSimone = composicao.getConjuntoNoDeSimone();
+			
+			EstadoDeSimone estadoDaComposicao;
+			estadoDaComposicao = composicao.getEstadoDeSimone();
 			
 			for (int i = 0; i < conjuntoNoDeSimone.size(); i++) {
+				conjuntoNoVisitado = new ConjuntoObject<NoDeSimone>();
+				
 				NoDeSimone noDeSimone;
 				noDeSimone = conjuntoNoDeSimone.get(i);
-				noDeSimone.subir(conjuntoAlfabeto, composicaoDoConjunto);
+				noDeSimone.subir(conjuntoNoVisitado, conjuntoAlfabeto, estadoDaComposicao);
 			}
 			
-			composicaoDoConjunto.atualizarConjuntoComposicao(conjuntoComposicao);
+			if (conjuntoEstadoDeSimone.contains(estadoDaComposicao)) {
+				estadoDaComposicao = conjuntoEstadoDeSimone.add(estadoDaComposicao);
+				
+				this.atualizarEstadoDeSimoneEquivalente(conjuntoComposicao, estadoDaComposicao);
+				continue;
+			}
+			
+			conjuntoEstadoDeSimone.add(estadoDaComposicao);
+			estadoDaComposicao.atualizarConjuntoComposicao(conjuntoComposicao);
 		}
 		
-		// Cria o automato
-		for (int c = 0; c < conjuntoComposicao.size(); c++) {
-			ComposicaoDeSimone composicaoDoConjunto;
-			composicaoDoConjunto = conjuntoComposicao.get(c);
+		// Criar o automato
+		for (int c = 0; c < conjuntoEstadoDeSimone.size(); c++) {
+			EstadoDeSimone estadoDeSimone;
+			estadoDeSimone = conjuntoEstadoDeSimone.get(c);
 			
-			Estado estadoComposicao;
-			estadoComposicao = composicaoDoConjunto.gerarEstado();
+			Estado estadoAf;
+			estadoAf = estadoDeSimone.gerarEstadoAf();
 			
-			novoAutomato.addEstado(estadoComposicao);
+			novoAutomato.addEstado(estadoAf);
+			
+			if (estadoAf.isInicial()) {
+				novoAutomato.setEstadoInicial(estadoAf);
+			}
+		}
+		
+		ConjuntoEstado conjuntoEstado;
+		conjuntoEstado = novoAutomato.getConjuntoEstado();
+		
+		// "Renomeia" simbolo dos estados
+		for (int c = 0; c < conjuntoEstado.size(); c++) {
+			Estado estado;
+			estado = conjuntoEstado.get(c);
+			estado.setSimbolo("q"+c);
 		}
 		
 		return novoAutomato;
@@ -83,28 +130,30 @@ public class NoDeSimone {
 		return this.simbolo;
 	}
 	
-	private void descer(ConjuntoAlfabeto conjuntoAlfabeto, ComposicaoDeSimone composicao) {
-		if (this.nodoFimDaArvore) {
+	private void descer(ConjuntoObject<NoDeSimone> conjuntoNoVisitado, ConjuntoAlfabeto conjuntoAlfabeto, EstadoDeSimone composicao) {
+		if (this.nodoFimDaArvore || conjuntoNoVisitado.contains(this)) {
 			return;
 		}
+		
+		conjuntoNoVisitado.add(this);
 		
 		//System.out.println("descer "+this.simbolo);
 		
 		switch (this.simbolo) {
 			case "|":
-				this.noFilhoEsquerdo.descer(conjuntoAlfabeto, composicao);
-				this.noFilhoDireito.descer(conjuntoAlfabeto, composicao);
+				this.noFilhoEsquerdo.descer(conjuntoNoVisitado, conjuntoAlfabeto, composicao);
+				this.noFilhoDireito.descer(conjuntoNoVisitado, conjuntoAlfabeto, composicao);
 				break;
 			case ".":
-				this.noFilhoEsquerdo.descer(conjuntoAlfabeto, composicao);
+				this.noFilhoEsquerdo.descer(conjuntoNoVisitado, conjuntoAlfabeto, composicao);
 				break;
 			case "?":
-				this.noFilhoEsquerdo.descer(conjuntoAlfabeto, composicao);
-				this.noFilhoDireito.subir(conjuntoAlfabeto, composicao);
+				this.noFilhoEsquerdo.descer(conjuntoNoVisitado, conjuntoAlfabeto, composicao);
+				this.noFilhoDireito.subir(conjuntoNoVisitado, conjuntoAlfabeto, composicao);
 				break;
 			case "*":
-				this.noFilhoEsquerdo.descer(conjuntoAlfabeto, composicao);
-				this.noFilhoDireito.subir(conjuntoAlfabeto, composicao);
+				this.noFilhoEsquerdo.descer(conjuntoNoVisitado, conjuntoAlfabeto, composicao);
+				this.noFilhoDireito.subir(conjuntoNoVisitado, conjuntoAlfabeto, composicao);
 				break;
 			default:
 				conjuntoAlfabeto.add(this.simbolo.charAt(0));
@@ -112,38 +161,49 @@ public class NoDeSimone {
 				break;
 		}
 	}
-	private void subir(ConjuntoAlfabeto conjuntoAlfabeto, ComposicaoDeSimone composicao) {
+	private void subir(ConjuntoObject<NoDeSimone> conjuntoNoVisitado, ConjuntoAlfabeto conjuntoAlfabeto, EstadoDeSimone composicao) {
 		if (this.nodoFimDaArvore) {
+			composicao.addNoDeSimone(this);
 			return;
 		}
+		if (conjuntoNoVisitado.contains(this)) {
+			return;
+		}
+		
+		conjuntoNoVisitado.add(this);
 		
 		//System.out.println("subir "+this.simbolo);
 		
 		switch (this.simbolo) {
 			case "|":
-				this.noFilhoDireito.descerAteOFim(conjuntoAlfabeto, composicao);
+				this.noFilhoDireito.descerAteOFim(conjuntoNoVisitado, conjuntoAlfabeto, composicao);
 				break;
 			case ".":
-				this.noFilhoDireito.descer(conjuntoAlfabeto, composicao);
+				this.noFilhoDireito.descer(conjuntoNoVisitado, conjuntoAlfabeto, composicao);
 				break;
 			case "?":
-				this.noFilhoDireito.subir(conjuntoAlfabeto, composicao);
+				this.noFilhoDireito.subir(conjuntoNoVisitado, conjuntoAlfabeto, composicao);
 				break;
 			case "*":
-				this.noFilhoEsquerdo.descer(conjuntoAlfabeto, composicao);
-				this.noFilhoDireito.subir(conjuntoAlfabeto, composicao);
+				this.noFilhoEsquerdo.descer(conjuntoNoVisitado, conjuntoAlfabeto, composicao);
+				this.noFilhoDireito.subir(conjuntoNoVisitado, conjuntoAlfabeto, composicao);
 				break;
 			default:
-				this.noFilhoDireito.subir(conjuntoAlfabeto, composicao);
+				this.noFilhoDireito.subir(conjuntoNoVisitado, conjuntoAlfabeto, composicao);
 				break;
 		}
 	}
-	private void descerAteOFim(ConjuntoAlfabeto conjuntoAlfabeto, ComposicaoDeSimone composicao) {
-		if (this.noFilhoDireito != null && !this.nodoFimDaArvore) {
-			this.noFilhoDireito.descerAteOFim(conjuntoAlfabeto, composicao);
-		} if (this.nodoFimDaArvore) {
+	private void descerAteOFim(ConjuntoObject<NoDeSimone> conjuntoNoVisitado, ConjuntoAlfabeto conjuntoAlfabeto, EstadoDeSimone composicao) {
+		if (this.nodoFimDaArvore) {
 			composicao.addNoDeSimone(this);
+			return;
 		}
+		
+		if (this.noFilhoEsquerdo == null || this.simbolo.equals("?") || this.simbolo.equals("*")) {
+			this.noFilhoDireito.subir(conjuntoNoVisitado, conjuntoAlfabeto, composicao);
+		}
+		
+		this.noFilhoDireito.descerAteOFim(conjuntoNoVisitado, conjuntoAlfabeto, composicao);
 	}
 	
 	public String arvoreToString() {
@@ -153,7 +213,7 @@ public class NoDeSimone {
 		return this.arvoreToString(arrayVisitados, -1);
 	}
 	private String arvoreToString(ArrayList<NoDeSimone> arrayVisitados, int nivel) {
-		if (this.nodoFimDaArvore || arrayVisitados.contains(this)) {
+		if (arrayVisitados.contains(this)) {
 			return "";
 		}
 		
@@ -187,7 +247,6 @@ public class NoDeSimone {
 		if (arrayVisitados.contains(this) || this.nodoFimDaArvore) {
 			return;
 		}
-		System.out.println(simbolo);
 		arrayVisitados.add(this);
 		
 		char simbolo;
@@ -196,10 +255,11 @@ public class NoDeSimone {
 		if (simbolo != '|' && simbolo != '.') {
 			// Caso * que leva ao nodo final
 			if (arrayPrecedentes.size() == 0) {
-				this.noFilhoDireito = new NoDeSimone("#", true);
-			} else {
-				this.noFilhoDireito = arrayPrecedentes.remove(arrayPrecedentes.size()-1);
+				arrayPrecedentes.add(new NoDeSimone("#", true));
 			}
+			
+			System.out.println(simbolo+" "+arrayPrecedentes.get(arrayPrecedentes.size()-1).getSimbolo());
+			this.noFilhoDireito = arrayPrecedentes.remove(arrayPrecedentes.size()-1);
 		}
 		if (simbolo == '*' || simbolo == '.' || simbolo == '|' || simbolo == '?') {
 			arrayPrecedentes.add(this);

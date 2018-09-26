@@ -7,6 +7,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import automato.Automato;
+import automato.OperarAutomato;
 import util.Linguagem;
 import view.IViewEditar;
 import view.View;
@@ -29,6 +30,8 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 	private MenuLateral menuLateral;
 	private Automato automatoSelecionado;
 	
+	private OperarAutomato operarAutomato;
+	
 	private JButton buttonEditar, buttonSalvar, buttonCancelar;
 	private JButton buttonMinimizar, buttonDeterminizar;
 	
@@ -37,6 +40,8 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 	public ViewEditarAutomato(ManagerLinguagem managerLinguagem) {
 		super();
 		this.managerLinguagem = managerLinguagem;
+		
+		this.operarAutomato = new OperarAutomato();
 		
 		this.editando = false;
 		this.menuLateral = new MenuLateral(this);
@@ -99,11 +104,16 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		this.buttonEditar.setBounds(350, 519, 120, 35);
 		this.buttonMinimizar.setBounds(480, 519, 140, 35);
 		this.buttonDeterminizar.setBounds(629, 519, 160, 35);
+		
+		this.addComponent(this.buttonSalvar);
+		this.addComponent(this.buttonCancelar);
+		this.addComponent(this.buttonEditar);
+		this.addComponent(this.buttonMinimizar);
+		this.addComponent(this.buttonDeterminizar);
 	}
 	
 	@Override
 	public void setLinguagem(String nome) {
-		System.out.println("ooooooooooi "+nome);
 		Automato automato;
 		automato = this.managerLinguagem.getAutomato(nome);
 		
@@ -111,50 +121,64 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 			return;
 		}
 		
-		automato.print();
+		this.automatoSelecionado = automato;
 		
 		this.inputNome.setText(automato.getNome());
 		this.tableAutomato.montarTable(automato);
 		
-		this.jPanel.repaint();
+		this.inputGerador1.setText(automato.getNomePai1());
+		this.inputGerador2.setText(automato.getNomePai2());
+		this.inputOperacao.setText(automato.getGeradorPor1());
+		
+		this.buttonEditar.setVisible(true);
+		this.buttonDeterminizar.setVisible(true);
+		this.buttonMinimizar.setVisible(true);
 	}
 	
 	public void minimizar() {
 		System.out.println("MINIMIZAR");
+		
+		Automato novoAutomato;
+		novoAutomato = this.operarAutomato.minimizar(this.automatoSelecionado);
+		novoAutomato.setNome("A.M."+this.managerLinguagem.getNomeNovoAutomato());
+		novoAutomato.setNomePai1( this.automatoSelecionado.getNome() );
+		novoAutomato.setNomeOperacaoGerador1("Minimizacao");
+		
+		this.managerLinguagem.gerarNomeNovoAutomato();
+		this.managerLinguagem.addAutomato(novoAutomato);
+		
+		this.atualizar();
+		this.setLinguagem(this.automatoSelecionado.getNome());
 	}
 	public void determinizar() {
 		System.out.println("DETERMINIZAR");
+		
+		Automato novoAutomato;
+		novoAutomato = this.operarAutomato.determinizar(this.automatoSelecionado);
+		novoAutomato.setNome("A.D."+this.managerLinguagem.getNomeNovoAutomato());
+		novoAutomato.setNomePai1( this.automatoSelecionado.getNome() );
+		novoAutomato.setNomeOperacaoGerador1("Determinizacao");
+		
+		this.managerLinguagem.gerarNomeNovoAutomato();
+		this.managerLinguagem.addAutomato(novoAutomato);
+		
+		this.atualizar();
+		this.setLinguagem(this.automatoSelecionado.getNome());
 	}
 	public void editar() {
 		this.editando = true;
 		
-		this.addComponent(this.buttonSalvar);
-		this.addComponent(this.buttonCancelar);
-		
 		this.buttonSalvar.setVisible(true);
 		this.buttonCancelar.setVisible(true);
-		
-		this.jPanel.remove(this.buttonEditar);
-		this.jPanel.remove(this.buttonDeterminizar);
-		this.jPanel.remove(this.buttonMinimizar);
 		
 		this.buttonEditar.setVisible(false);
 		this.buttonDeterminizar.setVisible(false);
 		this.buttonMinimizar.setVisible(false);
-		
-		this.jPanel.repaint();
 	}
 	public void salvar() {
 		this.editando = false;
 		this.buttonSalvar.setVisible(false);
 		this.buttonCancelar.setVisible(false);
-		
-		this.jPanel.remove(this.buttonSalvar);
-		this.jPanel.remove(this.buttonCancelar);
-		
-		this.addComponent(this.buttonEditar);
-		this.addComponent(this.buttonDeterminizar);
-		this.addComponent(this.buttonMinimizar);
 		
 		this.buttonEditar.setVisible(true);
 		this.buttonDeterminizar.setVisible(true);
@@ -167,13 +191,6 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		this.editando = false;
 		this.buttonSalvar.setVisible(false);
 		this.buttonCancelar.setVisible(false);
-		
-		this.jPanel.remove(this.buttonSalvar);
-		this.jPanel.remove(this.buttonCancelar);
-		
-		this.addComponent(this.buttonEditar);
-		this.addComponent(this.buttonDeterminizar);
-		this.addComponent(this.buttonMinimizar);
 		
 		this.buttonEditar.setVisible(true);
 		this.buttonDeterminizar.setVisible(true);
@@ -188,5 +205,11 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		arrayAutomato = this.managerLinguagem.getConjuntoAutomato();
 		
 		this.menuLateral.setMenu(arrayAutomato);
+		
+		this.buttonSalvar.setVisible(false);
+		this.buttonEditar.setVisible(false);
+		this.buttonCancelar.setVisible(false);
+		this.buttonMinimizar.setVisible(false);
+		this.buttonDeterminizar.setVisible(false);
 	}
 }

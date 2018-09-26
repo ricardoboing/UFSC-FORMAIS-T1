@@ -107,12 +107,28 @@ public class ViewEditarGerador extends View implements IViewEditar {
 	}
 	
 	public void gerarAf() {
+		String siglaOperador;
+		siglaOperador = "";
+		
+		switch (this.eLinguagem) {
+			case GRAMATICA:
+				siglaOperador += "G";
+				break;
+			case EXPRESSAO:
+				siglaOperador += "E";
+				break;
+			default:
+				break;
+		}
+		
 		String nomeAutomato;
-		nomeAutomato = "G."+this.managerLinguagem.getNomeNovoAutomato();
+		nomeAutomato = siglaOperador+"."+this.managerLinguagem.getNomeNovoAutomato();
 		this.managerLinguagem.gerarNomeNovoAutomato();
 		
 		Automato novoAutomato;
 		novoAutomato = new Automato(nomeAutomato, this.geradorSelecionado);
+		novoAutomato.setNomePai1( this.geradorSelecionado.getNome() );
+		novoAutomato.setNomeOperacaoGerador1(siglaOperador+"R -> AF");
 		
 		this.managerLinguagem.addAutomato(novoAutomato);
 		
