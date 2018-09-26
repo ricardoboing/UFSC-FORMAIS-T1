@@ -8,6 +8,7 @@ import javax.swing.JTextField;
 
 import automato.Automato;
 import automato.OperarAutomato;
+import gramatica.Gramatica;
 import util.Linguagem;
 import view.IViewEditar;
 import view.View;
@@ -33,7 +34,7 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 	private OperarAutomato operarAutomato;
 	
 	private JButton buttonEditar, buttonSalvar, buttonCancelar;
-	private JButton buttonMinimizar, buttonDeterminizar;
+	private JButton buttonMinimizar, buttonDeterminizar, buttonGerarGr;
 	
 	private boolean editando;
 	
@@ -81,18 +82,21 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		EventViewEditarAutomato event;
 		event = new EventViewEditarAutomato(this);
 		
+		this.buttonGerarGr = new JButton("Gerar GR");
 		this.buttonEditar = new JButton("Editar");
 		this.buttonSalvar = new JButton("Salvar");
 		this.buttonCancelar = new JButton("Cancelar");
 		this.buttonMinimizar = new JButton("Minimizar");
 		this.buttonDeterminizar = new JButton("Determinizar");
 		
+		this.buttonGerarGr.setActionCommand("GERAR_GR");
 		this.buttonEditar.setActionCommand("EDITAR");
 		this.buttonSalvar.setActionCommand("SALVAR");
 		this.buttonCancelar.setActionCommand("CANCELAR");
 		this.buttonMinimizar.setActionCommand("MINIMIZAR");
 		this.buttonDeterminizar.setActionCommand("DETERMINIZAR");
 		
+		this.buttonGerarGr.addActionListener(event);
 		this.buttonSalvar.addActionListener(event);
 		this.buttonCancelar.addActionListener(event);
 		this.buttonEditar.addActionListener(event);
@@ -101,10 +105,12 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		
 		this.buttonSalvar.setBounds(530, 519, 120, 35);
 		this.buttonCancelar.setBounds(659, 519, 130, 35);
+		this.buttonGerarGr.setBounds(220, 519, 120, 35);
 		this.buttonEditar.setBounds(350, 519, 120, 35);
 		this.buttonMinimizar.setBounds(480, 519, 140, 35);
 		this.buttonDeterminizar.setBounds(629, 519, 160, 35);
 		
+		this.addComponent(this.buttonGerarGr);
 		this.addComponent(this.buttonSalvar);
 		this.addComponent(this.buttonCancelar);
 		this.addComponent(this.buttonEditar);
@@ -130,11 +136,22 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		this.inputGerador2.setText(automato.getNomePai2());
 		this.inputOperacao.setText(automato.getGeradorPor1());
 		
+		this.buttonGerarGr.setVisible(true);
 		this.buttonEditar.setVisible(true);
 		this.buttonDeterminizar.setVisible(true);
 		this.buttonMinimizar.setVisible(true);
 	}
-	
+	public void gerarGr() {
+		Gramatica novaGramatica;
+		novaGramatica = new Gramatica(this.automatoSelecionado);
+		novaGramatica.setNome("A."+this.managerLinguagem.getNomeNovoGramatica());
+		
+		this.managerLinguagem.gerarNomeNovoGramatica();
+		this.managerLinguagem.addGramatica(novaGramatica);
+		
+		this.atualizar();
+		this.setLinguagem(this.automatoSelecionado.getNome());
+	}
 	public void minimizar() {
 		System.out.println("MINIMIZAR");
 		
@@ -171,6 +188,7 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		this.buttonSalvar.setVisible(true);
 		this.buttonCancelar.setVisible(true);
 		
+		this.buttonGerarGr.setVisible(false);
 		this.buttonEditar.setVisible(false);
 		this.buttonDeterminizar.setVisible(false);
 		this.buttonMinimizar.setVisible(false);
@@ -180,6 +198,7 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		this.buttonSalvar.setVisible(false);
 		this.buttonCancelar.setVisible(false);
 		
+		this.buttonGerarGr.setVisible(true);
 		this.buttonEditar.setVisible(true);
 		this.buttonDeterminizar.setVisible(true);
 		this.buttonMinimizar.setVisible(true);
@@ -192,6 +211,7 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		this.buttonSalvar.setVisible(false);
 		this.buttonCancelar.setVisible(false);
 		
+		this.buttonGerarGr.setVisible(true);
 		this.buttonEditar.setVisible(true);
 		this.buttonDeterminizar.setVisible(true);
 		this.buttonMinimizar.setVisible(true);
@@ -206,6 +226,7 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		
 		this.menuLateral.setMenu(arrayAutomato);
 		
+		this.buttonGerarGr.setVisible(false);
 		this.buttonSalvar.setVisible(false);
 		this.buttonEditar.setVisible(false);
 		this.buttonCancelar.setVisible(false);

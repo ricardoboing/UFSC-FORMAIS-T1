@@ -291,7 +291,7 @@ public class Gramatica implements LinguagemGerador {
 		for (int c = 0; c < this.conjuntoNaoTerminal.size(); c++) {
 			NaoTerminal naoTerminal;
 			naoTerminal = this.conjuntoNaoTerminal.get(c);
-			//naoTerminal.setSimbolo(alfabetoPortugues.proximaLetra());
+			naoTerminal.setSimbolo(alfabetoPortugues.proximaLetra());
 		}
 	}
 	@Override

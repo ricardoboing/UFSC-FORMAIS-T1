@@ -56,7 +56,7 @@ public class ViewEditarGerador extends View implements IViewEditar {
 		this.buttonEditar = new JButton("Editar");
 		this.buttonSalvar = new JButton("Salvar");
 		this.buttonCancelar = new JButton("Cancelar");
-		this.buttonGerarAF = new JButton("GerarAF");
+		this.buttonGerarAF = new JButton("Gerar AF");
 		
 		this.buttonEditar.setActionCommand("EDITAR");
 		this.buttonSalvar.setActionCommand("SALVAR");
