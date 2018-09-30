@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import automato.Automato;
 import automato.Estado;
+import automato.OperarAutomato;
 import automato.Transicao;
 import conjunto.ConjuntoAlfabeto;
 import conjunto.ConjuntoEstado;
@@ -209,11 +210,15 @@ public class Gramatica implements LinguagemGerador {
 	}
 	/*	Cria uma Gramatica a partir de um Automato
 	 */
-	private void gerarGramatica(Automato automato) {
-		this.conjuntoAlfabeto = automato.getConjuntoAlfabeto().clone();
+	private void gerarGramatica(Automato automatoOriginal) {
+		Automato automatoClone;
+		automatoClone = OperarAutomato.determinizar(automatoOriginal.clone());
+		
+		this.conjuntoAlfabeto = automatoClone.getConjuntoAlfabeto().clone();
+		this.conjuntoAlfabeto.remove(ManagerLinguagem.EPSILON);
 		
 		ConjuntoEstado conjuntoEstado;
-		conjuntoEstado = automato.getConjuntoEstado();
+		conjuntoEstado = automatoClone.getConjuntoEstado();
 		
 		// Para cada estadoDoAutomato eh criado um naoTerminalDaGramatica correspondente.
 		for (int c = 0; c < conjuntoEstado.size(); c++) {
@@ -243,13 +248,14 @@ public class Gramatica implements LinguagemGerador {
 				naoTerminalDaTransicao = this.addNaoTerminal(naoTerminalDaTransicao);
 				
 				// Cria uma producao do formato "A -> bB"
-				Producao producaoDoNaoTerminalNovo;
-				producaoDoNaoTerminalNovo = new Producao();
-				producaoDoNaoTerminalNovo.setTerminal(terminalDaTransicao);
-				producaoDoNaoTerminalNovo.setNaoTerminal(naoTerminalDaTransicao);
-				
-				naoTerminalNovo.addProducao(producaoDoNaoTerminalNovo);
-				
+				if (estadoDestinoDaTransicao.getConjuntoTransicao().size() > 0) {
+					Producao producaoDoNaoTerminalNovo;
+					producaoDoNaoTerminalNovo = new Producao();
+					producaoDoNaoTerminalNovo.setTerminal(terminalDaTransicao);
+					producaoDoNaoTerminalNovo.setNaoTerminal(naoTerminalDaTransicao);
+					
+					naoTerminalNovo.addProducao(producaoDoNaoTerminalNovo);
+				}
 				// Cria uma producao do formato "A -> b"
 				if (estadoDestinoDaTransicao.isFinal()) {
 					Producao producao2DoNaoTerminalNovo;
@@ -259,10 +265,14 @@ public class Gramatica implements LinguagemGerador {
 					naoTerminalNovo.addProducao(producao2DoNaoTerminalNovo);
 				}
 			}
+			
+			if (naoTerminalNovo.getConjuntoProducao().size() == 0) {
+				this.conjuntoNaoTerminal.remove(naoTerminalNovo);
+			}
 		}
 		
 		Estado estadoInicialDoAutomato;
-		estadoInicialDoAutomato = automato.getEstadoInicial();
+		estadoInicialDoAutomato = automatoClone.getEstadoInicial();
 		
 		// Caso o estado S, inicial, seja final, entao adiciona a producao "S -> epsilon"
 		if (estadoInicialDoAutomato.isFinal()) {
@@ -280,6 +290,15 @@ public class Gramatica implements LinguagemGerador {
 			naoTerminalInicialNovo.addProducao(producaoEpsilon);
 			
 			this.naoTerminalInicial = naoTerminalInicialNovo;
+			this.conjuntoNaoTerminal.add(naoTerminalInicialNovo);
+			
+			ConjuntoNaoTerminal conjuntoNaoTerminalClone;
+			conjuntoNaoTerminalClone = this.conjuntoNaoTerminal.clone();
+			
+			// Poe o naoTerminalInicial no topo do conjunto
+			this.conjuntoNaoTerminal = new ConjuntoNaoTerminal();
+			this.conjuntoNaoTerminal.add(this.naoTerminalInicial);
+			this.conjuntoNaoTerminal.add(conjuntoNaoTerminalClone);
 		}
 		
 		AlfabetoPortuguesMaiusculo alfabetoPortugues;

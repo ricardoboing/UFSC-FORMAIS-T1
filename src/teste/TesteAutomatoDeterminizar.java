@@ -56,11 +56,8 @@ public class TesteAutomatoDeterminizar {
 		estadoF.setFinal(true);
 		estadoD.setFinal(true);
 		
-		OperarAutomato operar;
-		operar = new OperarAutomato();
-		
 		Automato automatoAFD;
-		automatoAFD = operar.determinizar(automatoAFND);
+		automatoAFD = OperarAutomato.determinizar(automatoAFND);
 		
 		automatoAFND.print();
 		System.out.println("\n--------------------\n");
@@ -85,11 +82,8 @@ public class TesteAutomatoDeterminizar {
 		
 		estadoF.setFinal(true);
 		
-		OperarAutomato operar;
-		operar = new OperarAutomato();
-		
 		Automato automatoAFD;
-		automatoAFD = operar.determinizar(automatoAFND);
+		automatoAFD = OperarAutomato.determinizar(automatoAFND);
 		
 		automatoAFND.print();
 		System.out.println("\n--------------------\n");
@@ -125,11 +119,8 @@ public class TesteAutomatoDeterminizar {
 		
 		estadoR.setFinal(true);
 		
-		OperarAutomato operar;
-		operar = new OperarAutomato();
-		
 		Automato automatoAFD;
-		automatoAFD = operar.determinizar(automatoAFND);
+		automatoAFD = OperarAutomato.determinizar(automatoAFND);
 		
 		automatoAFND.print();
 		System.out.println("\n--------------------\n");
@@ -164,17 +155,12 @@ public class TesteAutomatoDeterminizar {
 		//estadoQ.addTransicao('&', estadoP);
 		//estadoQ.addTransicao('&', estadoQ);
 		estadoQ.addTransicao('&', estadoR);
-		
 		estadoR.addTransicao('&', estadoP);
 		
 		estadoR.setFinal(true);
 		
-		OperarAutomato operar;
-		operar = new OperarAutomato();
+		OperarAutomato.gerarConjuntoEpsilonFecho(automatoAFND);
 		
-		operar.gerarConjuntoEpsilonFecho(automatoAFND);
-		
-
 		ConjuntoEstado conjuntoEstado;
 		conjuntoEstado = automatoAFND.getConjuntoEstado();
 		

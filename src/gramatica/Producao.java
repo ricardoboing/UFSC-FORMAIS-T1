@@ -28,6 +28,6 @@ public class Producao {
 	
 	@Override
 	public Producao clone() {
-		return new Producao(this.terminal, this.naoTerminal.clone());
+		return new Producao(this.terminal, this.naoTerminal);
 	}
 }

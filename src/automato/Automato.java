@@ -478,7 +478,7 @@ public class Automato implements Linguagem {
 	public void setNomePai2(String nomePai2) {
 		this.nomePai2 = nomePai2;
 	}
-	public void setNomeOperacaoGerador1(String nomeOperacaoGerador1) {
+	public void setNomeOperacaoGerador(String nomeOperacaoGerador1) {
 		this.nomeOperacaoGerador1 = nomeOperacaoGerador1;
 	}
 	

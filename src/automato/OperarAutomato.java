@@ -7,9 +7,7 @@ import conjunto.ConjuntoObject;
 import view.principal.ManagerLinguagem;
 
 public class OperarAutomato {
-	public OperarAutomato() {}
-	
-	public void gerarConjuntoEpsilonFecho(Automato automatoAFND) {
+	public static void gerarConjuntoEpsilonFecho(Automato automatoAFND) {
 		/*	Percorre todas as transicoes
 		 * 		Se o simbolo da transicao nao for epsilon
 		 * 			continue
@@ -89,8 +87,8 @@ public class OperarAutomato {
 			}
 		} while(houveMudanca);
 	}
-	public Automato determinizar(Automato automatoAFND) {
-		this.gerarConjuntoEpsilonFecho(automatoAFND);
+	public static Automato determinizar(Automato automatoAFND) {
+		OperarAutomato.gerarConjuntoEpsilonFecho(automatoAFND);
 		
 		Estado estadoInicialAFND;
 		estadoInicialAFND = automatoAFND.getEstadoInicial();
@@ -195,24 +193,24 @@ public class OperarAutomato {
 			}
 		}
 		
-		//automatoAFD.alterarSimboloDosEstados();
+		automatoAFD.alterarSimboloDosEstados();
 		
 		return automatoAFD;
 	}
-	public Automato minimizar(Automato automato) {
+	public static Automato minimizar(Automato automato) {
 		Automato novoAutomato;
 		novoAutomato = automato.clone();
-		novoAutomato = this.determinizar(novoAutomato);
-		novoAutomato = this.eliminarEstadosInalcansaveis(novoAutomato);
-		novoAutomato = this.eliminarEstadosMortos(novoAutomato);
-		novoAutomato = this.eliminarEstadosDuplicados(novoAutomato);
+		novoAutomato = OperarAutomato.determinizar(novoAutomato);
+		novoAutomato = OperarAutomato.eliminarEstadosInalcansaveis(novoAutomato);
+		novoAutomato = OperarAutomato.eliminarEstadosMortos(novoAutomato);
+		novoAutomato = OperarAutomato.eliminarEstadosDuplicados(novoAutomato);
 		
 		novoAutomato.alterarSimboloDosEstados();
 		
 		return novoAutomato;
 	}
 	
-	public Automato eliminarEstadosInalcansaveis(Automato automatoOriginal) {
+	public static Automato eliminarEstadosInalcansaveis(Automato automatoOriginal) {
 		Automato automatoOriginalClone;
 		automatoOriginalClone = automatoOriginal.clone();
 		
@@ -245,11 +243,11 @@ public class OperarAutomato {
 			}
 		}
 		
-		this.eliminarTransicoesInutil(conjuntoEstadoAlcansavel);
+		OperarAutomato.eliminarTransicoesInutil(conjuntoEstadoAlcansavel);
 		
 		return automatoEstadoAlcansavel;
 	}
-	public Automato eliminarEstadosMortos(Automato automatoOriginal) {
+	public static Automato eliminarEstadosMortos(Automato automatoOriginal) {
 		Automato automatoClone;
 		automatoClone = automatoOriginal.clone();
 		
@@ -300,11 +298,11 @@ public class OperarAutomato {
 			// Continuar enquanto novos estados forem adicionados como vivo
 		} while (numeroTotalEstadoVivoAnterior != conjuntoEstadoVivo.size());
 		
-		this.eliminarTransicoesInutil(conjuntoEstadoVivo);
+		OperarAutomato.eliminarTransicoesInutil(conjuntoEstadoVivo);
 		
 		return automatoEstadoVivo;
 	}
-	private void eliminarTransicoesInutil(ConjuntoEstado conjuntoEstado) {
+	private static void eliminarTransicoesInutil(ConjuntoEstado conjuntoEstado) {
 		for (int c = 0; c < conjuntoEstado.size(); c++) {
 			Estado estadoAlcansavel;
 			estadoAlcansavel = conjuntoEstado.get(c);
@@ -324,7 +322,7 @@ public class OperarAutomato {
 			}
 		}
 	}
-	public Automato eliminarEstadosDuplicados(Automato automatoOriginal) {
+	public static Automato eliminarEstadosDuplicados(Automato automatoOriginal) {
 		Automato automatoClone;
 		automatoClone = automatoOriginal.clone();
 		
@@ -432,5 +430,139 @@ public class OperarAutomato {
 		}
 		
 		return novoAutomato;
+	}
+	
+	public static Automato intersectar(Automato automatoOriginal1, Automato automatoOriginal2) {
+		Automato automatoComplemento1, automatoComplemento2;
+		automatoComplemento1 = OperarAutomato.complementarAutomato(automatoOriginal1.clone());
+		automatoComplemento2 = OperarAutomato.complementarAutomato(automatoOriginal2.clone());
+		
+		Automato automatoUniao;
+		automatoUniao = OperarAutomato.unir(automatoComplemento1, automatoComplemento2);
+		
+		Automato automatoInterseccao;
+		automatoInterseccao = OperarAutomato.complementarAutomato(automatoUniao);
+		automatoInterseccao.alterarSimboloDosEstados();
+		
+		automatoInterseccao.setNomePai1(automatoOriginal1.getNome());
+		automatoInterseccao.setNomePai2(automatoOriginal2.getNome());
+		automatoInterseccao.setNomeOperacaoGerador("INTERSECCAO");
+		
+		return automatoInterseccao;
+	}
+	
+	public static Automato unir(Automato automatoOriginal1, Automato automatoOriginal2) {
+		Automato automatoClone1, automatoClone2;
+		automatoClone1 = automatoOriginal1.clone();
+		automatoClone2 = automatoOriginal2.clone();
+		
+		ConjuntoEstado conjuntoEstado1, conjuntoEstado2;
+		conjuntoEstado1 = automatoClone1.getConjuntoEstado();
+		conjuntoEstado2 = automatoClone2.getConjuntoEstado();
+		
+		// Altera o simbolo dos estados (simbolo unico), de ambos automatos, pra nao gerar erros
+		for (int c = 0; c < conjuntoEstado1.size(); c++) {
+			Estado estado;
+			estado = conjuntoEstado1.get(c);
+			estado.setSimbolo(estado.toString());
+		}
+		for (int c = 0; c < conjuntoEstado2.size(); c++) {
+			Estado estado;
+			estado = conjuntoEstado2.get(c);
+			estado.setSimbolo(estado.toString());
+		}
+		
+		Estado estadoInicial1, estadoInicial2;
+		estadoInicial1 = automatoClone1.getEstadoInicial();
+		estadoInicial2 = automatoClone2.getEstadoInicial();;
+		
+		estadoInicial1.setInicial(false);
+		estadoInicial2.setInicial(false);
+		
+		Estado novoEstadoInicial;
+		novoEstadoInicial = new Estado();
+		novoEstadoInicial.addTransicao(ManagerLinguagem.EPSILON, estadoInicial1);
+		novoEstadoInicial.addTransicao(ManagerLinguagem.EPSILON, estadoInicial2);
+		
+		ConjuntoAlfabeto conjuntoAlfabeto;
+		conjuntoAlfabeto = automatoClone1.getConjuntoAlfabeto().clone();
+		conjuntoAlfabeto.add(automatoClone2.getConjuntoAlfabeto());
+		
+		Automato automatoUniao;
+		automatoUniao = new Automato();
+		automatoUniao.addConjuntoEstado(conjuntoEstado1);
+		automatoUniao.addConjuntoEstado(conjuntoEstado2);
+		automatoUniao.setConjuntoAlfabeto(conjuntoAlfabeto);
+		automatoUniao.addEstadoInicial(novoEstadoInicial);
+		automatoUniao.alterarSimboloDosEstados();
+		
+		automatoUniao.setNomePai1(automatoOriginal1.getNome());
+		automatoUniao.setNomePai2(automatoOriginal2.getNome());
+		automatoUniao.setNomeOperacaoGerador("UNIAO");
+		
+		return automatoUniao;
+	}
+	
+	public static Automato complementarAutomato(Automato automatoOriginal) {
+		Automato automatoComplemento;
+		automatoComplemento = OperarAutomato.completarAutomato(automatoOriginal.clone());
+		automatoComplemento.setNomePai1(automatoOriginal.getNome());
+		automatoComplemento.setNomeOperacaoGerador("COMPLEMENTO");
+		
+		ConjuntoEstado conjuntoEstado;
+		conjuntoEstado = automatoComplemento.getConjuntoEstado();
+		
+		// Inverte os estados (final vira nao final e vice-versa)
+		for (int i = 0; i < conjuntoEstado.size(); i++) {
+			Estado estado;
+			estado = conjuntoEstado.get(i);
+			estado.setFinal(!estado.isFinal());
+		}
+		
+		return automatoComplemento;
+	}
+	
+	public static Automato completarAutomato(Automato automatoOriginal) {
+		Estado estadoDeErro;
+		estadoDeErro = new Estado("-");
+		
+		Automato automatoCompleto;
+		automatoCompleto = automatoOriginal.clone();
+		automatoCompleto.addEstado(estadoDeErro);
+		automatoCompleto.setNomePai1(automatoOriginal.getNome());
+		automatoCompleto.setNomeOperacaoGerador("COMPLETAR");
+		
+		ConjuntoAlfabeto conjuntoAlfabeto;
+		conjuntoAlfabeto = automatoCompleto.getConjuntoAlfabeto();
+		
+		// Completa o estadoDeErro
+		for (int c = 0; c < conjuntoAlfabeto.size(); c++) {
+			char simboloDoAlfabeto;
+			simboloDoAlfabeto = conjuntoAlfabeto.get(c);
+			
+			estadoDeErro.addTransicao(simboloDoAlfabeto, estadoDeErro);
+		}
+		
+		ConjuntoEstado conjuntoEstado;
+		conjuntoEstado = automatoCompleto.getConjuntoEstado();
+		
+		for (int c = 0; c < conjuntoAlfabeto.size(); c++) {
+			char simboloDoAlfabeto;
+			simboloDoAlfabeto = conjuntoAlfabeto.get(c);
+			
+			for (int i = 0; i < conjuntoEstado.size(); i++) {
+				Estado estadoDoAutomatoCompleto;
+				estadoDoAutomatoCompleto = conjuntoEstado.get(i);
+				
+				ConjuntoObject<Transicao> conjuntoTransicao;
+				conjuntoTransicao = estadoDoAutomatoCompleto.getConjuntoTransicao(simboloDoAlfabeto);
+				
+				if (conjuntoTransicao.size() == 0) {
+					estadoDoAutomatoCompleto.addTransicao(simboloDoAlfabeto, estadoDeErro);
+				}
+			}
+		}
+		
+		return automatoCompleto;
 	}
 }

@@ -9,7 +9,7 @@ public class Main {
 	 *  [X] AFND -> AFD     (falta teste exaustivo
 	 *  [X] GR   -> AFND    (falta teste exaustivo)
 	 * 	[X] AFD  -> GR      (falta teste exaustivo)
-	 * 	[ ] ER   -> AFD     (falta alguns bugs em casos aparentemente isolados; arvore sintatica funcionando; falta dar uma geral no codigo)
+	 * 	[X] ER   -> AFD     (falta teste exaustivo; gerando estado duplicado)
 	 */
 	public static void main(String[] args) {
 		Window w;

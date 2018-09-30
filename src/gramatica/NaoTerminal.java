@@ -57,8 +57,8 @@ public class NaoTerminal {
 	
 	@Override
 	public NaoTerminal clone() {
-		NaoTerminal clone;
-		clone = new NaoTerminal(this.simbolo+"_clone");
+		NaoTerminal naoTerminalClone;
+		naoTerminalClone = new NaoTerminal(this.simbolo+"_clone");
 		
 		for (int c = 0; c < this.conjuntoProducao.size(); c++) {
 			Producao producaoOriginal;
@@ -67,9 +67,9 @@ public class NaoTerminal {
 			Producao producaoClone;
 			producaoClone = producaoOriginal.clone();
 			
-			clone.addProducao(producaoClone);
+			naoTerminalClone.addProducao(producaoClone);
 		}
 		
-		return clone;
+		return naoTerminalClone;
 	}
 }

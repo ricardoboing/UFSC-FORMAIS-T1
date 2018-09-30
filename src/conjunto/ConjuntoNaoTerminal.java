@@ -25,4 +25,16 @@ public class ConjuntoNaoTerminal extends ConjuntoObject<NaoTerminal> {
 		
 		return adicionado;
 	}
+	
+	@Override
+	public ConjuntoNaoTerminal clone() {
+		ConjuntoNaoTerminal clone;
+		clone = new ConjuntoNaoTerminal();
+		
+		for (int c = 0; c < this.array.size(); c++) {
+			clone.array.add(this.array.get(c));
+		}
+		
+		return clone;
+	}
 }

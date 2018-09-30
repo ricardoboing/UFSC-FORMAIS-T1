@@ -31,8 +31,6 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 	private MenuLateral menuLateral;
 	private Automato automatoSelecionado;
 	
-	private OperarAutomato operarAutomato;
-	
 	private JButton buttonEditar, buttonSalvar, buttonCancelar;
 	private JButton buttonMinimizar, buttonDeterminizar, buttonGerarGr;
 	
@@ -41,8 +39,6 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 	public ViewEditarAutomato(ManagerLinguagem managerLinguagem) {
 		super();
 		this.managerLinguagem = managerLinguagem;
-		
-		this.operarAutomato = new OperarAutomato();
 		
 		this.editando = false;
 		this.menuLateral = new MenuLateral(this);
@@ -156,10 +152,10 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		System.out.println("MINIMIZAR");
 		
 		Automato novoAutomato;
-		novoAutomato = this.operarAutomato.minimizar(this.automatoSelecionado);
+		novoAutomato = OperarAutomato.minimizar(this.automatoSelecionado);
 		novoAutomato.setNome("A.M."+this.managerLinguagem.getNomeNovoAutomato());
 		novoAutomato.setNomePai1( this.automatoSelecionado.getNome() );
-		novoAutomato.setNomeOperacaoGerador1("Minimizacao");
+		novoAutomato.setNomeOperacaoGerador("Minimizacao");
 		
 		this.managerLinguagem.gerarNomeNovoAutomato();
 		this.managerLinguagem.addAutomato(novoAutomato);
@@ -171,10 +167,10 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		System.out.println("DETERMINIZAR");
 		
 		Automato novoAutomato;
-		novoAutomato = this.operarAutomato.determinizar(this.automatoSelecionado);
+		novoAutomato = OperarAutomato.determinizar(this.automatoSelecionado);
 		novoAutomato.setNome("A.D."+this.managerLinguagem.getNomeNovoAutomato());
 		novoAutomato.setNomePai1( this.automatoSelecionado.getNome() );
-		novoAutomato.setNomeOperacaoGerador1("Determinizacao");
+		novoAutomato.setNomeOperacaoGerador("Determinizacao");
 		
 		this.managerLinguagem.gerarNomeNovoAutomato();
 		this.managerLinguagem.addAutomato(novoAutomato);

@@ -10,7 +10,13 @@ public class Estado {
 	
 	private ConjuntoObject<Transicao> transicoes;
 	
+	public Estado() {
+		this.construir(this.toString());
+	}
 	public Estado(String simbolo) {
+		this.construir(simbolo);
+	}
+	private void construir(String simbolo) {
 		this.simbolo = simbolo;
 		this.isInicial = false;
 		this.isFinal = false;
@@ -65,6 +71,7 @@ public class Estado {
 	public ConjuntoObject<Transicao> getConjuntoTransicao(char entrada) {
 		ConjuntoObject<Transicao> reconhecedores;
 		reconhecedores = new ConjuntoObject<Transicao>();
+		
 		/* Percorre todas as producoes e add no conjunto aquelas
 		 * que transitao com a entrada
 		 */

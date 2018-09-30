@@ -3,12 +3,14 @@ package view.automato;
 import javax.swing.JButton;
 
 import automato.Automato;
+import automato.OperarAutomato;
 import util.Linguagem;
 import view.View;
 import view.component.ComboBox;
 import view.component.MostrarAutomato;
 import view.event.EventViewOperarAutomato;
 import view.principal.ManagerLinguagem;
+import view.principal.Window;
 
 public class ViewOperarAutomato extends View {
 	private ManagerLinguagem managerLinguagem;
@@ -127,9 +129,35 @@ public class ViewOperarAutomato extends View {
 	
 	public void unir() {
 		System.out.println("ViewOperarAutomato::Unir");
+		
+		Automato automato1, automato2;
+		automato1 = this.managerLinguagem.getAutomato(this.comboBoxAutomato1.getSelected());
+		automato2 = this.managerLinguagem.getAutomato(this.comboBoxAutomato1.getSelected());
+		
+		Automato novoAutomato;
+		novoAutomato = OperarAutomato.unir(automato1, automato2);
+		novoAutomato.setNome("U."+this.managerLinguagem.getNomeNovoAutomato());
+		
+		this.managerLinguagem.gerarNomeNovoAutomato();
+		this.managerLinguagem.addAutomato(novoAutomato);
+		
+		Window.insertMessage("Automato gerado com sucesso!", "Sucesso!");
 	}
 	public void intersectar() {
 		System.out.println("ViewOperarAutomato::Intersectar");
+		
+		Automato automato1, automato2;
+		automato1 = this.managerLinguagem.getAutomato(this.comboBoxAutomato1.getSelected());
+		automato2 = this.managerLinguagem.getAutomato(this.comboBoxAutomato1.getSelected());
+		
+		Automato novoAutomato;
+		novoAutomato = OperarAutomato.intersectar(automato1, automato2);
+		novoAutomato.setNome("I."+this.managerLinguagem.getNomeNovoAutomato());
+		
+		this.managerLinguagem.gerarNomeNovoAutomato();
+		this.managerLinguagem.addAutomato(novoAutomato);
+		
+		Window.insertMessage("Automato gerado com sucesso!", "Sucesso!");
 	}
 	public void limpar() {
 		System.out.println("ViewOperarAutomato::LImpar");

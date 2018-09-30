@@ -59,10 +59,7 @@ public class TesteAutomatoMinimizar {
 		estadoD.setFinal(true);
 		
 		Automato automatoAFD;
-		
-		OperarAutomato operar;
-		operar = new OperarAutomato();
-		automatoAFD = operar.eliminarEstadosInalcansaveis(automatoAFND);
+		automatoAFD = OperarAutomato.eliminarEstadosInalcansaveis(automatoAFND);
 		
 		automatoAFND.print();
 		System.out.println("\n--------------------\n");
@@ -115,10 +112,7 @@ public class TesteAutomatoMinimizar {
 		estadoF.setFinal(true);
 		
 		Automato automatoAFD;
-		
-		OperarAutomato operar;
-		operar = new OperarAutomato();
-		automatoAFD = operar.eliminarEstadosMortos(automatoAFND);
+		automatoAFD = OperarAutomato.eliminarEstadosMortos(automatoAFND);
 		
 		automatoAFND.print();
 		System.out.println("\n--------------------\n");
@@ -171,12 +165,9 @@ public class TesteAutomatoMinimizar {
 		estadoF.setFinal(true);
 		
 		Automato automatoAFD;
-		
-		OperarAutomato operar;
-		operar = new OperarAutomato();
-		automatoAFD = operar.eliminarEstadosInalcansaveis(automatoAFND);
-		automatoAFD = operar.eliminarEstadosMortos(automatoAFD);
-		automatoAFD = operar.eliminarEstadosDuplicados(automatoAFD);
+		automatoAFD = OperarAutomato.eliminarEstadosInalcansaveis(automatoAFND);
+		automatoAFD = OperarAutomato.eliminarEstadosMortos(automatoAFD);
+		automatoAFD = OperarAutomato.eliminarEstadosDuplicados(automatoAFD);
 		
 		automatoAFND.print();
 		System.out.println("\n--------------------\n");
