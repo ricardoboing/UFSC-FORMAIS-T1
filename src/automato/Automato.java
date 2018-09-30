@@ -194,11 +194,20 @@ public class Automato implements Linguagem {
 	}
 	
 	public void alterarSimboloDosEstados() {
+		this.estadoInicial.setSimbolo("q0");
+		int i;
+		i = 1;
+		
 		// Altera o simbolo dos estados. Essa etapa nao pode ser realizada durante o mapeamento de "NaoTerminal" para "Estado"
 		for (int c = 0; c < this.conjuntoEstado.size(); c++) {
 			Estado estado;
 			estado = this.conjuntoEstado.get(c);
-			estado.setSimbolo("q"+c);
+			
+			if (estado == this.estadoInicial) {
+				continue;
+			}
+			estado.setSimbolo("q"+i);
+			i++;
 		}
 	}
 	private void gerarAutomato(Gramatica gramatica) {

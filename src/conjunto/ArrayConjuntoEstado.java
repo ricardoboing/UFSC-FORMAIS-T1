@@ -69,8 +69,10 @@ public class ArrayConjuntoEstado {
 			// Considera-se que o automato seja deterministico (possui apenas uma transicao por entrada)
 			Estado estadoDestinoDoEstado1, estadoDestinoDoEstado2;
 			estadoDestinoDoEstado1 = transicaoDoEstado1.getEstadoDestino();
-			estadoDestinoDoEstado2 = conjuntoTransicaoDoEstado2PorEntrada.get(0).getEstadoDestino();
-			
+			estadoDestinoDoEstado2 = null;
+			if (conjuntoTransicaoDoEstado2PorEntrada.size() > 0) {
+				estadoDestinoDoEstado2 = conjuntoTransicaoDoEstado2PorEntrada.get(0).getEstadoDestino();
+			}
 			if (estadoDestinoDoEstado1 == null && estadoDestinoDoEstado2 == null) {
 				continue;
 			}

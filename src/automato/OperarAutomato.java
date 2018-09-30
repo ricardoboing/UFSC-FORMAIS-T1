@@ -205,7 +205,7 @@ public class OperarAutomato {
 		novoAutomato = this.determinizar(novoAutomato);
 		novoAutomato = this.eliminarEstadosInalcansaveis(novoAutomato);
 		novoAutomato = this.eliminarEstadosMortos(novoAutomato);
-		novoAutomato = this.eliminarEstadosMortos(novoAutomato);
+		novoAutomato = this.eliminarEstadosDuplicados(novoAutomato);
 		
 		novoAutomato.alterarSimboloDosEstados();
 		
@@ -361,7 +361,11 @@ public class OperarAutomato {
 				arrayConjuntoEstadoNovo.add(conjuntoEstadoAnteriorClone);
 				
 				Estado primeiroEstadoDoConjuntoEstado;
-				primeiroEstadoDoConjuntoEstado = conjuntoEstadoAnteriorClone.get(0);
+				primeiroEstadoDoConjuntoEstado = null;
+				
+				if (conjuntoEstadoAnteriorClone.size() > 0) {
+					primeiroEstadoDoConjuntoEstado = conjuntoEstadoAnteriorClone.get(0);
+				}
 				
 				for (int i = 1; i < conjuntoEstadoAnteriorClone.size(); i++) {
 					Estado estadoDoConjuntoEstadoAnteriorClone;
@@ -391,6 +395,10 @@ public class OperarAutomato {
 		for (int c = 0; c < arrayConjuntoEstadoNovo.size(); c++) {
 			ConjuntoEstado conjuntoEstado;
 			conjuntoEstado = arrayConjuntoEstadoNovo.get(c);
+			
+			if (conjuntoEstado.size() == 0) {
+				continue;
+			}
 			
 			// O primeiro estado do conjuntoDeEstadosEquivalentes eh o estado adicionado no novoAutomato
 			Estado primeiroEstadoDoConjuntoEstado;
