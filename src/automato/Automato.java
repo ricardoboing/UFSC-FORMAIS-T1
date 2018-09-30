@@ -35,8 +35,8 @@ public class Automato implements Linguagem {
 		this.estadoInicial = null;
 		
 		this.nomePai1 = "";
-		this.nomeOperacaoGerador1 = "";
 		this.nomePai2 = "";
+		this.nomeOperacaoGerador1 = "";
 		
 		this.conjuntoEstado = new ConjuntoEstado();
 		this.conjuntoAlfabeto = new ConjuntoAlfabeto();
@@ -193,6 +193,14 @@ public class Automato implements Linguagem {
 		return stringConjuntoTransicaoCompleto;
 	}
 	
+	public void alterarSimboloDosEstados() {
+		// Altera o simbolo dos estados. Essa etapa nao pode ser realizada durante o mapeamento de "NaoTerminal" para "Estado"
+		for (int c = 0; c < this.conjuntoEstado.size(); c++) {
+			Estado estado;
+			estado = this.conjuntoEstado.get(c);
+			estado.setSimbolo("q"+c);
+		}
+	}
 	private void gerarAutomato(Gramatica gramatica) {
 		this.conjuntoAlfabeto = gramatica.getConjuntoAlfabeto().clone();
 		
@@ -258,12 +266,7 @@ public class Automato implements Linguagem {
 		this.conjuntoEstado.remove(estadoFinal);
 		this.conjuntoEstado.add(estadoFinal);
 		
-		// Altera o simbolo dos estados. Essa etapa nao pode ser realizada durante o mapeamento de "NaoTerminal" para "Estado"
-		for (int c = 0; c < this.conjuntoEstado.size(); c++) {
-			Estado estado;
-			estado = this.conjuntoEstado.get(c);
-			estado.setSimbolo("q"+c);
-		}
+		this.alterarSimboloDosEstados();
 	}
 	private void gerarAutomato(Expressao expressao) {
 		NoDeSimone no;

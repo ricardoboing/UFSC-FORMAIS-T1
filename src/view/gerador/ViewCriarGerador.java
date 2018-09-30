@@ -52,8 +52,8 @@ public class ViewCriarGerador extends View {
 		this.buttonSalvar.addActionListener(event);
 		this.buttonLimpar.addActionListener(event);
 		
-		this.buttonSalvar.setBounds(540, 519, 120, 35);
-		this.buttonLimpar.setBounds(669, 519, 120, 35);
+		this.buttonSalvar.setBounds(530, 519, 120, 35);
+		this.buttonLimpar.setBounds(659, 519, 120, 35);
 		
 		this.addComponent(this.buttonSalvar);
 		this.addComponent(this.buttonLimpar);

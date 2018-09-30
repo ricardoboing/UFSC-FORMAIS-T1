@@ -1,10 +1,12 @@
 package automato;
 
+import conjunto.ConjuntoEstado;
 import conjunto.ConjuntoObject;
 
 public class Estado {
 	private String simbolo;
 	private boolean isInicial, isFinal;
+	private ConjuntoEstado conjuntoEpsilonFecho;
 	
 	private ConjuntoObject<Transicao> transicoes;
 	
@@ -14,6 +16,9 @@ public class Estado {
 		this.isFinal = false;
 		
 		this.transicoes = new ConjuntoObject<Transicao>();
+		
+		this.conjuntoEpsilonFecho = new ConjuntoEstado();
+		this.conjuntoEpsilonFecho.add(this);
 	}
 	
 	// Metodos Add
@@ -73,6 +78,9 @@ public class Estado {
 		}
 		
 		return reconhecedores;
+	}
+	public ConjuntoEstado getConjuntoEpsilonFecho() {
+		return this.conjuntoEpsilonFecho;
 	}
 	
 	public boolean reconhece(char entrada) {

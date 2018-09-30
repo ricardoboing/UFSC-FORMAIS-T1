@@ -17,12 +17,10 @@ public class TableAutomato {
 		this.viewTable = new ViewTable(x, y, width, height);
 		this.simboloEstadoErro = "-";
 	}
-	
 	public void setVisible(boolean visible) {
 		this.viewTable.setVisible(visible);
 	}
-	
-	public JScrollPane getjScrollPane() {
+	public JScrollPane getJScrollPane() {
 		return this.viewTable.getJScrollPane();
 	}
 	

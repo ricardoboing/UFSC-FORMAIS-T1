@@ -1,5 +1,8 @@
 package conjunto;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import automato.Estado;
 import automato.Transicao;
 
@@ -33,5 +36,31 @@ public class ConjuntoEstado extends ConjuntoObject<Estado> {
 		clone.array = super.clone().array;
 		
 		return clone;
+	}
+	
+	public String getToString() {
+		String retorno;
+		retorno = "";
+		
+		ArrayList<String> array;
+		array = new ArrayList<String>();
+		
+		for (int c = 0; c < this.array.size(); c++) {
+			Estado estado;
+			estado = this.array.get(c);
+			
+			array.add(estado.getSimbolo());
+		}
+		
+		Collections.sort(array);
+		
+		for (int c = 0; c < array.size(); c++) {
+			if (c > 0) {
+				retorno += ",";
+			}
+			retorno += array.get(c);
+		}
+		
+		return retorno;
 	}
 }

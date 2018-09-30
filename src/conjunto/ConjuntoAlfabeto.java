@@ -10,7 +10,7 @@ public class ConjuntoAlfabeto extends Conjunto<Character> {
 	@Override
 	public Character add(Character simbolo) {
 		if (simbolo == ManagerLinguagem.EPSILON) {
-			return null;
+			//return null;
 		}
 		
 		return super.add(simbolo);

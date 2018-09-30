@@ -4,24 +4,115 @@ import conjunto.ArrayConjuntoEstado;
 import conjunto.ConjuntoAlfabeto;
 import conjunto.ConjuntoEstado;
 import conjunto.ConjuntoObject;
+import view.principal.ManagerLinguagem;
 
 public class OperarAutomato {
 	public OperarAutomato() {}
 	
+	public void gerarConjuntoEpsilonFecho(Automato automatoAFND) {
+		/*	Percorre todas as transicoes
+		 * 		Se o simbolo da transicao nao for epsilon
+		 * 			continue
+		 * 		Fim
+		 * 		Adiciona o estadoDestino no conjuntoEpsilonFecho
+		 * 	Fim
+		*/
+		
+		ConjuntoEstado conjuntoEstado;
+		conjuntoEstado = automatoAFND.getConjuntoEstado();
+		
+		for (int c = 0; c < conjuntoEstado.size(); c++) {
+			Estado estado;
+			estado = conjuntoEstado.get(c);
+			
+			ConjuntoEstado conjuntoEpsilonFecho;
+			conjuntoEpsilonFecho = estado.getConjuntoEpsilonFecho();
+			
+			ConjuntoObject<Transicao> conjuntoTransicao;
+			conjuntoTransicao = estado.getConjuntoTransicao();
+			
+			for (int i = 0; i < conjuntoTransicao.size(); i++) {
+				Transicao transicao;
+				transicao = conjuntoTransicao.get(i);
+				
+				Estado estadoDestino;
+				estadoDestino = transicao.getEstadoDestino();
+				
+				if  (transicao.getSimboloEntrada() == ManagerLinguagem.EPSILON) {
+					conjuntoEpsilonFecho.add(estadoDestino);
+				}
+			}
+		}
+		
+		/*
+		 * 	Enquanto houveMudanca
+		 * 		Para todos os estadoDoAutomato
+		 * 			Obtem conjuntoEpsilonFechoDoEstadoDoAutomato
+		 * 			Para todo estadoDoConjuntoEpsilonFecho
+		 * 				Obtem conjuntoEpsilonFechoDoEstadoDoConjuntoEpsilonFecho
+		 * 				Add conjuntoEpsilonFechoDoEstadoDoConjuntoEpsilonFecho no conjuntoEpsilonFecho
+		 * 				Verifica se o tamanho do conjuntoEpsilonFecho mudou
+		 * 				Se o tamanho mudou
+		 * 					houveMudanca = true
+		 * 				Fim
+		 * 			Fim
+		 * 		Fim
+		 * 	Fim
+		 */
+		
+		boolean houveMudanca;
+		houveMudanca = false;
+		
+		do {
+			houveMudanca = false;
+			
+			for (int c = 0; c < conjuntoEstado.size(); c++) {
+				Estado estado;
+				estado = conjuntoEstado.get(c);
+				
+				ConjuntoEstado conjuntoEpsilonFecho;
+				conjuntoEpsilonFecho = estado.getConjuntoEpsilonFecho();
+				
+				for (int i = 0; i < conjuntoEpsilonFecho.size(); i++) {
+					Estado estadoEpsilonFecho;
+					estadoEpsilonFecho = conjuntoEpsilonFecho.get(i);
+					
+					int sizeAntes;
+					sizeAntes = conjuntoEpsilonFecho.size();
+					
+					conjuntoEpsilonFecho.add(estadoEpsilonFecho.getConjuntoEpsilonFecho());
+					
+					if (sizeAntes != conjuntoEpsilonFecho.size()) {
+						houveMudanca = true;
+					}
+				}
+			}
+		} while(houveMudanca);
+	}
 	public Automato determinizar(Automato automatoAFND) {
+		this.gerarConjuntoEpsilonFecho(automatoAFND);
+		
 		Estado estadoInicialAFND;
 		estadoInicialAFND = automatoAFND.getEstadoInicial();
 		
+		String simboloEstadoInicialAFD;
+		simboloEstadoInicialAFD = estadoInicialAFND.getConjuntoEpsilonFecho().getToString();
+		
 		Estado estadoInicialAFD;
-		estadoInicialAFD = new Estado(estadoInicialAFND.getSimbolo());
+		estadoInicialAFD = new Estado(simboloEstadoInicialAFD);
 		
 		ConjuntoAlfabeto conjuntoAlfabeto;
-		conjuntoAlfabeto = automatoAFND.getConjuntoAlfabeto();
+		conjuntoAlfabeto = automatoAFND.getConjuntoAlfabeto().clone();
+		conjuntoAlfabeto.remove(ManagerLinguagem.EPSILON);
 		
 		Automato automatoAFD;
 		automatoAFD = new Automato();
 		automatoAFD.setEstadoInicial(estadoInicialAFD);
 		automatoAFD.setConjuntoAlfabeto(conjuntoAlfabeto);
+		
+		if (estadoInicialAFND.isFinal()) {
+			estadoInicialAFD.setFinal(true);
+		}
 		
 		ConjuntoEstado conjuntoEstadoAFD;
 		conjuntoEstadoAFD = automatoAFD.getConjuntoEstado();
@@ -45,15 +136,18 @@ public class OperarAutomato {
 				char entradaDoAlfabeto;
 				entradaDoAlfabeto = conjuntoAlfabeto.get(j);
 				
-				String simboloNovoEstadoAFD;
-				simboloNovoEstadoAFD = "";
+				String[] simbolosEstadoAFND;
+				simbolosEstadoAFND = simboloEstadoAFD.split(",");
+				
+				ConjuntoEstado conjunto;
+				conjunto = new ConjuntoEstado();
 				
 				/* Cada caracter do simbolo do estadoAFD corresponde
 				 * a um estadoAFND.
 				 */
-				for (int i = 0; i < simboloEstadoAFD.length(); i++) {
+				for (int i = 0; i < simbolosEstadoAFND.length; i++) {
 					String simboloEstadoAFND;
-					simboloEstadoAFND = simboloEstadoAFD.substring(i, i+1);
+					simboloEstadoAFND = simbolosEstadoAFND[i];
 					
 					Estado estadoAFND;
 					estadoAFND = automatoAFND.getEstado(simboloEstadoAFND);
@@ -67,8 +161,8 @@ public class OperarAutomato {
 					conjuntoTransicaoEstadoAFND = estadoAFND.getConjuntoTransicao();
 					
 					/* O novoEstadoAFD possui como simbolo a concatenacao do
-					 * simbolo de todos estadosDestinoAFND cuja transicao
-					 * reconhece a entradaDoAlfabeto
+					 * simbolo de todos estadosEpsilonFecho de todos os 
+					 * estadosDestinoAFND cuja transicao reconhece a entradaDoAlfabeto
 					 */
 					for (int k = 0; k < conjuntoTransicaoEstadoAFND.size(); k++) {
 						Transicao transicaoAFND;
@@ -78,10 +172,13 @@ public class OperarAutomato {
 							Estado estadoDestinoAFND;
 							estadoDestinoAFND = transicaoAFND.getEstadoDestino();
 							
-							simboloNovoEstadoAFD += estadoDestinoAFND.getSimbolo();
+							conjunto.add(estadoDestinoAFND.getConjuntoEpsilonFecho());
 						}
 					}
 				}
+				
+				String simboloNovoEstadoAFD;
+				simboloNovoEstadoAFD = conjunto.getToString();
 				
 				/* Cria o novoEstadoAFD somente caso seja formado por
 				 * pelo menos um estadoDestinoAFND
@@ -98,6 +195,8 @@ public class OperarAutomato {
 			}
 		}
 		
+		//automatoAFD.alterarSimboloDosEstados();
+		
 		return automatoAFD;
 	}
 	public Automato minimizar(Automato automato) {
@@ -107,6 +206,8 @@ public class OperarAutomato {
 		novoAutomato = this.eliminarEstadosInalcansaveis(novoAutomato);
 		novoAutomato = this.eliminarEstadosMortos(novoAutomato);
 		novoAutomato = this.eliminarEstadosMortos(novoAutomato);
+		
+		novoAutomato.alterarSimboloDosEstados();
 		
 		return novoAutomato;
 	}

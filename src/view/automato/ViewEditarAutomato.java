@@ -76,7 +76,7 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		this.addComponent(this.inputGerador1);
 		this.addComponent(this.inputGerador2);
 		this.addComponent(this.menuLateral.getJPanel());
-		this.addComponent(this.tableAutomato.getjScrollPane());
+		this.addComponent(this.tableAutomato.getJScrollPane());
 	}
 	private void loadButton() {
 		EventViewEditarAutomato event;

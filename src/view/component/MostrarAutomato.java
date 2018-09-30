@@ -18,7 +18,7 @@ public class MostrarAutomato {
 	}
 	
 	public JScrollPane getAutomatoJScrollPane() {
-		return this.table.getjScrollPane();
+		return this.table.getJScrollPane();
 	}
 	
 	public void hideAutomato() {
