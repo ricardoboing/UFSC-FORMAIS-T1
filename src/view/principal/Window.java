@@ -25,7 +25,7 @@ public class Window {
 		this.loadContentPane();
 		this.loadMenuBar();
 		
-		this.alterarView(EView.AF_EDITAR);
+		this.alterarView(EView.AF_CRIAR);
 		this.frame.setVisible(true);
 	}
 	
@@ -71,6 +71,9 @@ public class Window {
 	
 	public static void insertMessage(String message, String title) {
 		JOptionPane.showMessageDialog(null, message, title, JOptionPane.INFORMATION_MESSAGE);
+	}
+	public static void insertMessageFalha(String message) {
+		JOptionPane.showMessageDialog(null, message, "Falhou!", JOptionPane.WARNING_MESSAGE);
 	}
 	public static void insertMessageEntradaInvalida() {
 		JOptionPane.showMessageDialog(null, "Entrada invalida!", "Falha!", JOptionPane.WARNING_MESSAGE);

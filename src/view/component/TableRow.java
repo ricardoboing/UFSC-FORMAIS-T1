@@ -12,8 +12,21 @@ public class TableRow {
 	public void addColumn(String column) {
 		this.columns.add(column);
 	}
+	public void removeLastColumn() {
+		if (this.columns.size() > 0) {
+			this.columns.remove(this.columns.size()-1);
+		}
+	}
+	public void removeAllColumn() {
+		while (this.columns.size() > 0) {
+			this.columns.remove(0);
+		}
+	}
 	
-	public int get_n_column() {
+	public String getColumn(int i) {
+		return this.columns.get(i);
+	}
+	public int size() {
 		return this.columns.size();
 	}
 	

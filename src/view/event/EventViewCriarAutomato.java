@@ -18,11 +18,23 @@ public class EventViewCriarAutomato implements ActionListener {
 		actionCommand = e.getActionCommand();
 		
 		switch (actionCommand) {
-			case "D":
-				
+			case "SALVAR":
+				this.view.salvar();
 				break;
-			case "M":
-				
+			case "LIMPAR":
+				this.view.limpar();
+				break;
+			case "ADICIONAR_SIMBOLO":
+				this.view.adicionarSimbolo();
+				break;
+			case "REMOVER_SIMBOLO":
+				this.view.removerSimbolo();
+				break;
+			case "ADICIONAR_ESTADO":
+				this.view.adicionarEstado();
+				break;
+			case "REMOVER_ESTADO":
+				this.view.removerEstado();
 				break;
 			default:
 				break;

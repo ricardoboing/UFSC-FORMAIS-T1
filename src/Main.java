@@ -4,9 +4,9 @@ import view.principal.Window;
 
 public class Main {
 	/*	[X] Minimizacao AFD (falta arrumar as chamadas do metodo)
-	 * 	[ ] Interseccao AFD ()
-	 * 	[ ] Uniao AFD       ()
-	 *  [X] AFND -> AFD     (falta teste exaustivo
+	 * 	[X] Interseccao AFD (falta teste exaustivo)
+	 * 	[X] Uniao AFD       (falta teste exaustivo)
+	 *  [X] AFND -> AFD     (falta teste exaustivo)
 	 *  [X] GR   -> AFND    (falta teste exaustivo)
 	 * 	[X] AFD  -> GR      (falta teste exaustivo)
 	 * 	[X] ER   -> AFD     (falta teste exaustivo; gerando estado duplicado)

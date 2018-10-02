@@ -62,7 +62,9 @@ public class ViewTable {
 	public void addMouseListener(MouseListener mouseListener) {
 		this.swingTable.addMouseListener(mouseListener);
 	}
-	
+	public void setEditable(boolean isEditable) {
+		this.swingTable.setEditable(isEditable);
+	}
 	public void setVisible(boolean visible) {
 		this.scroll.setVisible(visible);
 		this.swingTable.setVisible(visible);
@@ -74,5 +76,33 @@ public class ViewTable {
 	}
 	public DefaultTableModel getDefaultTableModel() {
 		return this.model;
+	}
+	public String getValue(int i, int j) {
+		return this.model.getValueAt(i, j).toString();
+	}
+	public void removeLastRow() {
+		this.model.removeRow(this.model.getRowCount()-1);
+	}
+	public void removeLastColumn() {
+		this.model.removeRow(this.model.getColumnCount()-1);
+	}
+	public void addRow() {
+		String[] row = new String[this.model.getColumnCount()];
+		
+		for (int c = 0; c < this.model.getColumnCount(); c++) {
+			row[c] = "";
+		}
+		
+		this.model.addRow(row);
+	}
+	public void addColumn() {
+		this.model.addColumn("");
+	}
+	
+	public int numeroRows() {
+		return this.model.getRowCount();
+	}
+	public int numeroColumns() {
+		return this.model.getColumnCount();
 	}
 }

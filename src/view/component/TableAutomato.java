@@ -24,6 +24,10 @@ public class TableAutomato {
 		return this.viewTable.getJScrollPane();
 	}
 	
+	public ViewTable getViewTable() {
+		return this.viewTable;
+	}
+	
 	public void montarTable(Automato automato) {
 		ConjuntoEstado estados;
 		estados = automato.getConjuntoEstado();
