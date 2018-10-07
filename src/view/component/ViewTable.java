@@ -3,106 +3,84 @@ package view.component;
 import java.awt.event.MouseListener;
 
 import javax.swing.JScrollPane;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.JTable;
 
 public class ViewTable {
-	private DefaultTableModel model;
-	private SwingTable swingTable;
-	private JScrollPane scroll;
-	private Table table;
+	protected Table table;
+	protected JTable jTable;
+	protected JScrollPane scrollPane;
 	
-	private int x, y;
-	private int width, height;
+	protected MouseListener mouseListener;
 	
 	/* Metodos Construtor */
 	public ViewTable(int x, int y, int width, int height) {
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
+		this.scrollPane = new JScrollPane();
+		this.scrollPane.setBounds(x, y, width, height);
 		
-		this.loadSwingTable();
+		this.table = new Table();
+		this.recritarJTable();
 	}
-	
-	/* Metodos Load */
-	private void loadSwingTable() {
-		this.swingTable = new SwingTable();
-		this.swingTable.setBounds(this.x, this.y, this.width, this.height);
-		this.swingTable.getTableHeader().setReorderingAllowed(false);
-		this.swingTable.setCellSelectionEnabled(false);
+	protected void recritarJTable() {
+		this.jTable = new JTable(this.table.getCorpo(),this.table.getCabecalho()) {
+			@Override
+			public boolean isCellEditable(int r, int c) {
+				return false;
+			}
+		};
 		
-		this.loadScrollPane();
-	}
-	private void loadScrollPane() {
-		this.scroll = new JScrollPane();
-		this.scroll.setBounds(this.x, this.y, this.width, this.height);
-		this.scroll.setViewportView(this.swingTable);
-	}
-	public void reloadModel() {
-		this.model = new DefaultTableModel(null, this.table.getHead().to_object());
+		this.jTable.setBounds(this.scrollPane.getBounds());
+		this.jTable.getTableHeader().setReorderingAllowed(false);
+		this.jTable.setCellSelectionEnabled(false);
 		
-		int c;
-		for (c = 0; c < this.table.size(); c++) {
-			this.model.addRow( table.getBody(c).to_object() );
+		if (this.mouseListener != null) {
+			this.jTable.addMouseListener(this.mouseListener);
 		}
 		
-		this.swingTable.setModel(this.model);
+		this.scrollPane.setViewportView(this.jTable);
 	}
-	
 	public void repaint() {
-		this.swingTable.repaint();
-		this.scroll.repaint();
+		this.jTable.repaint();
+		this.scrollPane.repaint();
 	}
 	
-	/* Metodos Setter */
-	public void setTable(Table table) {
-		this.table = table;
-		this.reloadModel();
+	public void addLinha() {
+		this.table.addLinha();
+	}
+	public void addColuna() {
+		this.table.addColuna();
 	}
 	public void addMouseListener(MouseListener mouseListener) {
-		this.swingTable.addMouseListener(mouseListener);
+		this.mouseListener = mouseListener;
+		this.jTable.addMouseListener(mouseListener);
 	}
-	public void setEditable(boolean isEditable) {
-		this.swingTable.setEditable(isEditable);
+	
+	public void removeUltimaColuna() {
+		this.table.removerUltimaColuna();
 	}
+	public void removeUltimaLinha() {
+		this.table.removerUltimaLinha();
+	}
+	public void removerTodasLinhas() {
+		this.table = new Table();
+	}
+	
 	public void setVisible(boolean visible) {
-		this.scroll.setVisible(visible);
-		this.swingTable.setVisible(visible);
+		this.scrollPane.setVisible(visible);
+		this.jTable.setVisible(visible);
+	}
+	public void setHeader(String header[]) {
+		this.table.setCabecalho(header);
+		this.scrollPane.remove(this.jTable);
+		
+		this.recritarJTable();
+	}
+	public void setTable(Table table) {
+		this.table = table;
+		this.scrollPane.remove(this.jTable);
+		this.recritarJTable();
 	}
 	
-	/* Metodos Getter */
 	public JScrollPane getJScrollPane() {
-		return this.scroll;
-	}
-	public DefaultTableModel getDefaultTableModel() {
-		return this.model;
-	}
-	public String getValue(int i, int j) {
-		return this.model.getValueAt(i, j).toString();
-	}
-	public void removeLastRow() {
-		this.model.removeRow(this.model.getRowCount()-1);
-	}
-	public void removeLastColumn() {
-		this.model.removeRow(this.model.getColumnCount()-1);
-	}
-	public void addRow() {
-		String[] row = new String[this.model.getColumnCount()];
-		
-		for (int c = 0; c < this.model.getColumnCount(); c++) {
-			row[c] = "";
-		}
-		
-		this.model.addRow(row);
-	}
-	public void addColumn() {
-		this.model.addColumn("");
-	}
-	
-	public int numeroRows() {
-		return this.model.getRowCount();
-	}
-	public int numeroColumns() {
-		return this.model.getColumnCount();
+		return this.scrollPane;
 	}
 }

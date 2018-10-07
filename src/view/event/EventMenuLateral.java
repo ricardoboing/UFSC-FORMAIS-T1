@@ -3,8 +3,9 @@ package view.event;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import javax.swing.JTable;
+
 import view.component.MenuLateral;
-import view.component.SwingTable;
 
 public class EventMenuLateral implements MouseListener {
 	private MenuLateral menuLateral;
@@ -15,8 +16,8 @@ public class EventMenuLateral implements MouseListener {
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		SwingTable swingTable;
-		swingTable = (SwingTable) e.getComponent();
+		JTable swingTable;
+		swingTable = (JTable) e.getComponent();
 		
 		int countSelected;
 		countSelected = swingTable.getSelectedRow();

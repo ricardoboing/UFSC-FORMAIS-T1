@@ -3,59 +3,100 @@ package view.component;
 import java.util.ArrayList;
 
 public class Table {
-	private TableRow head;
-	private ArrayList<TableRow> body;
+	protected ArrayList<ArrayList<String>> table;
+	protected String[] cabecalho;
+	protected int numeroColunas;
 	
-	/* Metodos Construtor */
-	public Table(TableRow head) {
-		this.head = head;
-		this.reload();
-	}
-	public void reload() {
-		this.body = new ArrayList<TableRow>();
+	public Table() {
+		this.cabecalho = new String[0];
+		this.numeroColunas = 1;
+		this.table = new ArrayList<ArrayList<String>>();
 	}
 	
-	/* Metodos add/remove */
-	public void addRow(TableRow row) {
-		this.body.add(row);
+	public void addLinha() {
+		this.addLinha(null);
 	}
-	public void addColumn(String column) {
-		for (int c = 0; c < this.body.size(); c++) {
-			this.body.get(c).addColumn(column);
+	public void addLinha(String conteudo[]) {
+		ArrayList<String> novaColuna;
+		novaColuna = new ArrayList<String>();
+		
+		for (int c = 0; c < this.numeroColunas; c++) {
+			String valor;
+			valor = null;
+			
+			if (conteudo != null) {
+				valor = conteudo[c];
+			}
+			novaColuna.add(valor);
 		}
-		this.head.addColumn("Entrada");
+		
+		this.table.add(novaColuna);
 	}
-	public void removeLastRow() {
-		if (this.body.size() > 0) {
-			this.body.remove(this.body.size()-1);
+	public void addColuna() {
+		String novoCabecalho[];
+		novoCabecalho = new String[this.numeroColunas+1];
+		
+		for (int c = 0; c < numeroColunas; c++) {
+			novoCabecalho[c] = this.cabecalho[c];
 		}
-	}
-	public void removeLastColumn() {
-		for (int c = 0; c < this.body.size(); c++) {
-			this.body.get(c).removeLastColumn();
+		novoCabecalho[this.numeroColunas] = "Simbolo";
+		
+		for (int c = 0; c < this.table.size(); c++) {
+			this.table.get(c).add("");
 		}
-		this.head.removeLastColumn();
-	}
-	public void removeAllRow() {
-		while (this.body.size() > 0) {
-			this.body.remove(0);
-		}
-	}
-	public void removeAllColumn() {
-		for (int c = 0; c < this.body.size(); c++) {
-			this.body.get(c).removeAllColumn();
-		}
-		this.head.removeAllColumn();
+		
+		this.numeroColunas++;
+		this.cabecalho = novoCabecalho;
 	}
 	
-	/* Metodos Getter */
-	public TableRow getHead() {
-		return this.head;
+	
+	public void removerUltimaColuna() {
+		if (this.numeroColunas <= 3) {
+			return;
+		}
+		
+		String novoCabecalho[];
+		novoCabecalho = new String[this.numeroColunas-1];
+		
+		for (int c = 0; c < numeroColunas-1; c++) {
+			novoCabecalho[c] = this.cabecalho[c];
+		}
+		this.cabecalho = novoCabecalho;
+		
+		for (int c = 0; c < this.table.size(); c++) {
+			this.table.get(c).remove(this.numeroColunas-1);
+		}
+		this.numeroColunas--;
 	}
-	public TableRow getBody(int i) {
-		return this.body.get(i);
+	public void removerUltimaLinha() {
+		if (this.table.size() > 0) {
+			this.table.remove(this.table.size()-1);
+		}
 	}
-	public int size() {
-		return this.body.size();
+	public String[][] getCorpo() {
+		String[][] corpo;
+		corpo = new String[this.table.size()][this.numeroColunas];
+		
+		for (int c = 0; c < this.table.size(); c++) {
+			for (int i = 0; i < this.numeroColunas; i++) {
+				corpo[c][i] = this.table.get(c).get(i);
+			}
+		}
+		
+		return corpo;
+	}
+	
+	public void setCabecalho(String[] cabecalho) {
+		this.cabecalho = cabecalho;
+		this.numeroColunas = cabecalho.length;
+	}
+	public String[] getCabecalho() {
+		return this.cabecalho;
+	}
+	public int getNumeroLinhas() {
+		return this.table.size();
+	}
+	public int getNumeroColunas() {
+		return this.numeroColunas;
 	}
 }

@@ -27,11 +27,8 @@ public class EventViewEditarAutomato implements ActionListener {
 			case "SALVAR":
 				this.view.salvar();
 				break;
-			case "EDITAR":
-				this.view.editar();
-				break;
-			case "CANCELAR":
-				this.view.cancelar();
+			case "REMOVER":
+				this.view.remover();
 				break;
 			case "GERAR_GR":
 				this.view.gerarGr();

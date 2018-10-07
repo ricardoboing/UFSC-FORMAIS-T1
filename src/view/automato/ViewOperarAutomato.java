@@ -7,7 +7,6 @@ import automato.OperarAutomato;
 import util.Linguagem;
 import view.View;
 import view.component.ComboBox;
-import view.component.MostrarAutomato;
 import view.event.EventViewOperarAutomato;
 import view.principal.ManagerLinguagem;
 import view.principal.Window;
@@ -15,7 +14,6 @@ import view.principal.Window;
 public class ViewOperarAutomato extends View {
 	private ManagerLinguagem managerLinguagem;
 	
-	private MostrarAutomato mostrarAutomato1, mostrarAutomato2;
 	private ComboBox comboBoxAutomato1, comboBoxAutomato2;
 	
 	private JButton buttonUnir, buttonIntersectar, buttonLimpar;
@@ -31,11 +29,7 @@ public class ViewOperarAutomato extends View {
 	}
 	
 	private void loadMostrarAutomato() {
-		this.mostrarAutomato1 = new MostrarAutomato(20, 100);
-		this.mostrarAutomato2 = new MostrarAutomato(430, 100);
 		
-		this.addComponent(this.mostrarAutomato1.getAutomatoJScrollPane());
-		this.addComponent(this.mostrarAutomato2.getAutomatoJScrollPane());
 	}
 	private void loadLabel() {
 		this.addComponent( this.addJLabel(20, 20, 100, 40, "Automato 1:") );
@@ -87,9 +81,9 @@ public class ViewOperarAutomato extends View {
 		this.buttonIntersectar.setEnabled(valido);
 	}
 	
-	private void atualizarMostrarAutomato(ComboBox comboBox, MostrarAutomato mostrarAutomato) {
+	private void atualizarMostrarAutomato(ComboBox comboBox) {
 		if (comboBox.getIndiceSelected() == 0) {
-			mostrarAutomato.hideAutomato();
+			//mostrarAutomato.hideAutomato();
 			return;
 		}
 		
@@ -103,13 +97,13 @@ public class ViewOperarAutomato extends View {
 			return;
 		}
 		
-		mostrarAutomato.showAutomato((Automato)iLinguagem);
+		//mostrarAutomato.showAutomato((Automato)iLinguagem);
 	}
 	public void atualizarMostrarAutomato1() {
-		this.atualizarMostrarAutomato(comboBoxAutomato1, mostrarAutomato1);
+		//this.atualizarMostrarAutomato(comboBoxAutomato1, mostrarAutomato1);
 	}
 	public void atualizarMostrarAutomato2() {
-		this.atualizarMostrarAutomato(comboBoxAutomato2, mostrarAutomato2);
+		//this.atualizarMostrarAutomato(comboBoxAutomato2, mostrarAutomato2);
 	}
 	
 	public void atualizarJCombox1() {

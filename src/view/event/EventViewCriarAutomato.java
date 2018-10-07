@@ -24,18 +24,6 @@ public class EventViewCriarAutomato implements ActionListener {
 			case "LIMPAR":
 				this.view.limpar();
 				break;
-			case "ADICIONAR_SIMBOLO":
-				this.view.adicionarSimbolo();
-				break;
-			case "REMOVER_SIMBOLO":
-				this.view.removerSimbolo();
-				break;
-			case "ADICIONAR_ESTADO":
-				this.view.adicionarEstado();
-				break;
-			case "REMOVER_ESTADO":
-				this.view.removerEstado();
-				break;
 			default:
 				break;
 		}

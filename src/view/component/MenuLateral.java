@@ -12,8 +12,6 @@ public class MenuLateral {
 	private JPanel panel;
 	private ViewTable viewTable;
 	
-	private Table table;
-	
 	private IViewEditar view;
 	
 	public MenuLateral(IViewEditar view) {
@@ -24,12 +22,7 @@ public class MenuLateral {
 		
 		this.viewTable = new ViewTable(0, 0, 200, 540);
 		this.viewTable.addMouseListener(event);
-		
-		TableRow rowHead;
-		rowHead = new TableRow();
-		rowHead.addColumn("Menu");
-		
-		this.table = new Table(rowHead);
+		this.viewTable.setHeader(new String[] {"Menu"});
 		
 		this.panel = new JPanel();
 		this.panel.setLayout(null);
@@ -39,8 +32,6 @@ public class MenuLateral {
 	}
 	
 	private void load() {
-		this.table.reload();
-		this.viewTable.setTable(this.table);
 		this.panel.add(this.viewTable.getJScrollPane());
 	}
 	private void reload() {
@@ -55,18 +46,25 @@ public class MenuLateral {
 	public void setMenu(ArrayList<Linguagem> array) {
 		this.reload();
 		
+		this.viewTable.removerTodasLinhas();
+		
+		Table table;
+		table = new Table();
+		table.setCabecalho(new String[] {
+			"Menu"
+		});
+		
 		for (int c = 0; c < array.size(); c++) {
 			Linguagem linguagem;
 			linguagem = array.get(c);
 			
-			TableRow row;
-			row = new TableRow();
-			row.addColumn(linguagem.getNome());
-			
-			this.table.addRow(row);
+			table.addLinha(new String[] {
+				linguagem.getNome()
+			});
 		}
 		
-		this.viewTable.reloadModel();
+		this.viewTable.setTable(table);
+		this.repaint();
 	}
 	public void setLinguagem(String nome) {
 		this.view.setLinguagem(nome);
@@ -76,7 +74,6 @@ public class MenuLateral {
 	public JPanel getJPanel() {
 		return this.panel;
 	}
-	
 	public void repaint() {
 		this.panel.repaint();
 		this.viewTable.repaint();

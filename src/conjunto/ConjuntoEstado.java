@@ -24,6 +24,12 @@ public class ConjuntoEstado extends ConjuntoObject<Estado> {
 			transicoes = estado.getConjuntoTransicao();
 			
 			adicionado.addConjuntoTransicao(transicoes);
+			if (estado.isInicial()) {
+				adicionado.setInicial(true);
+			}
+			if (estado.isFinal()) {
+				adicionado.setFinal(true);
+			}
 		}
 		
 		return adicionado;

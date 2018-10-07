@@ -1,6 +1,6 @@
 package view.component;
 
-import javax.swing.JScrollPane;
+import java.util.ArrayList;
 
 import automato.Automato;
 import automato.Estado;
@@ -9,122 +9,89 @@ import conjunto.ConjuntoAlfabeto;
 import conjunto.ConjuntoEstado;
 import conjunto.ConjuntoObject;
 
-public class TableAutomato {
-	private ViewTable viewTable;
-	private String simboloEstadoErro;
-	
-	public TableAutomato(int x, int y, int width, int height) {
-		this.viewTable = new ViewTable(x, y, width, height);
-		this.simboloEstadoErro = "-";
-	}
-	public void setVisible(boolean visible) {
-		this.viewTable.setVisible(visible);
-	}
-	public JScrollPane getJScrollPane() {
-		return this.viewTable.getJScrollPane();
+public class TableAutomato extends Table {
+	public TableAutomato() {
+		super();
 	}
 	
-	public ViewTable getViewTable() {
-		return this.viewTable;
-	}
-	
-	public void montarTable(Automato automato) {
-		ConjuntoEstado estados;
-		estados = automato.getConjuntoEstado();
+	public void setAutomato(Automato automato) {
+		ConjuntoAlfabeto conjuntoAlfabeto;
+		conjuntoAlfabeto = automato.getConjuntoAlfabeto();
 		
-		ConjuntoAlfabeto alfabeto;
-		alfabeto = automato.getConjuntoAlfabeto();
+		ConjuntoEstado conjuntoEstado;
+		conjuntoEstado = automato.getConjuntoEstado();
 		
-		TableRow row_head;
-		row_head = this.montarRowHead(alfabeto);
+		this.table = new ArrayList<ArrayList<String>>();
+		this.numeroColunas = conjuntoAlfabeto.size()+3;
 		
-		TableRow row_inicial;
-		row_inicial = this.montarRow(automato.getEstadoInicial(), alfabeto);
+		String cabecalho[];
+		cabecalho = new String[this.numeroColunas];
+		cabecalho[0] = "Inicial";
+		cabecalho[1] = "Final";
+		cabecalho[2] = "Estado";
 		
-		Table table;
-		table = new Table(row_head);
-		table.addRow(row_inicial);
-		
-		for (int i = 0; i < estados.size(); i++) {
-			Estado estado;
-			estado = estados.get(i);
+		for (int c = 0; c < conjuntoEstado.size()+1; c++) {
+			ArrayList<String> colunas;
+			colunas = new ArrayList<String>();
 			
-			if (estado.isInicial()) {
-				continue;
+			for (int i = 0; i < this.numeroColunas; i++) {
+				colunas.add("");
 			}
 			
-			TableRow row;
-			row = this.montarRow(estado, alfabeto);
+			this.table.add(colunas);
+		}
+		for (int c = 3; c < this.numeroColunas; c++) {
+			cabecalho[c] = "Simbolo";
+		}
+		
+		this.cabecalho = cabecalho;
+		
+		for (int c = 0; c < conjuntoAlfabeto.size(); c++) {
+			String simbolo;
+			simbolo = conjuntoAlfabeto.get(c)+"";
+			simbolo = simbolo.replaceAll(" ", "");
 			
-			table.addRow(row);
+			this.table.get(0).set(c+3, simbolo);
 		}
-		
-		this.viewTable.setTable(table);
-	}
-	
-	private TableRow montarRowHead(ConjuntoAlfabeto alfabeto) {
-		TableRow row_head;
-		row_head = new TableRow();
-		row_head.addColumn("");
-		
-		for (int j = 0; j < alfabeto.size(); j++) {
-			row_head.addColumn(alfabeto.get(j)+"");
-		}
-		
-		return row_head;
-	}
-	private TableRow montarRow(Estado estado, ConjuntoAlfabeto alfabeto) {
-		String inicialFinal;
-		inicialFinal = "";
-		
-		if (estado.isFinal()) {
-			inicialFinal += "*";
-		} else {
-			inicialFinal += " ";
-		}
-		if (estado.isInicial()) {
-			inicialFinal += ">";
-		} else {
-			inicialFinal += " ";
-		}
-		
-		TableRow row;
-		row = new TableRow();
-		row.addColumn(inicialFinal+estado.getSimbolo());
-		
-		for (int i = 0; i < alfabeto.size(); i++) {
-			char simboloAlfabeto;
-			simboloAlfabeto = alfabeto.get(i);
+		for (int c = 0; c < conjuntoEstado.size(); c++) {
+			Estado estado;
+			estado = conjuntoEstado.get(c);
+			
+			if (estado.isInicial()) {
+				this.table.get(c+1).set(0, ">");
+			}
+			if (estado.isFinal()) {
+				this.table.get(c+1).set(1, "*");
+			}
+			
+			this.table.get(c+1).set(2, estado.getSimbolo());
 			
 			ConjuntoObject<Transicao> conjuntoTransicao;
 			conjuntoTransicao = estado.getConjuntoTransicao();
 			
-			String stringColumn;
-			stringColumn = "";
-			
-			for (int j = 0; j < conjuntoTransicao.size(); j++) {
-				Transicao transicao;
-				transicao = conjuntoTransicao.get(j);
+			for (int i = 0; i < conjuntoAlfabeto.size(); i++) {
+				char simboloAlfabeto;
+				simboloAlfabeto = conjuntoAlfabeto.get(i);
 				
-				if (transicao.getSimboloEntrada() == simboloAlfabeto) {
-					Estado destino;
-					destino = transicao.getEstadoDestino();
+				for (int j = 0; j < conjuntoTransicao.size(); j++) {
+					Transicao transicao;
+					transicao = conjuntoTransicao.get(j);
 					
-					if (!stringColumn.equals("")) {
-						stringColumn += ", ";
+					if (transicao.getSimboloEntrada() != simboloAlfabeto) {
+						continue;
 					}
 					
-					stringColumn += destino.getSimbolo();
+					String celulaTable;
+					celulaTable = this.table.get(c+1).get(i+3);
+					
+					if (!celulaTable.equals("")) {
+						celulaTable += ", ";
+					}
+					celulaTable += transicao.getEstadoDestino().getSimbolo();
+					
+					this.table.get(c+1).set(i+3, celulaTable);
 				}
 			}
-			
-			if (stringColumn.equals("")) {
-				row.addColumn(this.simboloEstadoErro);
-			} else {
-				row.addColumn(stringColumn);
-			}
 		}
-		
-		return row;
 	}
 }
