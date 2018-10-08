@@ -28,7 +28,7 @@ public class ViewEditarGerador extends View implements IViewEditar {
 	private LinguagemGerador geradorSelecionado;
 	
 	private JButton buttonEditar, buttonSalvar, buttonCancelar;
-	private JButton buttonGerarAF;
+	private JButton buttonGerarAF, buttonRemover;
 	
 	public ViewEditarGerador(ManagerLinguagem managerLinguagem, ELinguagem eLinguagem) {
 		super();
@@ -58,26 +58,31 @@ public class ViewEditarGerador extends View implements IViewEditar {
 		this.buttonSalvar = new JButton("Salvar");
 		this.buttonCancelar = new JButton("Cancelar");
 		this.buttonGerarAF = new JButton("Gerar AF");
+		this.buttonRemover = new JButton("Remover");
 		
 		this.buttonEditar.setActionCommand("EDITAR");
 		this.buttonSalvar.setActionCommand("SALVAR");
 		this.buttonCancelar.setActionCommand("CANCELAR");
 		this.buttonGerarAF.setActionCommand("GERAR_AF");
+		this.buttonRemover.setActionCommand("REMOVER");
 		
 		this.buttonSalvar.addActionListener(event);
 		this.buttonCancelar.addActionListener(event);
 		this.buttonEditar.addActionListener(event);
 		this.buttonGerarAF.addActionListener(event);
+		this.buttonRemover.addActionListener(event);
 		
 		this.buttonSalvar.setBounds(530, 519, 120, 35);
 		this.buttonCancelar.setBounds(659, 519, 130, 35);
 		this.buttonEditar.setBounds(530, 519, 120, 35);
-		this.buttonGerarAF.setBounds(659, 519, 130, 35);
+		this.buttonGerarAF.setBounds(230, 519, 130, 35);
+		this.buttonRemover.setBounds(659, 519, 130, 35);
 		
 		this.addComponent(this.buttonEditar);
 		this.addComponent(this.buttonSalvar);
 		this.addComponent(this.buttonCancelar);
 		this.addComponent(this.buttonGerarAF);
+		this.addComponent(this.buttonRemover);
 		
 		this.disableComponents();
 	}
@@ -141,6 +146,7 @@ public class ViewEditarGerador extends View implements IViewEditar {
 		
 		this.buttonEditar.setVisible(false);
 		this.buttonGerarAF.setVisible(false);
+		this.buttonRemover.setVisible(false);
 		
 		this.textArea.setEnable(true);
 	}
@@ -190,6 +196,7 @@ public class ViewEditarGerador extends View implements IViewEditar {
 		
 		this.buttonEditar.setVisible(true);
 		this.buttonGerarAF.setVisible(true);
+		this.buttonRemover.setVisible(true);
 		
 		this.textArea.setEnable(false);
 	}
@@ -199,6 +206,7 @@ public class ViewEditarGerador extends View implements IViewEditar {
 		
 		this.buttonEditar.setVisible(true);
 		this.buttonGerarAF.setVisible(true);
+		this.buttonRemover.setVisible(true);
 		
 		this.textArea.setEnable(false);
 	}
@@ -208,6 +216,7 @@ public class ViewEditarGerador extends View implements IViewEditar {
 		this.buttonCancelar.setVisible(false);
 		this.buttonEditar.setVisible(false);
 		this.buttonGerarAF.setVisible(false);
+		this.buttonRemover.setVisible(false);
 		
 		this.textArea.setEnable(false);
 		this.textArea.setText("");
@@ -226,5 +235,22 @@ public class ViewEditarGerador extends View implements IViewEditar {
 		}
 		
 		this.disableComponents();
+	}
+	public void remover() {
+		switch (this.eLinguagem) {
+			case EXPRESSAO:
+				this.managerLinguagem.removerExpressao((Expressao)this.geradorSelecionado);
+				this.menuLateral.setMenu(this.managerLinguagem.getConjuntoExpressao());
+				break;
+			case GRAMATICA:
+				this.managerLinguagem.removerGramatica((Gramatica)this.geradorSelecionado);
+				this.menuLateral.setMenu(this.managerLinguagem.getConjuntoGramatica());
+				break;
+			default:
+				break;
+		}
+		
+		this.geradorSelecionado = null;
+		this.atualizar();
 	}
 }

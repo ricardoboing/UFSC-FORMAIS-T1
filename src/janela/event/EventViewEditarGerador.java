@@ -34,6 +34,9 @@ public class EventViewEditarGerador implements ActionListener {
 				this.view.gerarAf();
 				
 				break;
+			case "REMOVER":
+				this.view.remover();
+				break;
 			default:
 				break;
 		}
