@@ -248,22 +248,7 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		this.automatoSelecionado.setConjuntoAlfabeto(automato.getConjuntoAlfabeto());
 		this.automatoSelecionado.setConjuntoEstado(automato.getConjuntoEstado());
 		this.automatoSelecionado.setEstadoInicial(automato.getEstadoInicial());
-	}
-	public void selecionarArquivo() {
-		String stringAutomato;
-		stringAutomato = Arquivo.openFile(Arquivo.extensaoAutomato);
 		
-		if (stringAutomato == null) {
-			return;
-		}
-		
-		Automato automato;
-		automato = new Automato("", stringAutomato);
-		
-		TableAutomato tableAutomato;
-		tableAutomato = new TableAutomato();
-		tableAutomato.setAutomato(automato);
-		this.viewTableAutomato.setTable(tableAutomato);
-		this.viewTableAutomato.recarregarViewTableAutomato();
+		Arquivo.escrever(this.automatoSelecionado.getNome(), this.automatoSelecionado.getStringConjuntoTransicao(), Arquivo.extensaoAutomato);
 	}
 }

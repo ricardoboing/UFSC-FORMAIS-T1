@@ -342,6 +342,9 @@ public class Gramatica implements LinguagemGerador {
 		boolean naoTerminalInicialPossuiEpsilon;
 		naoTerminalInicialPossuiEpsilon = false;
 		
+		ConjuntoNaoTerminal conjuntoNaoTerminal;
+		conjuntoNaoTerminal = new ConjuntoNaoTerminal();
+		
 		// Cria os naoTerminais, um a um, e cria suas producoes
 		for (int c = 0; c < arrayNaoTerminal.length; c++) {
 			String stringNaoTerminal;
@@ -367,12 +370,22 @@ public class Gramatica implements LinguagemGerador {
 				simboloNaoTerminalInicial = simboloNaoTerminal.charAt(0);
 			}
 			
+			NaoTerminal naoTerminal;
+			naoTerminal = new NaoTerminal(simboloNaoTerminal);
+			
+			conjuntoNaoTerminal.add(naoTerminal);
+		}
+		
+		
+		
+		
+		for (int c = 0; c < arrayNaoTerminal.length; c++) {
+			String stringNaoTerminal;
+			stringNaoTerminal = arrayNaoTerminal[c];
+			
 			String stringProducoes;
 			stringProducoes = stringNaoTerminal.substring(Gramatica.SEPARADOR_NT_PRODUCAO.length()+1);
 			
-			/*	Transforma stringProducoes em array de producoes.
-			 * 	Ex (S-> a | bS): array[0] = "a"; array[1] = "bS";
-			 */
 			String[] arrayProducao;
 			arrayProducao = stringProducoes.split(Gramatica.SEPARADOR_PRODUCAO_SPLIT);
 			
@@ -383,11 +396,11 @@ public class Gramatica implements LinguagemGerador {
 				char simboloTerminal;
 				simboloTerminal = stringProducao.charAt(0);
 				
-				if (simboloTerminal == ManagerLinguagem.EPSILON && i == 0) {
+				if (simboloTerminal == ManagerLinguagem.EPSILON && c == 0) {
 					naoTerminalInicialPossuiEpsilon = true;
 				}
 				
-				if (simboloTerminal == ManagerLinguagem.EPSILON && i != 0) {
+				if (simboloTerminal == ManagerLinguagem.EPSILON && c != 0) {
 					System.out.println("erro 3");
 					return false;
 				}
@@ -402,15 +415,23 @@ public class Gramatica implements LinguagemGerador {
 				}
 				
 				if (stringProducao.length() == 2) {
-					char simboloNaoTerminalDaProducao;
-					simboloNaoTerminalDaProducao = stringProducao.charAt(1);
+					char simboloNaoTerminal;
+					simboloNaoTerminal = stringProducao.charAt(1);
 					
-					if (!AlfabetoPortuguesMaiusculo.validar(simboloNaoTerminalDaProducao)) {
+					if (!AlfabetoPortuguesMaiusculo.validar(simboloNaoTerminal)) {
 						System.out.println("erro 6");
 						return false;
 					}
-					if (naoTerminalInicialPossuiEpsilon && simboloNaoTerminalDaProducao == simboloNaoTerminalInicial) {
+					if (naoTerminalInicialPossuiEpsilon && simboloNaoTerminal == simboloNaoTerminalInicial) {
 						System.out.println("erro 7");
+						return false;
+					}
+					
+					NaoTerminal naoTerminal;
+					naoTerminal = new NaoTerminal(simboloNaoTerminal+"");
+					
+					if (!conjuntoNaoTerminal.contains(naoTerminal)) {
+						System.out.println("erro 8");
 						return false;
 					}
 				}

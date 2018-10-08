@@ -73,6 +73,9 @@ public class ViewTableAutomato extends ViewTable {
 			}
 		}
 		
+		ConjuntoAlfabeto conjuntoAlfabeto;
+		conjuntoAlfabeto = new ConjuntoAlfabeto();
+		
 		// Verifica preenchimento da linha do alfabeto
 		for (int c = 3; c < this.jTable.getColumnCount(); c++) {
 			String valorSimbolo;
@@ -87,6 +90,16 @@ public class ViewTableAutomato extends ViewTable {
 				Window.insertMessageFalha("Entrada invalida! A coluna \"Simbolo\" deve ser preenchida!");
 				return false;
 			}
+			if (valorSimbolo.length() != 1) {
+				Window.insertMessageFalha("Entrada invalida! A coluna \"Simbolo\" deve conter exatamente um simbolo de entrada!");
+				return false;
+			}
+			if (conjuntoAlfabeto.contains(valorSimbolo.charAt(0))) {
+				Window.insertMessageFalha("Entrada invalida! A coluna \"Simbolo\" deve ser preenchida com simbolos nao repetidos!");
+				return false;
+			}
+			
+			conjuntoAlfabeto.add(valorSimbolo.charAt(0));
 		}
 		
 		ConjuntoEstado conjuntoEstado;
