@@ -4,7 +4,7 @@ import conjunto.ArrayConjuntoEstado;
 import conjunto.ConjuntoAlfabeto;
 import conjunto.ConjuntoEstado;
 import conjunto.ConjuntoObject;
-import view.principal.ManagerLinguagem;
+import janela.principal.ManagerLinguagem;
 
 public class OperarAutomato {
 	public static void gerarConjuntoEpsilonFecho(Automato automatoAFND) {

@@ -10,10 +10,10 @@ import conjunto.ConjuntoAlfabeto;
 import conjunto.ConjuntoEstado;
 import conjunto.ConjuntoNaoTerminal;
 import conjunto.ConjuntoObject;
+import janela.principal.ManagerLinguagem;
 import util.AlfabetoPortuguesMaiusculo;
 import util.ELinguagem;
 import util.LinguagemGerador;
-import view.principal.ManagerLinguagem;
 
 public class Gramatica implements LinguagemGerador {
 	public static final String SEPARADOR_NT = "\n";

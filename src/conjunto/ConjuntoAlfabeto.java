@@ -1,6 +1,6 @@
 package conjunto;
 
-import view.principal.ManagerLinguagem;
+import janela.principal.ManagerLinguagem;
 
 public class ConjuntoAlfabeto extends Conjunto<Character> {
 	public ConjuntoAlfabeto() {

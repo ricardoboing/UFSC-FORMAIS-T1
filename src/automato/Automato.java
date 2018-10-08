@@ -12,9 +12,9 @@ import gramatica.Gramatica;
 import gramatica.NaoTerminal;
 import gramatica.Producao;
 import gramatica.Terminal;
+import janela.principal.ManagerLinguagem;
 import util.Linguagem;
 import util.LinguagemGerador;
-import view.principal.ManagerLinguagem;
 
 public class Automato implements Linguagem {
 	private String nome;

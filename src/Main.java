@@ -1,6 +1,6 @@
 import automato.Automato;
 import expressao.NoDeSimone;
-import view.principal.Window;
+import janela.principal.Window;
 
 public class Main {
 	/*	[X] Minimizacao AFD (falta arrumar as chamadas do metodo)
