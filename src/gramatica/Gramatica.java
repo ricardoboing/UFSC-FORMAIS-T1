@@ -318,9 +318,104 @@ public class Gramatica implements LinguagemGerador {
 		return ELinguagem.GRAMATICA;
 	}
 	
+	
+	
+	
+	
+	
+	
+	
+	
 	// Implementar...
-	public static boolean entradaValida(String gramatica) {
+	public static boolean entradaValida(String stringGramatica) {
+		stringGramatica = stringGramatica.replaceAll(" ", "");
 		
+		/*	Transforma stringGramatica em array de naoTerminais.
+		 * 	Ex: array[0] = "S-> a | bA"; array[1] = "A -> b";
+		 */
+		String[] arrayNaoTerminal;
+		arrayNaoTerminal = stringGramatica.split(Gramatica.SEPARADOR_NT);
+		
+		char simboloNaoTerminalInicial;
+		simboloNaoTerminalInicial = ' ';
+		
+		boolean naoTerminalInicialPossuiEpsilon;
+		naoTerminalInicialPossuiEpsilon = false;
+		
+		// Cria os naoTerminais, um a um, e cria suas producoes
+		for (int c = 0; c < arrayNaoTerminal.length; c++) {
+			String stringNaoTerminal;
+			stringNaoTerminal = arrayNaoTerminal[c];
+			
+			String simboloNaoTerminal;
+			simboloNaoTerminal = stringNaoTerminal.substring(0,1);
+			
+			if (stringNaoTerminal.length() < 4) {
+				System.out.println("erro 0");
+				return false;
+			}
+			if (!AlfabetoPortuguesMaiusculo.validar(simboloNaoTerminal.charAt(0))) {
+				System.out.println("erro 1");
+				return false;
+			}
+			if (stringNaoTerminal.charAt(1) != '-' || stringNaoTerminal.charAt(2) != '>') {
+				System.out.println("erro 2");
+				return false;
+			}
+			
+			if (c == 0) {
+				simboloNaoTerminalInicial = simboloNaoTerminal.charAt(0);
+			}
+			
+			String stringProducoes;
+			stringProducoes = stringNaoTerminal.substring(Gramatica.SEPARADOR_NT_PRODUCAO.length()+1);
+			
+			/*	Transforma stringProducoes em array de producoes.
+			 * 	Ex (S-> a | bS): array[0] = "a"; array[1] = "bS";
+			 */
+			String[] arrayProducao;
+			arrayProducao = stringProducoes.split(Gramatica.SEPARADOR_PRODUCAO_SPLIT);
+			
+			for (int i = 0; i < arrayProducao.length; i++) {
+				String stringProducao;
+				stringProducao = arrayProducao[i];
+				
+				char simboloTerminal;
+				simboloTerminal = stringProducao.charAt(0);
+				
+				if (simboloTerminal == ManagerLinguagem.EPSILON && i == 0) {
+					naoTerminalInicialPossuiEpsilon = true;
+				}
+				
+				if (simboloTerminal == ManagerLinguagem.EPSILON && i != 0) {
+					System.out.println("erro 3");
+					return false;
+				}
+				
+				if (AlfabetoPortuguesMaiusculo.validar(simboloTerminal)) {
+					System.out.println("erro 4");
+					return false;
+				}
+				if (stringProducao.length() > 2) {
+					System.out.println("erro 5");
+					return false;
+				}
+				
+				if (stringProducao.length() == 2) {
+					char simboloNaoTerminalDaProducao;
+					simboloNaoTerminalDaProducao = stringProducao.charAt(1);
+					
+					if (!AlfabetoPortuguesMaiusculo.validar(simboloNaoTerminalDaProducao)) {
+						System.out.println("erro 6");
+						return false;
+					}
+					if (naoTerminalInicialPossuiEpsilon && simboloNaoTerminalDaProducao == simboloNaoTerminalInicial) {
+						System.out.println("erro 7");
+						return false;
+					}
+				}
+			}
+		}
 		
 		
 		return true;

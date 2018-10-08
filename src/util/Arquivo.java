@@ -56,7 +56,7 @@ public class Arquivo {
 		Date data;
 		data = new Date();
 		
-		nomeArquivo += "_"+sdf.format(data);
+		nomeArquivo = sdf.format(data)+"_"+nomeArquivo;
 		
 		BufferedWriter buffWrite;
 		
