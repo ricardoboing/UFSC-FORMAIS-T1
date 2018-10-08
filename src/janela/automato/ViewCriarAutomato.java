@@ -5,19 +5,23 @@ import javax.swing.JTextField;
 
 import automato.Automato;
 import janela.View;
-import janela.component.Table;
+import janela.component.TableAutomato;
 import janela.component.ViewTableAutomato;
 import janela.event.EventViewCriarAutomato;
 import janela.principal.ManagerLinguagem;
+import janela.principal.Window;
+import util.Arquivo;
 
 public class ViewCriarAutomato extends View {
 	private ViewTableAutomato viewTableAutomato;
 	private JTextField inputNome;
 	private ManagerLinguagem managerLinguagem;
 	
-	private JButton buttonSalvar, buttonLimpar;
+	private JButton buttonSalvar;
+	private JButton buttonLimpar;
+	private JButton buttonSelecionarArquivo;
 	
-	private Table table;
+	private TableAutomato table;
 	
 	public ViewCriarAutomato(ManagerLinguagem managerLinguagem) {
 		super();
@@ -49,7 +53,7 @@ public class ViewCriarAutomato extends View {
 			">", "*", "q0"
 		};
 		
-		this.table = new Table();
+		this.table = new TableAutomato();
 		this.table.setCabecalho(cabecalho);
 		this.table.addLinha(linhaAlfabeto);
 		this.table.addLinha(linhaEstadoInicial);
@@ -71,11 +75,20 @@ public class ViewCriarAutomato extends View {
 		this.buttonLimpar.addActionListener(event);
 		this.buttonLimpar.setBounds(659, 519, 120, 35);
 		
+		this.buttonSelecionarArquivo = new JButton("Selecionar Arquivo");
+		this.buttonSelecionarArquivo.setActionCommand("SELECIONAR_ARQUIVO");
+		this.buttonSelecionarArquivo.addActionListener(event);
+		this.buttonSelecionarArquivo.setBounds(100, 519, 250, 35);
+		
 		this.addComponent(this.buttonSalvar);
 		this.addComponent(this.buttonLimpar);
+		this.addComponent(this.buttonSelecionarArquivo);
 	}
-	
 	public void salvar() {
+		if (!this.viewTableAutomato.validar()) {
+			return;
+		}
+		
 		Automato novoAutomato;
 		novoAutomato = this.viewTableAutomato.getAutomato();
 		novoAutomato.setNomeOperacaoGerador("NOVO AF");
@@ -85,9 +98,35 @@ public class ViewCriarAutomato extends View {
 		this.managerLinguagem.gerarNomeNovoAutomato();
 		this.managerLinguagem.addAutomato(novoAutomato);
 		
-		this.atualizar();
+		Arquivo.escrever(novoAutomato.getNome(), novoAutomato.getStringConjuntoTransicao(), Arquivo.extensaoAutomato);
+		this.atualizarNome();
+		
+		Window.insertMessage("Automato salvo com sucesso!", "Sucesso!");
 	}
 	public void limpar() {
 		this.viewTableAutomato.limpar();
+	}
+	private void atualizarNome() {
+		this.inputNome.setText(this.managerLinguagem.getNomeNovoAutomato());
+	}
+	@Override
+	public void atualizar() {
+		this.atualizarNome();
+		this.limpar();
+	}
+	public void selecionarArquivo() {
+		String stringAutomato;
+		stringAutomato = Arquivo.openFile(Arquivo.extensaoAutomato);
+		
+		if (stringAutomato == null) {
+			return;
+		}
+		
+		Automato automato;
+		automato = new Automato("", stringAutomato);
+		
+		this.table.setAutomato(automato);
+		this.viewTableAutomato.setTable(this.table);
+		this.viewTableAutomato.recarregarViewTableAutomato();
 	}
 }

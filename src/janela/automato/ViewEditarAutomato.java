@@ -16,6 +16,7 @@ import janela.component.TableAutomato;
 import janela.component.ViewTableAutomato;
 import janela.event.EventViewEditarAutomato;
 import janela.principal.ManagerLinguagem;
+import util.Arquivo;
 import util.Linguagem;
 
 public class ViewEditarAutomato extends View implements IViewEditar {
@@ -39,7 +40,7 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		this.managerLinguagem = managerLinguagem;
 		this.menuLateral = new MenuLateral(this);
 		
-		this.viewTableAutomato = new ViewTableAutomato(230, 62, 550, 320);
+		this.viewTableAutomato = new ViewTableAutomato(230, 62, 550, 280);
 		this.viewTableAutomato.adicionarButtons(this.jPanel);
 		this.viewTableAutomato.setEditavel(false);
 		
@@ -54,14 +55,14 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		this.inputGerador2.setEditable(false);
 		
 		this.addJLabel(230, 20, 70, 25, "Nome:");
-		this.addJLabel(230, 462, 90, 25, "Obtido por");
-		this.labelGerador1 = this.addJLabel(465, 462, 30, 25, "de");
-		this.labelGerador2 = this.addJLabel(640, 462, 20, 25, "e");
+		this.addJLabel(230, 422, 90, 25, "Obtido por");
+		this.labelGerador1 = this.addJLabel(465, 422, 30, 25, "de");
+		this.labelGerador2 = this.addJLabel(635, 422, 20, 25, "e");
 		
 		this.inputNome.setBounds(330, 20, 200, 25);
-		this.inputOperacao.setBounds(330, 460, 120, 25);
-		this.inputGerador1.setBounds(500, 460, 120, 25);
-		this.inputGerador2.setBounds(670, 462, 120, 25);
+		this.inputOperacao.setBounds(330, 420, 120, 25);
+		this.inputGerador1.setBounds(495, 420, 120, 25);
+		this.inputGerador2.setBounds(660, 422, 120, 25);
 		
 		this.loadButton();
 		
@@ -78,13 +79,13 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		
 		this.buttonGerarGr = new JButton("Gerar GR");
 		this.buttonSalvar = new JButton("Salvar");
-		this.buttonRemover = new JButton("REMOVER");
+		this.buttonRemover = new JButton("Remover");
 		this.buttonMinimizar = new JButton("Minimizar");
 		this.buttonDeterminizar = new JButton("Determinizar");
 		
 		this.buttonGerarGr.setActionCommand("GERAR_GR");
 		this.buttonSalvar.setActionCommand("SALVAR");
-		this.buttonRemover.setActionCommand("CANCELAR");
+		this.buttonRemover.setActionCommand("REMOVER");
 		this.buttonMinimizar.setActionCommand("MINIMIZAR");
 		this.buttonDeterminizar.setActionCommand("DETERMINIZAR");
 		
@@ -94,11 +95,11 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		this.buttonMinimizar.addActionListener(event);
 		this.buttonDeterminizar.addActionListener(event);
 		
-		this.buttonSalvar.setBounds(530, 519, 120, 35);
-		this.buttonRemover.setBounds(659, 519, 130, 35);
-		this.buttonGerarGr.setBounds(220, 519, 120, 35);
-		this.buttonMinimizar.setBounds(480, 519, 140, 35);
-		this.buttonDeterminizar.setBounds(629, 519, 160, 35);
+		this.buttonSalvar.setBounds(541, 519, 110, 35);
+		this.buttonRemover.setBounds(660, 519, 120, 35);
+		this.buttonGerarGr.setBounds(230, 470, 120, 35);
+		this.buttonMinimizar.setBounds(230, 519, 140, 35);
+		this.buttonDeterminizar.setBounds(379, 519, 150, 35);
 		
 		this.addComponent(this.buttonGerarGr);
 		this.addComponent(this.buttonSalvar);
@@ -155,7 +156,10 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		this.buttonGerarGr.setVisible(true);
 		this.buttonDeterminizar.setVisible(true);
 		this.buttonMinimizar.setVisible(true);
+		this.buttonSalvar.setVisible(true);
+		this.buttonRemover.setVisible(true);
 		
+		this.viewTableAutomato.setVisible(true);
 		this.viewTableAutomato.setEditavel(true);
 		this.loadTable();
 	}
@@ -201,12 +205,14 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		this.setLinguagem(this.automatoSelecionado.getNome());
 	}
 	
-	public void salvar() {
-		
-	}
 	public void remover() {
+		this.managerLinguagem.removerAutomato(this.automatoSelecionado);
+		this.menuLateral.setMenu(this.managerLinguagem.getConjuntoAutomato());
+		
+		this.viewTableAutomato.limpar();
+		this.automatoSelecionado = null;
+		
 		this.atualizar();
-		this.setLinguagem(this.automatoSelecionado.getNome());
 	}
 	
 	@Override
@@ -228,5 +234,36 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		this.buttonDeterminizar.setVisible(false);
 		
 		this.viewTableAutomato.setEditavel(false);
+		this.viewTableAutomato.setVisible(false);
+	}
+	public void salvar() {
+		if (!this.viewTableAutomato.validar()) {
+			return;
+		}
+		
+		Automato automato;
+		automato = this.viewTableAutomato.getAutomato();
+		automato.print();
+		
+		this.automatoSelecionado.setConjuntoAlfabeto(automato.getConjuntoAlfabeto());
+		this.automatoSelecionado.setConjuntoEstado(automato.getConjuntoEstado());
+		this.automatoSelecionado.setEstadoInicial(automato.getEstadoInicial());
+	}
+	public void selecionarArquivo() {
+		String stringAutomato;
+		stringAutomato = Arquivo.openFile(Arquivo.extensaoAutomato);
+		
+		if (stringAutomato == null) {
+			return;
+		}
+		
+		Automato automato;
+		automato = new Automato("", stringAutomato);
+		
+		TableAutomato tableAutomato;
+		tableAutomato = new TableAutomato();
+		tableAutomato.setAutomato(automato);
+		this.viewTableAutomato.setTable(tableAutomato);
+		this.viewTableAutomato.recarregarViewTableAutomato();
 	}
 }

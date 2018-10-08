@@ -88,8 +88,11 @@ public class Automato implements Linguagem {
 			isFinal = stringEstado.charAt(0);
 			isInicial = stringEstado.charAt(1);
 			
+			int indiceFimDoSimboloEstado;
+			indiceFimDoSimboloEstado = stringEstado.indexOf("->");
+			
 			String simboloDoEstado;
-			simboloDoEstado = stringEstado.substring(2,3);
+			simboloDoEstado = stringEstado.substring(2,indiceFimDoSimboloEstado);
 			
 			Estado estado;
 			estado = new Estado(simboloDoEstado);
@@ -104,7 +107,7 @@ public class Automato implements Linguagem {
 			}
 			
 			String stringTransicoes;
-			stringTransicoes = stringEstado.substring(5);
+			stringTransicoes = stringEstado.substring(indiceFimDoSimboloEstado+2);
 			
 			/*	Transforma stringTransicoes em array de producoes.
 			 * 	Ex (S-> a | bS): array[0] = "a"; array[1] = "bS";
@@ -115,6 +118,10 @@ public class Automato implements Linguagem {
 			for (int i = 0; i < arrayTransicao.length; i++) {
 				String stringTransicao;
 				stringTransicao = arrayTransicao[i];
+				
+				if (stringTransicao.equals("")) {
+					break;
+				}
 				
 				char entradaTransicao;
 				entradaTransicao = stringTransicao.charAt(0);
@@ -491,7 +498,6 @@ public class Automato implements Linguagem {
 	public String getGeradorPor1() {
 		return this.nomeOperacaoGerador1;
 	}
-	
 	
 	public void print() {
 		for (int c = 0; c < this.conjuntoEstado.size(); c++) {

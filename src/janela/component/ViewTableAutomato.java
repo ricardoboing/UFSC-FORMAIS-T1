@@ -45,17 +45,18 @@ public class ViewTableAutomato extends ViewTable {
 		this.buttonAddSimbolo.addActionListener(event);
 	}
 	public boolean validar() {
-		for (int c = 0; c < this.jTable.getRowCount(); c++) {
+		// Verifica preenchimento da coluna de simbolo de estados
+		for (int c = 1; c < this.jTable.getRowCount(); c++) {
 			String valorColunaFinal;
 			valorColunaFinal = (String)this.jTable.getValueAt(c, 1);
 			
-			if (valorColunaFinal == null) {
-				continue;
-			}
-			valorColunaFinal = valorColunaFinal.replaceAll(" ", "");
-			if (!valorColunaFinal.equals("") && !valorColunaFinal.equals("*")) {
-				Window.insertMessageFalha("Entrada invalida! A coluna \"Final\" deve estar com:\nEm branco: estado nao final\n*: estado final");
-				return false;
+			if (valorColunaFinal != null) {
+				valorColunaFinal = valorColunaFinal.replaceAll(" ", "");
+				
+				if (!valorColunaFinal.equals("") && !valorColunaFinal.equals("*")) {
+					Window.insertMessageFalha("Entrada invalida! A coluna \"Final\" deve estar em branco (estado nao final)\nou contendo o caracter * (estado final)");
+					return false;
+				}
 			}
 			
 			String valorColunaEstado;
@@ -63,7 +64,7 @@ public class ViewTableAutomato extends ViewTable {
 			
 			if (valorColunaEstado == null) {
 				Window.insertMessageFalha("Entrada invalida! A coluna \"Estado\" deve ser preenchida!");
-				continue;
+				return false;
 			}
 			valorColunaEstado = valorColunaEstado.replaceAll(" ", "");
 			if (valorColunaEstado.equals("")) {
@@ -72,6 +73,7 @@ public class ViewTableAutomato extends ViewTable {
 			}
 		}
 		
+		// Verifica preenchimento da linha do alfabeto
 		for (int c = 3; c < this.jTable.getColumnCount(); c++) {
 			String valorSimbolo;
 			valorSimbolo = (String)this.jTable.getValueAt(0, c);
@@ -84,6 +86,54 @@ public class ViewTableAutomato extends ViewTable {
 			if (valorSimbolo.equals("")) {
 				Window.insertMessageFalha("Entrada invalida! A coluna \"Simbolo\" deve ser preenchida!");
 				return false;
+			}
+		}
+		
+		ConjuntoEstado conjuntoEstado;
+		conjuntoEstado = new ConjuntoEstado();
+		
+		// Verifica se existem dois estados com mesmo simbolo
+		for (int c = 1; c < this.jTable.getRowCount(); c++) {
+			String simboloEstado;
+			simboloEstado = (String)this.jTable.getValueAt(c, 2);
+			
+			Estado novoEstado;
+			novoEstado = new Estado(simboloEstado);
+			
+			// Estado duplicado
+			if (conjuntoEstado.contains(novoEstado)) {
+				Window.insertMessageFalha("Entrada invalida! Existem um ou mais estados com o mesmo simbolo/nome!");
+				return false;
+			}
+			
+			novoEstado = conjuntoEstado.add(novoEstado);
+		}
+		
+		// Verifica se os estados transitam para estados validos/existentes
+		for (int c = 1; c < this.jTable.getRowCount(); c++) {
+			for (int i = 3; i < this.jTable.getColumnCount(); i++) {
+				String simboloEstadoDestino;
+				simboloEstadoDestino = (String)this.jTable.getValueAt(c, i);
+				
+				if (simboloEstadoDestino == null) {
+					continue;
+				}
+				simboloEstadoDestino = simboloEstadoDestino.replaceAll(" ", "");
+				if (simboloEstadoDestino.equals("")) {
+					continue;
+				}
+				
+				String[] arraySimboloEstadoDestino;
+				arraySimboloEstadoDestino = simboloEstadoDestino.split(",");
+				
+				for (int j = 0; j < arraySimboloEstadoDestino.length; j++) {
+					Estado estadoDestino;
+					estadoDestino = new Estado(arraySimboloEstadoDestino[j]);
+					if (!conjuntoEstado.contains(estadoDestino)) {
+						Window.insertMessageFalha("Entrada invalida! Os estados devem transitar para estados existentes!");
+						return false;
+					}
+				}
 			}
 		}
 		
@@ -142,6 +192,10 @@ public class ViewTableAutomato extends ViewTable {
 			novoEstado.setInicial(isInicial.equals(">"));
 			novoEstado.setFinal(isFinal.equals("*"));
 			
+			if (novoEstado.isInicial()) {
+				novoAutomato.setEstadoInicial(novoEstado);
+			}
+			
 			for (int i = 3; i < this.jTable.getColumnCount(); i++) {
 				String simboloEstadoDestino;
 				simboloEstadoDestino = (String)this.jTable.getValueAt(c, i);
@@ -154,14 +208,19 @@ public class ViewTableAutomato extends ViewTable {
 					continue;
 				}
 				
-				Estado estadoDestino;
-				estadoDestino = new Estado(simboloEstadoDestino);
-				estadoDestino = conjuntoEstado.add(estadoDestino);
+				String[] arraySimboloEstadoDestino;
+				arraySimboloEstadoDestino = simboloEstadoDestino.split(",");
 				
-				String simboloAlfabeto;
-				simboloAlfabeto = (String)this.jTable.getValueAt(0, i);
-				
-				novoEstado.addTransicao(simboloAlfabeto.charAt(0), estadoDestino);
+				for (int j = 0; j < arraySimboloEstadoDestino.length; j++) {
+					Estado estadoDestino;
+					estadoDestino = new Estado(arraySimboloEstadoDestino[j]);
+					estadoDestino = conjuntoEstado.add(estadoDestino);
+					
+					String simboloAlfabeto;
+					simboloAlfabeto = (String)this.jTable.getValueAt(0, i);
+					
+					novoEstado.addTransicao(simboloAlfabeto.charAt(0), estadoDestino);
+				}
 			}
 		}
 		

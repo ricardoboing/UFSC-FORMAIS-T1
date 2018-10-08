@@ -24,6 +24,9 @@ public class EventViewCriarGerador implements ActionListener {
 			case "LIMPAR":
 				this.view.limpar();
 				break;
+			case "SELECIONAR_ARQUIVO":
+				this.view.selecionarArquivo();
+				break;
 			default:
 				break;
 		}

@@ -13,6 +13,7 @@ import janela.component.TextArea;
 import janela.event.EventViewEditarGerador;
 import janela.principal.ManagerLinguagem;
 import janela.principal.Window;
+import util.Arquivo;
 import util.ELinguagem;
 import util.LinguagemGerador;
 
@@ -144,8 +145,9 @@ public class ViewEditarGerador extends View implements IViewEditar {
 		this.textArea.setEnable(true);
 	}
 	public void salvar() {
-		String stringTextArea;
+		String stringTextArea, extensao;
 		stringTextArea = this.textArea.getText();
+		extensao = "";
 		
 		switch (this.eLinguagem) {
 			case GRAMATICA:
@@ -158,6 +160,8 @@ public class ViewEditarGerador extends View implements IViewEditar {
 				gramaticaEditando = (Gramatica)this.geradorSelecionado;
 				gramaticaEditando.gerarGramatica(stringTextArea);
 				
+				extensao = Arquivo.extensaoGramatica;
+				
 				Window.insertMessage("Gramatica salva com sucesso!", "Sucesso!");
 				break;
 			case EXPRESSAO:
@@ -166,10 +170,19 @@ public class ViewEditarGerador extends View implements IViewEditar {
 					break;
 				}
 				
+				extensao = Arquivo.extensaoExpressao;
+				
 				Window.insertMessage("Expressao salva com sucesso!", "Sucesso!");
 				break;
 			default:
 				break;
+		}
+		
+		String nome;
+		nome = this.geradorSelecionado.getNome();
+		
+		if (!extensao.equals("")) {
+			Arquivo.escrever(nome, stringTextArea, extensao);
 		}
 		
 		this.buttonSalvar.setVisible(false);

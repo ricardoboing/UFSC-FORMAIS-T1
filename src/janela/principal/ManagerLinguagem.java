@@ -39,6 +39,24 @@ public class ManagerLinguagem {
 		this.conjuntoExpressao.add(expressao);
 	}
 	
+	public void removerAutomato(Automato automato) {
+		for (int c = 0; c < this.conjuntoAutomato.size(); c++) {
+			Automato automatoDoConjunto;
+			automatoDoConjunto = (Automato)this.conjuntoAutomato.get(c);
+			
+			if (automato.getNome().equals(automatoDoConjunto.getNome())) {
+				this.conjuntoAutomato.remove(c);
+				return;
+			}
+		}
+	}
+	public void removerGramatica(Gramatica gramatica) {
+		this.conjuntoGramatica.remove(gramatica);
+	}
+	public void removerExpressao(Expressao expressao) {
+		this.conjuntoExpressao.remove(expressao);
+	}
+	
 	// Metodos Getters
 	public ArrayList<Linguagem> getConjuntoAutomato() {
 		return conjuntoAutomato;

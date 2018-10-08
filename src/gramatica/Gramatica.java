@@ -320,6 +320,9 @@ public class Gramatica implements LinguagemGerador {
 	
 	// Implementar...
 	public static boolean entradaValida(String gramatica) {
+		
+		
+		
 		return true;
 	}
 }

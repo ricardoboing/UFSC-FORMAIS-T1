@@ -10,6 +10,7 @@ import janela.component.TextArea;
 import janela.event.EventViewCriarGerador;
 import janela.principal.ManagerLinguagem;
 import janela.principal.Window;
+import util.Arquivo;
 import util.ELinguagem;
 
 public class ViewCriarGerador extends View {
@@ -19,7 +20,9 @@ public class ViewCriarGerador extends View {
 	private TextArea textArea;
 	private JTextField inputNome;
 	
-	private JButton buttonSalvar, buttonLimpar;
+	private JButton buttonSalvar;
+	private JButton buttonLimpar;
+	private JButton buttonSelecionarArquivo;
 	
 	public ViewCriarGerador(ManagerLinguagem managerLinguagem, ELinguagem eLinguagem) {
 		super();
@@ -44,19 +47,23 @@ public class ViewCriarGerador extends View {
 		event = new EventViewCriarGerador(this);
 		
 		this.buttonSalvar = new JButton("Salvar");
-		this.buttonLimpar = new JButton("Limpar");
-		
 		this.buttonSalvar.setActionCommand("SALVAR");
-		this.buttonLimpar.setActionCommand("LIMPAR");
-		
 		this.buttonSalvar.addActionListener(event);
-		this.buttonLimpar.addActionListener(event);
-		
 		this.buttonSalvar.setBounds(530, 519, 120, 35);
+		
+		this.buttonLimpar = new JButton("Limpar");
+		this.buttonLimpar.setActionCommand("LIMPAR");
+		this.buttonLimpar.addActionListener(event);
 		this.buttonLimpar.setBounds(659, 519, 120, 35);
+		
+		this.buttonSelecionarArquivo = new JButton("Selecionar Arquivo");
+		this.buttonSelecionarArquivo.setActionCommand("SELECIONAR_ARQUIVO");
+		this.buttonSelecionarArquivo.addActionListener(event);
+		this.buttonSelecionarArquivo.setBounds(100, 519, 250, 35);
 		
 		this.addComponent(this.buttonSalvar);
 		this.addComponent(this.buttonLimpar);
+		this.addComponent(this.buttonSelecionarArquivo);
 	}
 	public void atualizarNome() {
 		switch (this.eLinguagem) {
@@ -72,11 +79,10 @@ public class ViewCriarGerador extends View {
 	}
 	
 	public void salvar() {
-		String stringTextArea;
-		stringTextArea = this.textArea.getText();
-		
-		String nome;
+		String nome, extensao, stringTextArea;
 		nome = this.inputNome.getText();
+		stringTextArea = this.textArea.getText();
+		extensao = "";
 		
 		switch (this.eLinguagem) {
 			case GRAMATICA:
@@ -90,6 +96,8 @@ public class ViewCriarGerador extends View {
 				
 				this.managerLinguagem.addGramatica(gramatica);
 				this.managerLinguagem.gerarNomeNovoGramatica();
+				
+				extensao = Arquivo.extensaoGramatica;
 				
 				Window.insertMessage("Gramatica inserida com sucesso!", "Sucesso!");
 				break;
@@ -105,10 +113,16 @@ public class ViewCriarGerador extends View {
 				this.managerLinguagem.addExpressao(expressao);
 				this.managerLinguagem.gerarNomeNovoExpressao();
 				
+				extensao = Arquivo.extensaoExpressao;
+				
 				Window.insertMessage("Expressao inserida com sucesso!", "Sucesso!");
 				break;
 			default:
 				break;
+		}
+		
+		if (!extensao.equals("")) {
+			Arquivo.escrever(nome, stringTextArea, extensao);
 		}
 		
 		this.atualizar();
@@ -120,5 +134,22 @@ public class ViewCriarGerador extends View {
 	public void atualizar() {
 		this.atualizarNome();
 		this.jPanel.repaint();
+	}
+	public void selecionarArquivo() {
+		String extensao;
+		if (eLinguagem == ELinguagem.GRAMATICA) {
+			extensao = Arquivo.extensaoGramatica;
+		} else {
+			extensao = Arquivo.extensaoExpressao;
+		}
+		
+		String conteudo;
+		conteudo = Arquivo.openFile(extensao);
+		
+		if (conteudo == null) {
+			return;
+		}
+		
+		this.textArea.setText(conteudo);
 	}
 }
