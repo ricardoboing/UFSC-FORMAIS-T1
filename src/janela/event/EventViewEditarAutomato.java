@@ -33,6 +33,9 @@ public class EventViewEditarAutomato implements ActionListener {
 			case "GERAR_GR":
 				this.view.gerarGr();
 				break;
+			case "RECONHECER":
+				this.view.reconhecer();
+				break;
 			default:
 				break;
 		}

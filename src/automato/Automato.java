@@ -546,7 +546,30 @@ public class Automato implements Linguagem {
 	}
 	
 	// Implementar...
-	public static boolean entradaValida(Automato automato) {
-		return true;
+	public boolean reconhecerEntrada(String entrada) {
+		boolean possuiEstadoFinal;
+		possuiEstadoFinal = (this.getConjuntoEstadoFinal().size() != 0);
+		
+		if (entrada == null && (this.estadoInicial.isFinal() || !possuiEstadoFinal)) {
+			System.out.println("1. reconhece");
+			return true;
+		}
+		if (entrada.equals("") && (this.estadoInicial.isFinal() || !possuiEstadoFinal)) {
+			System.out.println("2. reconhece");
+			return true;
+		}
+		
+		for (int c = 0; c < entrada.length(); c++) {
+			if (!this.conjuntoAlfabeto.contains(entrada.charAt(c))) {
+				System.out.println("3. nao reconhece");
+				return false;
+			}
+		}
+		
+		if (this.estadoInicial.reconhece(entrada)) {
+			return true;
+		}
+		
+		return false;
 	}
 }

@@ -105,6 +105,49 @@ public class Estado {
 		
 		return false;
 	}
+	public boolean reconhece(String entrada) {
+		System.out.println(this.simbolo);
+		
+		if (entrada == null) {
+			if (this.isFinal) {
+				System.out.println("5. reconhece");
+				return true;
+			}
+			System.out.println("6. nao reconhece");
+			return false;
+		}
+		if (entrada.equals("")) {
+			if (this.isFinal) {
+				System.out.println("7. reconhece");
+				return true;
+			}
+			System.out.println("8. nao reconhece");
+			return false;
+		}
+		
+		for (int c = 0; c < this.getConjuntoTransicao().size(); c++) {
+			Transicao transicao;
+			transicao = this.getConjuntoTransicao().get(c);
+			
+			char simboloTransicao;
+			simboloTransicao = transicao.getSimboloEntrada();
+			
+			Estado estadoDestino;
+			estadoDestino = transicao.getEstadoDestino();
+			
+			if (entrada.charAt(0) != simboloTransicao) {
+				continue;
+			}
+			
+			if (estadoDestino.reconhece(entrada.substring(1))) {
+				System.out.println("9. reconhece");
+				return true;
+			}
+		}
+		
+		System.out.println("11. nao reconhece");
+		return false;
+	}
 	@Override
 	public boolean equals(Object object) {
 		Estado estado;

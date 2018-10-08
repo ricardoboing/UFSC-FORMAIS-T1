@@ -16,6 +16,7 @@ import janela.component.TableAutomato;
 import janela.component.ViewTableAutomato;
 import janela.event.EventViewEditarAutomato;
 import janela.principal.ManagerLinguagem;
+import janela.principal.Window;
 import util.Arquivo;
 import util.Linguagem;
 
@@ -24,7 +25,7 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 	private ViewTableAutomato viewTableAutomato;
 	
 	private JTextField inputNome;
-	private JTextField inputOperacao;
+	private JTextField inputOperacao, inputReconhecer;
 	private JTextField inputGerador1, inputGerador2;
 	
 	private JLabel labelGerador1, labelGerador2;
@@ -34,6 +35,7 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 	
 	private JButton buttonSalvar, buttonRemover;
 	private JButton buttonMinimizar, buttonDeterminizar, buttonGerarGr;
+	private JButton buttonReconhecer;
 	
 	public ViewEditarAutomato(ManagerLinguagem managerLinguagem) {
 		super();
@@ -48,6 +50,7 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		this.inputOperacao = new JTextField();
 		this.inputGerador1 = new JTextField();
 		this.inputGerador2 = new JTextField();
+		this.inputReconhecer = new JTextField();
 		
 		this.inputNome.setEditable(false);
 		this.inputOperacao.setEditable(false);
@@ -63,6 +66,7 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		this.inputOperacao.setBounds(330, 420, 120, 25);
 		this.inputGerador1.setBounds(495, 420, 120, 25);
 		this.inputGerador2.setBounds(660, 422, 120, 25);
+		this.inputReconhecer.setBounds(530, 470, 120, 35);
 		
 		this.loadButton();
 		
@@ -70,6 +74,7 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		this.addComponent(this.inputOperacao);
 		this.addComponent(this.inputGerador1);
 		this.addComponent(this.inputGerador2);
+		this.addComponent(this.inputReconhecer);
 		this.addComponent(this.menuLateral.getJPanel());
 		this.addComponent(this.viewTableAutomato.getJScrollPane());
 	}
@@ -82,30 +87,35 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		this.buttonRemover = new JButton("Remover");
 		this.buttonMinimizar = new JButton("Minimizar");
 		this.buttonDeterminizar = new JButton("Determinizar");
+		this.buttonReconhecer = new JButton("Reconhecer");
 		
 		this.buttonGerarGr.setActionCommand("GERAR_GR");
 		this.buttonSalvar.setActionCommand("SALVAR");
 		this.buttonRemover.setActionCommand("REMOVER");
 		this.buttonMinimizar.setActionCommand("MINIMIZAR");
 		this.buttonDeterminizar.setActionCommand("DETERMINIZAR");
+		this.buttonReconhecer.setActionCommand("RECONHECER");
 		
 		this.buttonGerarGr.addActionListener(event);
 		this.buttonSalvar.addActionListener(event);
 		this.buttonRemover.addActionListener(event);
 		this.buttonMinimizar.addActionListener(event);
 		this.buttonDeterminizar.addActionListener(event);
+		this.buttonReconhecer.addActionListener(event);
 		
 		this.buttonSalvar.setBounds(541, 519, 110, 35);
 		this.buttonRemover.setBounds(660, 519, 120, 35);
 		this.buttonGerarGr.setBounds(230, 470, 120, 35);
 		this.buttonMinimizar.setBounds(230, 519, 140, 35);
 		this.buttonDeterminizar.setBounds(379, 519, 150, 35);
+		this.buttonReconhecer.setBounds(660, 470, 120, 35);
 		
 		this.addComponent(this.buttonGerarGr);
 		this.addComponent(this.buttonSalvar);
 		this.addComponent(this.buttonRemover);
 		this.addComponent(this.buttonMinimizar);
 		this.addComponent(this.buttonDeterminizar);
+		this.addComponent(this.buttonReconhecer);
 	}
 	
 	private void loadTable() {
@@ -158,6 +168,8 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		this.buttonMinimizar.setVisible(true);
 		this.buttonSalvar.setVisible(true);
 		this.buttonRemover.setVisible(true);
+		this.buttonReconhecer.setVisible(true);
+		this.inputReconhecer.setVisible(true);
 		
 		this.viewTableAutomato.setVisible(true);
 		this.viewTableAutomato.setEditavel(true);
@@ -226,12 +238,14 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		this.labelGerador2.setVisible(false);
 		this.inputGerador1.setVisible(false);
 		this.inputGerador2.setVisible(false);
+		this.inputReconhecer.setVisible(false);
 		
 		this.buttonGerarGr.setVisible(false);
 		this.buttonSalvar.setVisible(false);
 		this.buttonRemover.setVisible(false);
 		this.buttonMinimizar.setVisible(false);
 		this.buttonDeterminizar.setVisible(false);
+		this.buttonReconhecer.setVisible(false);
 		
 		this.viewTableAutomato.setEditavel(false);
 		this.viewTableAutomato.setVisible(false);
@@ -250,5 +264,15 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		this.automatoSelecionado.setEstadoInicial(automato.getEstadoInicial());
 		
 		Arquivo.escrever(this.automatoSelecionado.getNome(), this.automatoSelecionado.getStringConjuntoTransicao(), Arquivo.extensaoAutomato);
+	}
+	public void reconhecer() {
+		String entrada;
+		entrada = this.inputReconhecer.getText();
+		
+		if (this.automatoSelecionado.reconhecerEntrada(entrada)) {
+			Window.insertMessage("Entrada reconhecida!", "Sucesso!");
+		} else {
+			Window.insertMessageFalha("Entrada nao reconhecida!");
+		}
 	}
 }
