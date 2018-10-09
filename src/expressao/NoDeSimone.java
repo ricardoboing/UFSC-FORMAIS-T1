@@ -223,7 +223,7 @@ public class NoDeSimone {
 		arrayPrecedentes = new ArrayList<NoDeSimone>();
 		arrayVisitados = new ArrayList<NoDeSimone>();
 		
-		this.gerarArvoreSintaticaaSemCostura();
+		this.gerarArvoreSintaticaSemCostura();
 		this.criarCostura(arrayPrecedentes, arrayVisitados);
 		
 		System.out.println("Preced: "+arrayPrecedentes.size());
@@ -257,7 +257,7 @@ public class NoDeSimone {
 			this.noFilhoDireito.criarCostura(arrayPrecedentes, arrayVisitados);
 		}
 	}
-	private void gerarArvoreSintaticaaSemCostura() {
+	private void gerarArvoreSintaticaSemCostura() {
 		Expressao expressao;
 		expressao = new Expressao(this.simbolo);
 		
@@ -305,9 +305,9 @@ public class NoDeSimone {
 			}
 		}
 		
-		this.noFilhoEsquerdo.gerarArvoreSintaticaaSemCostura();
+		this.noFilhoEsquerdo.gerarArvoreSintaticaSemCostura();
 		if (this.noFilhoDireito != null) {
-			this.noFilhoDireito.gerarArvoreSintaticaaSemCostura();
+			this.noFilhoDireito.gerarArvoreSintaticaSemCostura();
 		}
 	}
 }

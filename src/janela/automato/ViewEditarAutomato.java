@@ -39,7 +39,6 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 	private JButton buttonMinimizar, buttonDeterminizar;
 	private JButton buttonReconhecer, buttonGerarGr;
 	
-	
 	public ViewEditarAutomato(ManagerLinguagem managerLinguagem) {
 		super();
 		this.managerLinguagem = managerLinguagem;
@@ -77,7 +76,6 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		this.addComponent(this.inputOperacao);
 		this.addComponent(this.inputGerador1);
 		this.addComponent(this.inputGerador2);
-		//this.addComponent(this.inputReconhecer);
 		this.addComponent(this.menuLateral.getJPanel());
 		this.addComponent(this.viewTableAutomato.getJScrollPane());
 	}
@@ -134,6 +132,7 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		this.addComponent(this.buttonMinimizar);
 		this.addComponent(this.buttonDeterminizar);
 		//this.addComponent(this.buttonReconhecer);
+		//this.addComponent(this.inputReconhecer);
 	}
 	
 	private void loadTable() {

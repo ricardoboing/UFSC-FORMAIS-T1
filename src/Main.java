@@ -13,17 +13,17 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		Window w;
-		w = new Window();
+		//w = new Window();
 		
 		NoDeSimone no;
 		//no = new NoDeSimone("(ab|ac)*a?(ba?c)*");
 		//no = new NoDeSimone("(ab|ac)*a?|(ba?c)*");
 		no = new NoDeSimone("((((a)(b)(c | d) | e) | (f)))");
 		no = new NoDeSimone("((((a)(b)(c | d) | e) | (f)))*");
-		//no = new NoDeSimone("(ab)");
+		no = new NoDeSimone("(a|b)?g*");
 		//no = new NoDeSimone("(a|b).c");
 		//no = new NoDeSimone("1?1?(00?11?)*0?0?");
-		no = new NoDeSimone("(a|b)?((ab)*(ba)*)*(a|b)?");
+		//no = new NoDeSimone("(a|b)?((ab)*(ba)*)*(a|b)?");
 		no.gerarArvoreSintatica();
 		
 		String value;

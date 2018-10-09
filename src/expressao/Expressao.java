@@ -118,6 +118,91 @@ public class Expressao implements LinguagemGerador {
 	
 	// Implementar...
 	public static boolean entradaValida(String expressao) {
+		char valorInicial;
+		valorInicial = expressao.charAt(0);
+		
+		if (expressao.length() == 0 && valorInicial == '(') {
+			return false;
+		}
+		
+		char valorInicialInvalido[];
+		valorInicialInvalido = new char[] {
+			'|', ')', '.', '*', '?'
+		};
+		
+		for (int c = 0; c < valorInicialInvalido.length; c++) {
+			if (valorInicialInvalido[c] == valorInicial) {
+				return false;
+			}
+		}
+		
+		String combinacaoInvalida1[];
+		combinacaoInvalida1 = new String[] {
+			"(.", "(*", "(?", "(|", "()",
+			".)", ".*", ".?", ".|", "..",
+			"|.", "|*", "|?", "||", "|)",
+			"**", "??"
+		};
+		
+		for (int c = 0; c < combinacaoInvalida1.length; c++) {
+			if (expressao.indexOf(combinacaoInvalida1[c]) >= 0) {
+				return false;
+			}
+		}
+		
+		String combinacaoInvalida2[];
+		combinacaoInvalida2 = new String[] {
+			"*.", "*|", "?.", "?|"
+		};
+		
+		String doisUltimosChar;
+		doisUltimosChar = expressao.substring(expressao.length()-2);
+		
+		for (int c = 0; c < combinacaoInvalida2.length; c++) {
+			if (combinacaoInvalida2[c].equals(doisUltimosChar)) {
+				return false;
+			}
+		}
+		
+		char valorFinal;
+		valorFinal = expressao.charAt(expressao.length()-1);
+		
+		char valorFinalInvalido[];
+		valorFinalInvalido = new char[] {
+			'|', '(', '.', '*', '?'
+		};
+		
+		for (int c = 0; c < valorFinalInvalido.length; c++) {
+			if (valorFinalInvalido[c] == valorFinal) {
+				return false;
+			}
+		}
+		
+		int contadorParentesesAberto;
+		contadorParentesesAberto = 0;
+		
+		char expressaoChar[];
+		expressaoChar = expressao.toCharArray();
+		
+		for (int c = 0; c < expressaoChar.length; c++) {
+			char caracter;
+			caracter = expressaoChar[c];
+			
+			if (caracter == ')') {
+				contadorParentesesAberto--;
+			}
+			if (contadorParentesesAberto < 0) {
+				return false;
+			}
+			if (caracter == '(') {
+				contadorParentesesAberto++;
+			}
+		}
+		
+		if (contadorParentesesAberto > 0) {
+			return false;
+		}
+		
 		return true;
 	}
 }
