@@ -99,17 +99,28 @@ class EstadoDeSimone {
 		if (this.conjuntoComposicao.size() != estadoEquals.conjuntoComposicao.size()) {
 			return false;
 		}
-		//System.out.print(this.estado.getSimbolo()+" -> ");
+		
 		for (int c = 0; c < this.conjuntoComposicao.size(); c++) {
-			ComposicaoDeSimone composicaoThis, composicaoEquals;
+			ComposicaoDeSimone composicaoThis;
 			composicaoThis = this.conjuntoComposicao.get(c);
-			composicaoEquals = estadoEquals.conjuntoComposicao.get(c);
 			
-			if (!composicaoThis.equals(composicaoEquals)) {
+			boolean existeEquivalente;
+			existeEquivalente = false;
+			
+			for (int i = 0; i < estadoEquals.conjuntoComposicao.size(); i++) {
+				ComposicaoDeSimone composicaoEquals;
+				composicaoEquals = estadoEquals.conjuntoComposicao.get(i);
+				
+				if (composicaoThis.equals(composicaoEquals)) {
+					existeEquivalente = true;
+					break;
+				}
+			}
+			if (!existeEquivalente) {
 				return false;
 			}
 		}
-		//System.out.println("???: "+this.conjuntoNoDeSimone.size());
+		
 		return true;
 	}
 }

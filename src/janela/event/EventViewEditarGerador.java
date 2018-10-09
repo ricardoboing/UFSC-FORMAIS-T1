@@ -37,6 +37,9 @@ public class EventViewEditarGerador implements ActionListener {
 			case "REMOVER":
 				this.view.remover();
 				break;
+			case "SALVAR_EM_DISCO":
+				this.view.salvarEmDisco();
+				break;
 			default:
 				break;
 		}

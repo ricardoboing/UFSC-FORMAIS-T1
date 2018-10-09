@@ -328,7 +328,14 @@ public class Gramatica implements LinguagemGerador {
 	
 	// Implementar...
 	public static boolean entradaValida(String stringGramatica) {
+		if (stringGramatica == null) {
+			return false;
+		}
+		
 		stringGramatica = stringGramatica.replaceAll(" ", "");
+		if (stringGramatica.equals("")) {
+			return false;
+		}
 		
 		/*	Transforma stringGramatica em array de naoTerminais.
 		 * 	Ex: array[0] = "S-> a | bA"; array[1] = "A -> b";

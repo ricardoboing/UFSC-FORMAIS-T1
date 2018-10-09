@@ -98,9 +98,7 @@ public class ViewCriarAutomato extends View {
 		this.managerLinguagem.gerarNomeNovoAutomato();
 		this.managerLinguagem.addAutomato(novoAutomato);
 		
-		Arquivo.escrever(novoAutomato.getNome(), novoAutomato.getStringConjuntoTransicao(), Arquivo.extensaoAutomato);
 		this.atualizarNome();
-		
 		Window.insertMessage("Automato salvo com sucesso!", "Sucesso!");
 	}
 	public void limpar() {

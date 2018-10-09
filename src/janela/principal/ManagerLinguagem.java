@@ -111,6 +111,28 @@ public class ManagerLinguagem {
 		return null;
 	}
 	
+	public Gramatica getUltimaGramatica() {
+		if (this.conjuntoGramatica.size() > 0) {
+			return (Gramatica) this.conjuntoGramatica.get(this.conjuntoGramatica.size()-1);
+		}
+		
+		return null;
+	}
+	public Automato getUltimaAutomato() {
+		if (this.conjuntoAutomato.size() > 0) {
+			return (Automato) this.conjuntoAutomato.get(this.conjuntoAutomato.size()-1);
+		}
+		
+		return null;
+	}
+	public Expressao getUltimaExpressao() {
+		if (this.conjuntoExpressao.size() > 0) {
+			return (Expressao) this.conjuntoExpressao.get(this.conjuntoExpressao.size()-1);
+		}
+		
+		return null;
+	}
+	
 	public void gerarNomeNovoAutomato() {
 		this.contadorNomeNovoAutomato++;
 	}

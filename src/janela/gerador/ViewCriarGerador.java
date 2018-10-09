@@ -79,10 +79,9 @@ public class ViewCriarGerador extends View {
 	}
 	
 	public void salvar() {
-		String nome, extensao, stringTextArea;
+		String nome, stringTextArea;
 		nome = this.inputNome.getText();
 		stringTextArea = this.textArea.getText();
-		extensao = "";
 		
 		switch (this.eLinguagem) {
 			case GRAMATICA:
@@ -96,8 +95,6 @@ public class ViewCriarGerador extends View {
 				
 				this.managerLinguagem.addGramatica(gramatica);
 				this.managerLinguagem.gerarNomeNovoGramatica();
-				
-				extensao = Arquivo.extensaoGramatica;
 				
 				Window.insertMessage("Gramatica inserida com sucesso!", "Sucesso!");
 				break;
@@ -113,16 +110,10 @@ public class ViewCriarGerador extends View {
 				this.managerLinguagem.addExpressao(expressao);
 				this.managerLinguagem.gerarNomeNovoExpressao();
 				
-				extensao = Arquivo.extensaoExpressao;
-				
 				Window.insertMessage("Expressao inserida com sucesso!", "Sucesso!");
 				break;
 			default:
 				break;
-		}
-		
-		if (!extensao.equals("")) {
-			Arquivo.escrever(nome, stringTextArea, extensao);
 		}
 		
 		this.atualizar();

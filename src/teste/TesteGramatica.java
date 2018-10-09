@@ -58,7 +58,7 @@ public class TesteGramatica {
 		automato = OperarAutomato.determinizar(automato);
 		automato.print();
 		System.out.println("-------------");
-		automato = OperarAutomato.minimizar(automato);
+		//automato = OperarAutomato.minimizar(automato);
 		automato.print();
 	}
 	//@Test

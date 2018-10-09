@@ -27,6 +27,7 @@ public class ViewEditarGerador extends View implements IViewEditar {
 	private MenuLateral menuLateral;
 	private LinguagemGerador geradorSelecionado;
 	
+	private JButton buttonSalvarEmDisco;
 	private JButton buttonEditar, buttonSalvar, buttonCancelar;
 	private JButton buttonGerarAF, buttonRemover;
 	
@@ -56,30 +57,35 @@ public class ViewEditarGerador extends View implements IViewEditar {
 		
 		this.buttonEditar = new JButton("Editar");
 		this.buttonSalvar = new JButton("Salvar");
+		this.buttonSalvarEmDisco = new JButton("Salvar em disco");
 		this.buttonCancelar = new JButton("Cancelar");
 		this.buttonGerarAF = new JButton("Gerar AF");
 		this.buttonRemover = new JButton("Remover");
 		
 		this.buttonEditar.setActionCommand("EDITAR");
 		this.buttonSalvar.setActionCommand("SALVAR");
+		this.buttonSalvarEmDisco.setActionCommand("SALVAR_EM_DISCO");
 		this.buttonCancelar.setActionCommand("CANCELAR");
 		this.buttonGerarAF.setActionCommand("GERAR_AF");
 		this.buttonRemover.setActionCommand("REMOVER");
 		
 		this.buttonSalvar.addActionListener(event);
+		this.buttonSalvarEmDisco.addActionListener(event);
 		this.buttonCancelar.addActionListener(event);
 		this.buttonEditar.addActionListener(event);
 		this.buttonGerarAF.addActionListener(event);
 		this.buttonRemover.addActionListener(event);
 		
 		this.buttonSalvar.setBounds(530, 519, 120, 35);
+		this.buttonSalvarEmDisco.setBounds(360, 519, 160, 35);
 		this.buttonCancelar.setBounds(659, 519, 130, 35);
 		this.buttonEditar.setBounds(530, 519, 120, 35);
-		this.buttonGerarAF.setBounds(230, 519, 130, 35);
+		this.buttonGerarAF.setBounds(230, 519, 120, 35);
 		this.buttonRemover.setBounds(659, 519, 130, 35);
 		
 		this.addComponent(this.buttonEditar);
 		this.addComponent(this.buttonSalvar);
+		this.addComponent(this.buttonSalvarEmDisco);
 		this.addComponent(this.buttonCancelar);
 		this.addComponent(this.buttonGerarAF);
 		this.addComponent(this.buttonRemover);
@@ -143,6 +149,7 @@ public class ViewEditarGerador extends View implements IViewEditar {
 	public void editar() {
 		this.buttonSalvar.setVisible(true);
 		this.buttonCancelar.setVisible(true);
+		this.buttonSalvarEmDisco.setVisible(false);
 		
 		this.buttonEditar.setVisible(false);
 		this.buttonGerarAF.setVisible(false);
@@ -151,9 +158,8 @@ public class ViewEditarGerador extends View implements IViewEditar {
 		this.textArea.setEnable(true);
 	}
 	public void salvar() {
-		String stringTextArea, extensao;
+		String stringTextArea;
 		stringTextArea = this.textArea.getText();
-		extensao = "";
 		
 		switch (this.eLinguagem) {
 			case GRAMATICA:
@@ -166,8 +172,6 @@ public class ViewEditarGerador extends View implements IViewEditar {
 				gramaticaEditando = (Gramatica)this.geradorSelecionado;
 				gramaticaEditando.gerarGramatica(stringTextArea);
 				
-				extensao = Arquivo.extensaoGramatica;
-				
 				Window.insertMessage("Gramatica salva com sucesso!", "Sucesso!");
 				break;
 			case EXPRESSAO:
@@ -176,23 +180,15 @@ public class ViewEditarGerador extends View implements IViewEditar {
 					break;
 				}
 				
-				extensao = Arquivo.extensaoExpressao;
-				
 				Window.insertMessage("Expressao salva com sucesso!", "Sucesso!");
 				break;
 			default:
 				break;
 		}
 		
-		String nome;
-		nome = this.geradorSelecionado.getNome();
-		
-		if (!extensao.equals("")) {
-			Arquivo.escrever(nome, stringTextArea, extensao);
-		}
-		
 		this.buttonSalvar.setVisible(false);
 		this.buttonCancelar.setVisible(false);
+		this.buttonSalvarEmDisco.setVisible(true);
 		
 		this.buttonEditar.setVisible(true);
 		this.buttonGerarAF.setVisible(true);
@@ -203,6 +199,7 @@ public class ViewEditarGerador extends View implements IViewEditar {
 	public void cancelar() {
 		this.buttonSalvar.setVisible(false);
 		this.buttonCancelar.setVisible(false);
+		this.buttonSalvarEmDisco.setVisible(true);
 		
 		this.buttonEditar.setVisible(true);
 		this.buttonGerarAF.setVisible(true);
@@ -217,6 +214,7 @@ public class ViewEditarGerador extends View implements IViewEditar {
 		this.buttonEditar.setVisible(false);
 		this.buttonGerarAF.setVisible(false);
 		this.buttonRemover.setVisible(false);
+		this.buttonSalvarEmDisco.setVisible(false);
 		
 		this.textArea.setEnable(false);
 		this.textArea.setText("");
@@ -252,5 +250,35 @@ public class ViewEditarGerador extends View implements IViewEditar {
 		
 		this.geradorSelecionado = null;
 		this.atualizar();
+	}
+	public void salvarEmDisco() {
+		if (this.geradorSelecionado == null) {
+			Window.insertMessageFalha("Operacao falhou!");
+			return;
+		}
+		
+		String stringTextArea, extensao;
+		stringTextArea = this.textArea.getText();
+		extensao = "";
+		
+		switch (this.eLinguagem) {
+			case GRAMATICA:
+				extensao = Arquivo.extensaoGramatica;
+				Window.insertMessage("Gramatica salva com sucesso!", "Sucesso!");
+				break;
+			case EXPRESSAO:
+				extensao = Arquivo.extensaoExpressao;
+				Window.insertMessage("Expressao salva com sucesso!", "Sucesso!");
+				break;
+			default:
+				break;
+		}
+		
+		String nome;
+		nome = this.geradorSelecionado.getNome();
+		
+		if (!extensao.equals("")) {
+			Arquivo.escrever(nome, stringTextArea, extensao);
+		}
 	}
 }

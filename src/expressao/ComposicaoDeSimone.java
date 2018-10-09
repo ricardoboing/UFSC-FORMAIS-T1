@@ -33,18 +33,28 @@ public class ComposicaoDeSimone {
 		if (this.conjuntoNoDeSimone.size() != estadoEquals.conjuntoNoDeSimone.size()) {
 			return false;
 		}
-		//System.out.print(this.estado.getSimbolo()+" -> ");
 		
 		for (int c = 0; c < this.conjuntoNoDeSimone.size(); c++) {
-			NoDeSimone noThis, noEquals;
+			NoDeSimone noThis;
 			noThis = this.conjuntoNoDeSimone.get(c);
-			noEquals = estadoEquals.conjuntoNoDeSimone.get(c);
 			
-			if (!noThis.equals(noEquals)) {
+			boolean possuiEquivalente;
+			possuiEquivalente = false;
+			
+			for (int i = 0; i < estadoEquals.conjuntoNoDeSimone.size(); i++) {
+				NoDeSimone noEquals;
+				noEquals = estadoEquals.conjuntoNoDeSimone.get(i);
+				
+				if (noThis.equals(noEquals)) {
+					possuiEquivalente = true;
+					break;
+				}
+			}
+			if (!possuiEquivalente) {
 				return false;
 			}
 		}
-		//System.out.println("???: "+this.conjuntoNoDeSimone.size());
+		
 		return true;
 	}
 	public void setEstadoDeSimone(EstadoDeSimone estadoEquivalente) {
