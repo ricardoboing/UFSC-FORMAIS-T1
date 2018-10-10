@@ -154,7 +154,7 @@ public class ViewOperarAutomato extends View {
 		
 		Automato automato1, automato2;
 		automato1 = this.managerLinguagem.getAutomato(this.comboBoxAutomato1.getSelected());
-		automato2 = this.managerLinguagem.getAutomato(this.comboBoxAutomato1.getSelected());
+		automato2 = this.managerLinguagem.getAutomato(this.comboBoxAutomato2.getSelected());
 		
 		Automato novoAutomato;
 		novoAutomato = OperarAutomato.intersectar(automato1, automato2, this.managerLinguagem);

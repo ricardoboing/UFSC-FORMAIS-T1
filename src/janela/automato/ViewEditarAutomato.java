@@ -125,14 +125,14 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		
 		this.addComponent(this.buttonGerarGr);
 		this.addComponent(this.buttonSalvar);
-		this.addComponent(this.buttonSalvarEmDisco);
+		//this.addComponent(this.buttonSalvarEmDisco);
 		this.addComponent(this.buttonEditar);
 		this.addComponent(this.buttonRemover);
 		this.addComponent(this.buttonCancelar);
 		this.addComponent(this.buttonMinimizar);
 		this.addComponent(this.buttonDeterminizar);
-		//this.addComponent(this.buttonReconhecer);
-		//this.addComponent(this.inputReconhecer);
+		this.addComponent(this.buttonReconhecer);
+		this.addComponent(this.inputReconhecer);
 	}
 	
 	private void loadTable() {

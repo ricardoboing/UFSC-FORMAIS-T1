@@ -141,7 +141,7 @@ public class Expressao implements LinguagemGerador {
 			"(.", "(*", "(?", "(|", "()",
 			".)", ".*", ".?", ".|", "..",
 			"|.", "|*", "|?", "||", "|)",
-			"**", "??"
+			"??"
 		};
 		
 		for (int c = 0; c < combinacaoInvalida1.length; c++) {
@@ -169,7 +169,7 @@ public class Expressao implements LinguagemGerador {
 		
 		char valorFinalInvalido[];
 		valorFinalInvalido = new char[] {
-			'|', '(', '.', '*', '?'
+			'|', '(', '.'
 		};
 		
 		for (int c = 0; c < valorFinalInvalido.length; c++) {

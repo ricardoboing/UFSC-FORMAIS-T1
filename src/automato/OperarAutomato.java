@@ -434,21 +434,21 @@ public class OperarAutomato {
 	public static Automato intersectar(Automato automatoOriginal1, Automato automatoOriginal2, ManagerLinguagem managerLinguagem) {
 		Automato automatoComplemento1;
 		automatoComplemento1 = OperarAutomato.complementarAutomato(automatoOriginal1.clone());
-		automatoComplemento1.setNome("C.I."+managerLinguagem.getNomeNovoAutomato());
+		automatoComplemento1.setNome("A.C.I."+managerLinguagem.getNomeNovoAutomato());
 		automatoComplemento1.alterarSimboloDosEstados();
 		managerLinguagem.addAutomato(automatoComplemento1);
 		managerLinguagem.gerarNomeNovoAutomato();
 		
 		Automato automatoComplemento2;
 		automatoComplemento2 = OperarAutomato.complementarAutomato(automatoOriginal2.clone());
-		automatoComplemento1.setNome("C.I."+managerLinguagem.getNomeNovoAutomato());
-		automatoComplemento1.alterarSimboloDosEstados();
-		managerLinguagem.addAutomato(automatoComplemento1);
+		automatoComplemento2.setNome("A.C.I."+managerLinguagem.getNomeNovoAutomato());
+		automatoComplemento2.alterarSimboloDosEstados();
+		managerLinguagem.addAutomato(automatoComplemento2);
 		managerLinguagem.gerarNomeNovoAutomato();
 		
 		Automato automatoUniao;
 		automatoUniao = OperarAutomato.unir(automatoComplemento1, automatoComplemento2);
-		automatoUniao.setNome("I.I."+managerLinguagem.getNomeNovoAutomato());
+		automatoUniao.setNome("A.I.I."+managerLinguagem.getNomeNovoAutomato());
 		automatoUniao.alterarSimboloDosEstados();
 		managerLinguagem.addAutomato(automatoUniao);
 		managerLinguagem.gerarNomeNovoAutomato();
@@ -487,13 +487,14 @@ public class OperarAutomato {
 		
 		Estado estadoInicial1, estadoInicial2;
 		estadoInicial1 = automatoClone1.getEstadoInicial();
-		estadoInicial2 = automatoClone2.getEstadoInicial();;
+		estadoInicial2 = automatoClone2.getEstadoInicial();
 		
 		estadoInicial1.setInicial(false);
 		estadoInicial2.setInicial(false);
 		
 		Estado novoEstadoInicial;
-		novoEstadoInicial = new Estado();
+		novoEstadoInicial = new Estado("?");
+		novoEstadoInicial.setSimbolo(novoEstadoInicial.toString());
 		novoEstadoInicial.addTransicao(ManagerLinguagem.EPSILON, estadoInicial1);
 		novoEstadoInicial.addTransicao(ManagerLinguagem.EPSILON, estadoInicial2);
 		
@@ -503,10 +504,14 @@ public class OperarAutomato {
 		
 		Automato automatoUniao;
 		automatoUniao = new Automato();
+		automatoUniao.addEstadoInicial(novoEstadoInicial);
+		automatoUniao.addEstado(novoEstadoInicial);
 		automatoUniao.addConjuntoEstado(conjuntoEstado1);
 		automatoUniao.addConjuntoEstado(conjuntoEstado2);
 		automatoUniao.setConjuntoAlfabeto(conjuntoAlfabeto);
-		automatoUniao.addEstadoInicial(novoEstadoInicial);
+		automatoUniao.alterarSimboloDosEstados();
+		
+		automatoUniao = OperarAutomato.determinizar(automatoUniao);
 		automatoUniao.alterarSimboloDosEstados();
 		
 		automatoUniao.setNomePai1(automatoOriginal1.getNome());
@@ -541,7 +546,6 @@ public class OperarAutomato {
 		
 		Automato automatoCompleto;
 		automatoCompleto = automatoOriginal.clone();
-		automatoCompleto.addEstado(estadoDeErro);
 		automatoCompleto.setNomePai1(automatoOriginal.getNome());
 		automatoCompleto.setNomeOperacaoGerador("COMPLETAR");
 		
@@ -572,6 +576,7 @@ public class OperarAutomato {
 				
 				if (conjuntoTransicao.size() == 0) {
 					estadoDoAutomatoCompleto.addTransicao(simboloDoAlfabeto, estadoDeErro);
+					automatoCompleto.addEstado(estadoDeErro);
 				}
 			}
 		}
