@@ -102,6 +102,7 @@ public class ViewEditarGerador extends View implements IViewEditar {
 				
 				this.geradorSelecionado = gramatica;
 				
+				this.inputNome.setText(nome);
 				this.textArea.setText(gramatica.getStringConjuntoProducao());
 				break;
 			case EXPRESSAO:
@@ -110,6 +111,7 @@ public class ViewEditarGerador extends View implements IViewEditar {
 				
 				this.geradorSelecionado = expressao;
 				
+				this.inputNome.setText(nome);
 				this.textArea.setText(expressao.getToStringOriginal());
 			default:
 				break;

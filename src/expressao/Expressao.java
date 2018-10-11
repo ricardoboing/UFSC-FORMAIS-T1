@@ -121,7 +121,7 @@ public class Expressao implements LinguagemGerador {
 		char valorInicial;
 		valorInicial = expressao.charAt(0);
 		
-		if (expressao.length() == 0 && valorInicial == '(') {
+		if (expressao.length() == 1 && valorInicial == '(') {
 			return false;
 		}
 		
@@ -134,6 +134,10 @@ public class Expressao implements LinguagemGerador {
 			if (valorInicialInvalido[c] == valorInicial) {
 				return false;
 			}
+		}
+		
+		if (expressao.length() == 1) {
+			return true;
 		}
 		
 		String combinacaoInvalida1[];
