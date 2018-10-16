@@ -1,3 +1,17 @@
+/*
+ *  Trabalho I: Algoritmos para Manipulacao de Linguagens Regulares
+ *  
+ *  Departamento de Informatica e Estatistica – Universidade Federal de Santa Catarina (UFSC)
+ *  Campus Reitor Joao David Ferreira Lima, 88.040-900 – Florianopolis – SC – Brasil
+ *  
+ *  brunohonnef@gmail.com pedroabcorte@gmail.com ricardoboing.ufsc@gmail.com
+ *  
+ *  Bruno Gilmar Honnef
+ *  Pedro Alexandre Barradas da Corte
+ *  Ricardo do Nascimento Boing
+ *  
+ *  11 de Outubro de 2018
+ */
 package expressao;
 
 import java.util.ArrayList;
@@ -59,6 +73,7 @@ public class NoDeSimone {
 		conjuntoNoVisitadoDescer = new ConjuntoObject<NoDeSimone>();
 		conjuntoNoVisitadoSubir = new ConjuntoObject<NoDeSimone>();
 		
+		// Descer a raiz da arvore
 		this.descer(conjuntoNoVisitadoDescer, conjuntoNoVisitadoSubir, conjuntoAlfabeto, estadoInicial);
 		estadoInicial.atualizarConjuntoComposicao(conjuntoComposicao);
 		
@@ -190,13 +205,14 @@ public class NoDeSimone {
 		
 		this.noFilhoDireito.descerAteOFim(conjuntoNoVisitadoDescer, conjuntoNoVisitadoSubir, conjuntoAlfabeto, composicao);
 	}
-	
+	// Usado para fins de testes JUnit
 	public String arvoreToString() {
 		ArrayList<NoDeSimone> arrayVisitados;
 		arrayVisitados = new ArrayList<NoDeSimone>();
 		
 		return this.arvoreToString(arrayVisitados, -1);
 	}
+	// Usado para fins de testes JUnit
 	private String arvoreToString(ArrayList<NoDeSimone> arrayVisitados, int nivel) {
 		if (arrayVisitados.contains(this)) {
 			return "";
@@ -278,7 +294,9 @@ public class NoDeSimone {
 		 *	a parte direita corresponde ao filhoDireito e
 		 *	a parte esquerda corresponde ao filhoEsquerdo
 		 *
-		 * 	Ordem da menor para maior precedencia: '|' < '.' < '?' = '*'
+		 * 	A ordem da menor para maior precedencia: '|' < '.' < '?' = '*'
+		 *  e o resultado so da certo e o array de simbolosDePrecedencia
+		 *  cumprir essa ordem:
 		 */
 		char simbolosDePrecedencia[] = {'|', '.', '?', '*'};
 		for (int c = 0; c < simbolosDePrecedencia.length; c++) {
@@ -288,11 +306,13 @@ public class NoDeSimone {
 			int indicePrimeiraOcorrencia;
 			indicePrimeiraOcorrencia = expressaoExplicita.indexOf(simboloDePrecedencia);
 			
+			// So entra no if se o simbolo existe na expressao
 			if (indicePrimeiraOcorrencia > 0) {
 				String simboloFilhoEsquerdo, simboloFilhoDireito;
 				simboloFilhoEsquerdo = expressao.getToStringExplicita().substring(0, indicePrimeiraOcorrencia);
 				simboloFilhoDireito = expressao.getToStringExplicita().substring(indicePrimeiraOcorrencia+1);
 				
+				// Obtem o indice do simbolo (eh o ponto que divide o filho esquerdo do direito)
 				this.simbolo = expressao.getToStringExplicita().charAt(indicePrimeiraOcorrencia) + "";
 				
 				this.noFilhoEsquerdo = new NoDeSimone(simboloFilhoEsquerdo);
@@ -305,6 +325,7 @@ public class NoDeSimone {
 			}
 		}
 		
+		// Constroi as sub-arvores (arvores dos filhos)
 		this.noFilhoEsquerdo.gerarArvoreSintaticaSemCostura();
 		if (this.noFilhoDireito != null) {
 			this.noFilhoDireito.gerarArvoreSintaticaSemCostura();

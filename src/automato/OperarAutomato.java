@@ -1,3 +1,17 @@
+/*
+ *  Trabalho I: Algoritmos para Manipulacao de Linguagens Regulares
+ *  
+ *  Departamento de Informatica e Estatistica – Universidade Federal de Santa Catarina (UFSC)
+ *  Campus Reitor Joao David Ferreira Lima, 88.040-900 – Florianopolis – SC – Brasil
+ *  
+ *  brunohonnef@gmail.com pedroabcorte@gmail.com ricardoboing.ufsc@gmail.com
+ *  
+ *  Bruno Gilmar Honnef
+ *  Pedro Alexandre Barradas da Corte
+ *  Ricardo do Nascimento Boing
+ *  
+ *  11 de Outubro de 2018
+ */
 package automato;
 
 import conjunto.ArrayConjuntoEstado;
@@ -11,6 +25,8 @@ public class OperarAutomato {
 		ConjuntoEstado conjuntoEstado;
 		conjuntoEstado = automatoAFND.getConjuntoEstado();
 		
+		// Add no conjunto todos os estadoDestino para
+		// o qual o estado transita por epsilon
 		for (int c = 0; c < conjuntoEstado.size(); c++) {
 			Estado estado;
 			estado = conjuntoEstado.get(c);
@@ -37,9 +53,13 @@ public class OperarAutomato {
 		boolean houveMudanca;
 		houveMudanca = false;
 		
+		// Enquanto novos estados forem add no conjunto epsilon fecho
 		do {
 			houveMudanca = false;
 			
+			// O conjunto epsilon fecho do estado recebe todos os estados dos
+			// conjuntos epsilon fecho dos estadoDestino para o qual
+			// o estado transita
 			for (int c = 0; c < conjuntoEstado.size(); c++) {
 				Estado estado;
 				estado = conjuntoEstado.get(c);
@@ -56,6 +76,7 @@ public class OperarAutomato {
 					
 					conjuntoEpsilonFecho.add(estadoEpsilonFecho.getConjuntoEpsilonFecho());
 					
+					// Se houve mudanca em algum conjunto, entao necessita de mais uma iteracao
 					if (sizeAntes != conjuntoEpsilonFecho.size()) {
 						houveMudanca = true;
 					}
@@ -64,17 +85,20 @@ public class OperarAutomato {
 		} while(houveMudanca);
 	}
 	public static Automato determinizar(Automato automatoAFND) {
+		// Gera o conjunto epsilon fecho no AFND
 		OperarAutomato.gerarConjuntoEpsilonFecho(automatoAFND);
 		
 		Estado estadoInicialAFND;
 		estadoInicialAFND = automatoAFND.getEstadoInicial();
 		
+		// Estado inicial do AFD eh o conjunto epsilon fecho do AFND
 		String simboloEstadoInicialAFD;
 		simboloEstadoInicialAFD = estadoInicialAFND.getConjuntoEpsilonFecho().getToString();
 		
 		Estado estadoInicialAFD;
 		estadoInicialAFD = new Estado(simboloEstadoInicialAFD);
 		
+		// Copia o alfabeto mas desconsidera transicao por epsilon
 		ConjuntoAlfabeto conjuntoAlfabeto;
 		conjuntoAlfabeto = automatoAFND.getConjuntoAlfabeto().clone();
 		conjuntoAlfabeto.remove(ManagerLinguagem.EPSILON);
@@ -174,29 +198,35 @@ public class OperarAutomato {
 		return automatoAFD;
 	}
 	public static Automato minimizar(Automato automato, ManagerLinguagem managerLinguagem) {
+		// PASSO 1: DETERMINIZAR
 		Automato novoAutomato;
 		novoAutomato = automato.clone();
 		novoAutomato = OperarAutomato.determinizar(novoAutomato);
 		novoAutomato.setNome("A.M.I."+managerLinguagem.getNomeNovoAutomato());
 		novoAutomato.setNomeOperacaoGerador("Determinizacao");
 		novoAutomato.setNomePai1( automato.getNome() );
-		
 		novoAutomato.alterarSimboloDosEstados();
+		
 		managerLinguagem.addAutomato(novoAutomato);
 		managerLinguagem.gerarNomeNovoAutomato();
 		
+		// PASSO 2: ELIMINAR ESTADOS INALCANSAVEIS
 		novoAutomato = OperarAutomato.eliminarEstadosInalcansaveis(novoAutomato);
 		novoAutomato.setNome("A.M.I."+managerLinguagem.getNomeNovoAutomato());
 		novoAutomato.alterarSimboloDosEstados();
+		
 		managerLinguagem.addAutomato(novoAutomato);
 		managerLinguagem.gerarNomeNovoAutomato();
 		
+		// PASSO 3: ELIMINAR ESTADOS MORTOS
 		novoAutomato = OperarAutomato.eliminarEstadosMortos(novoAutomato);
 		novoAutomato.setNome("A.M.I."+managerLinguagem.getNomeNovoAutomato());
 		novoAutomato.alterarSimboloDosEstados();
+		
 		managerLinguagem.addAutomato(novoAutomato);
 		managerLinguagem.gerarNomeNovoAutomato();
 		
+		// PASSO 4: ELIMINAR ESTADOS DUPLICADOS
 		novoAutomato = OperarAutomato.eliminarEstadosDuplicados(novoAutomato);
 		novoAutomato.alterarSimboloDosEstados();
 		
@@ -268,25 +298,25 @@ public class OperarAutomato {
 			numeroTotalEstadoVivoAnterior = conjuntoEstadoVivo.size();
 			
 			for (int c = 0; c < conjuntoEstadoClone.size(); c++) {
-				Estado estadoClone;
-				estadoClone = conjuntoEstadoClone.get(c);
+				Estado estado;
+				estado = conjuntoEstadoClone.get(c);
 				
-				// EstadoClone ja eh vivo
-				if (conjuntoEstadoVivo.contains(estadoClone)) {
+				// Estado ja foi add no conjunto de vivos
+				if (conjuntoEstadoVivo.contains(estado)) {
 					continue;
 				}
 				
-				ConjuntoObject<Transicao> conjuntoTransicaoDoEstadoClone;
-				conjuntoTransicaoDoEstadoClone = estadoClone.getConjuntoTransicao();
+				ConjuntoObject<Transicao> conjuntoTransicaoDoEstado;
+				conjuntoTransicaoDoEstado = estado.getConjuntoTransicao();
 				
 				// Verifica se algum estado para o qual transita eh vivo
-				for (int i = 0; i < conjuntoTransicaoDoEstadoClone.size(); i++) {
+				for (int i = 0; i < conjuntoTransicaoDoEstado.size(); i++) {
 					Transicao transicaoDoEstadoClone;
-					transicaoDoEstadoClone = conjuntoTransicaoDoEstadoClone.get(i);
+					transicaoDoEstadoClone = conjuntoTransicaoDoEstado.get(i);
 					
-					// EstadoClone eh vivo se algum estadoDestino for vivo
+					// Estado eh vivo se algum estadoDestino for vivo
 					if (conjuntoEstadoVivo.contains(transicaoDoEstadoClone.getEstadoDestino())) {
-						conjuntoEstadoVivo.add(estadoClone);
+						conjuntoEstadoVivo.add(estado);
 						break;
 					}
 				}
@@ -299,20 +329,21 @@ public class OperarAutomato {
 		
 		return automatoEstadoVivo;
 	}
-	private static void eliminarTransicoesInutil(ConjuntoEstado conjuntoEstado) {
-		for (int c = 0; c < conjuntoEstado.size(); c++) {
+	private static void eliminarTransicoesInutil(ConjuntoEstado conjuntoEstadoAlcansavel) {
+		for (int c = 0; c < conjuntoEstadoAlcansavel.size(); c++) {
 			Estado estadoAlcansavel;
-			estadoAlcansavel = conjuntoEstado.get(c);
+			estadoAlcansavel = conjuntoEstadoAlcansavel.get(c);
 			
 			ConjuntoObject<Transicao> conjuntoTransicaoDoEstadoAlcansavel;
 			conjuntoTransicaoDoEstadoAlcansavel = estadoAlcansavel.getConjuntoTransicao();
 			
-			// Percorre as transicoes
+			// Percorre as transicoes e verifica se sao uteis
 			for (int i = 0; i < conjuntoTransicaoDoEstadoAlcansavel.size(); i++) {
 				Transicao transicaoDoEstadoAlcansavel;
 				transicaoDoEstadoAlcansavel = conjuntoTransicaoDoEstadoAlcansavel.get(i);
 				
-				if (!conjuntoEstado.contains(transicaoDoEstadoAlcansavel.getEstadoDestino())) {
+				// Se o estadoDestino nao for alcansavel, entao a transicao eh inutil
+				if (!conjuntoEstadoAlcansavel.contains(transicaoDoEstadoAlcansavel.getEstadoDestino())) {
 					conjuntoTransicaoDoEstadoAlcansavel.remove(transicaoDoEstadoAlcansavel);
 					i--;
 				}
@@ -338,16 +369,21 @@ public class OperarAutomato {
 		boolean alterouArrayConjuntoEstado;
 		alterouArrayConjuntoEstado = false;
 		
+		// Permanece no laco enquanto novos grupos de equivalencia forem criados
 		do {
 			alterouArrayConjuntoEstado = false;
 			
 			arrayConjuntoEstadoAnterior = arrayConjuntoEstadoNovo;
 			arrayConjuntoEstadoNovo = new ArrayConjuntoEstado();
 			
+			/* Para todo conjunto verifica-se se dois estados nao sao equivalentes
+			 * Caso positivo, entao cria-se um novo conjunto
+			 */
 			for (int c = 0; c < arrayConjuntoEstadoAnterior.size(); c++) {
 				ConjuntoEstado conjuntoEstadoAnterior;
 				conjuntoEstadoAnterior = arrayConjuntoEstadoAnterior.get(c);
 				
+				// Cria o novo conjunto e clona o conjunto anterior, para nao modificar o original
 				ConjuntoEstado conjuntoEstadoNovo, conjuntoEstadoAnteriorClone;
 				conjuntoEstadoNovo = new ConjuntoEstado();
 				conjuntoEstadoAnteriorClone = conjuntoEstadoAnterior.clone();
@@ -355,25 +391,32 @@ public class OperarAutomato {
 				arrayConjuntoEstadoNovo.add(conjuntoEstadoNovo);
 				arrayConjuntoEstadoNovo.add(conjuntoEstadoAnteriorClone);
 				
-				Estado primeiroEstadoDoConjuntoEstado;
-				primeiroEstadoDoConjuntoEstado = null;
+				Estado primeiroEstadoDoConjunto;
+				primeiroEstadoDoConjunto = null;
 				
 				if (conjuntoEstadoAnteriorClone.size() > 0) {
-					primeiroEstadoDoConjuntoEstado = conjuntoEstadoAnteriorClone.get(0);
+					primeiroEstadoDoConjunto = conjuntoEstadoAnteriorClone.get(0);
 				}
 				
 				for (int i = 1; i < conjuntoEstadoAnteriorClone.size(); i++) {
-					Estado estadoDoConjuntoEstadoAnteriorClone;
-					estadoDoConjuntoEstadoAnteriorClone = conjuntoEstadoAnteriorClone.get(i);
+					Estado estadoDoConjunto;
+					estadoDoConjunto = conjuntoEstadoAnteriorClone.get(i);
 					
-					if (!arrayConjuntoEstadoAnterior.conjuntoTransicaoEquivalente(primeiroEstadoDoConjuntoEstado, estadoDoConjuntoEstadoAnteriorClone)) {
-						conjuntoEstadoAnteriorClone.remove(estadoDoConjuntoEstadoAnteriorClone);
-						conjuntoEstadoNovo.add(estadoDoConjuntoEstadoAnteriorClone);
+					// Se as transicoes do estadoDoConjunto nao levarem aos mesmos conjuntos que as
+					// transicoes do primeiroEstadoDoConjunto, entao o estadoDoConjunto nao eh
+					// equivalente ao primeiroEstadoDoConjunto (adiciona o estadoDoConjunto no novo conjunto)
+					if (!arrayConjuntoEstadoAnterior.conjuntoTransicaoEquivalente(primeiroEstadoDoConjunto, estadoDoConjunto)) {
+						conjuntoEstadoAnteriorClone.remove(estadoDoConjunto);
+						conjuntoEstadoNovo.add(estadoDoConjunto);
 						i--;
+						// Se houver um novo conjunto for add
+						// entao uma nova iteracao do do-while deve acontecer
 						alterouArrayConjuntoEstado = true;
 					}
 				}
 				
+				// Se o novo conjunto nao possuir nenhum estado
+				// eh porque nao houve mudancas na lista de conjuntos
 				if (conjuntoEstadoNovo.size() == 0) {
 					arrayConjuntoEstadoNovo.remove(conjuntoEstadoNovo);
 				}
@@ -432,29 +475,52 @@ public class OperarAutomato {
 	}
 	
 	public static Automato intersectar(Automato automatoOriginal1, Automato automatoOriginal2, ManagerLinguagem managerLinguagem) {
+		// PASSO 1: DETERMINIZAR OS AUTOMATOS
+		Automato automatoClone1, automatoClone2;
+		automatoClone1 = automatoOriginal1.clone();
+		automatoClone2 = automatoOriginal2.clone();
+		
+		automatoClone1 = OperarAutomato.determinizar(automatoClone1);
+		automatoClone2 = OperarAutomato.determinizar(automatoClone2);
+		
+		// PASSO 2.1: COMPLEMENTAR AUTOMATO 1
 		Automato automatoComplemento1;
-		automatoComplemento1 = OperarAutomato.complementarAutomato(automatoOriginal1.clone());
+		automatoComplemento1 = OperarAutomato.complementarAutomato(automatoClone1);
 		automatoComplemento1.setNome("A.C.I."+managerLinguagem.getNomeNovoAutomato());
+		automatoComplemento1.setNomePai1(automatoOriginal1.getNome());
 		automatoComplemento1.alterarSimboloDosEstados();
 		managerLinguagem.addAutomato(automatoComplemento1);
 		managerLinguagem.gerarNomeNovoAutomato();
 		
+		// PASSO 2.2: COMPLEMENTAR AUTOMATO 2
 		Automato automatoComplemento2;
-		automatoComplemento2 = OperarAutomato.complementarAutomato(automatoOriginal2.clone());
+		automatoComplemento2 = OperarAutomato.complementarAutomato(automatoClone2);
 		automatoComplemento2.setNome("A.C.I."+managerLinguagem.getNomeNovoAutomato());
+		automatoComplemento2.setNomePai1(automatoOriginal2.getNome());
 		automatoComplemento2.alterarSimboloDosEstados();
 		managerLinguagem.addAutomato(automatoComplemento2);
 		managerLinguagem.gerarNomeNovoAutomato();
 		
+		// PASSO 3: UNIAO DO COMPLEMENTO DO AUTOMATO 1 COM COMPLEMENTO DO AUTOMATO 2
 		Automato automatoUniao;
 		automatoUniao = OperarAutomato.unir(automatoComplemento1, automatoComplemento2);
-		automatoUniao.setNome("A.I.I."+managerLinguagem.getNomeNovoAutomato());
+		automatoUniao.setNome("A.U.I."+managerLinguagem.getNomeNovoAutomato());
 		automatoUniao.alterarSimboloDosEstados();
+		
 		managerLinguagem.addAutomato(automatoUniao);
 		managerLinguagem.gerarNomeNovoAutomato();
 		
+		// PASSO 4: DETERMINIZAR A UNIAO
+		Automato automatoDeterministico;
+		automatoDeterministico = OperarAutomato.determinizar(automatoUniao);
+		automatoDeterministico.setNome("A.D.I."+managerLinguagem.getNomeNovoAutomato());
+		automatoDeterministico.alterarSimboloDosEstados();
+		managerLinguagem.addAutomato(automatoDeterministico);
+		managerLinguagem.gerarNomeNovoAutomato();
+		
+		// PASSO 5: COMPLEMENTO DA UNIAO
 		Automato automatoInterseccao;
-		automatoInterseccao = OperarAutomato.complementarAutomato(automatoUniao);
+		automatoInterseccao = OperarAutomato.complementarAutomato(automatoDeterministico);
 		automatoInterseccao.alterarSimboloDosEstados();
 		
 		automatoInterseccao.setNomePai1(automatoOriginal1.getNome());
@@ -473,7 +539,8 @@ public class OperarAutomato {
 		conjuntoEstado1 = automatoClone1.getConjuntoEstado();
 		conjuntoEstado2 = automatoClone2.getConjuntoEstado();
 		
-		// Altera o simbolo dos estados (simbolo unico), de ambos automatos, pra nao gerar erros
+		// Altera o simbolo dos estados de ambos automatos
+		// para que os estados nao tenham conflitos de simbolos
 		for (int c = 0; c < conjuntoEstado1.size(); c++) {
 			Estado estado;
 			estado = conjuntoEstado1.get(c);
@@ -492,15 +559,23 @@ public class OperarAutomato {
 		estadoInicial1.setInicial(false);
 		estadoInicial2.setInicial(false);
 		
+		// Novo estadoInicial transica por epsilon para os antigos estados iniciais
 		Estado novoEstadoInicial;
 		novoEstadoInicial = new Estado("?");
 		novoEstadoInicial.setSimbolo(novoEstadoInicial.toString());
 		novoEstadoInicial.addTransicao(ManagerLinguagem.EPSILON, estadoInicial1);
 		novoEstadoInicial.addTransicao(ManagerLinguagem.EPSILON, estadoInicial2);
 		
+		// Novo estadoInicial eh final se um dos antigos iniciais for final
+		if (estadoInicial1.isFinal() || estadoInicial2.isFinal()) {
+			novoEstadoInicial.setFinal(true);
+		}
+		
+		// O conjuntoAlfabeto do novoAutomato eh a unicao do alfabeto dos dois automatos
 		ConjuntoAlfabeto conjuntoAlfabeto;
 		conjuntoAlfabeto = automatoClone1.getConjuntoAlfabeto().clone();
 		conjuntoAlfabeto.add(automatoClone2.getConjuntoAlfabeto());
+		conjuntoAlfabeto.add(ManagerLinguagem.EPSILON);
 		
 		Automato automatoUniao;
 		automatoUniao = new Automato();
@@ -509,9 +584,6 @@ public class OperarAutomato {
 		automatoUniao.addConjuntoEstado(conjuntoEstado1);
 		automatoUniao.addConjuntoEstado(conjuntoEstado2);
 		automatoUniao.setConjuntoAlfabeto(conjuntoAlfabeto);
-		automatoUniao.alterarSimboloDosEstados();
-		
-		automatoUniao = OperarAutomato.determinizar(automatoUniao);
 		automatoUniao.alterarSimboloDosEstados();
 		
 		automatoUniao.setNomePai1(automatoOriginal1.getNome());
@@ -542,8 +614,11 @@ public class OperarAutomato {
 	
 	public static Automato completarAutomato(Automato automatoOriginal) {
 		Estado estadoDeErro;
-		estadoDeErro = new Estado("-");
+		estadoDeErro = new Estado("simbolo_alterado_posteriormente");
+		estadoDeErro.setSimbolo(estadoDeErro.toString());
 		
+		// AutomatoCompleto eh uma copia do original, porem com as transicoes
+		// para o estado morto explicitas
 		Automato automatoCompleto;
 		automatoCompleto = automatoOriginal.clone();
 		automatoCompleto.setNomePai1(automatoOriginal.getNome());
@@ -552,7 +627,7 @@ public class OperarAutomato {
 		ConjuntoAlfabeto conjuntoAlfabeto;
 		conjuntoAlfabeto = automatoCompleto.getConjuntoAlfabeto();
 		
-		// Completa o estadoDeErro
+		// Completa o estadoDeErro (estado morto)
 		for (int c = 0; c < conjuntoAlfabeto.size(); c++) {
 			char simboloDoAlfabeto;
 			simboloDoAlfabeto = conjuntoAlfabeto.get(c);
@@ -571,9 +646,12 @@ public class OperarAutomato {
 				Estado estadoDoAutomatoCompleto;
 				estadoDoAutomatoCompleto = conjuntoEstado.get(i);
 				
+				// Obtem conjunto de transicoes para um dado simbolo do alfabeto
 				ConjuntoObject<Transicao> conjuntoTransicao;
 				conjuntoTransicao = estadoDoAutomatoCompleto.getConjuntoTransicao(simboloDoAlfabeto);
 				
+				// Se nao existir transicao entao cria-se a transicao
+				// para o estado morto
 				if (conjuntoTransicao.size() == 0) {
 					estadoDoAutomatoCompleto.addTransicao(simboloDoAlfabeto, estadoDeErro);
 					automatoCompleto.addEstado(estadoDeErro);

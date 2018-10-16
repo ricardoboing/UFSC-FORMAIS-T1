@@ -1,3 +1,17 @@
+/*
+ *  Trabalho I: Algoritmos para Manipulacao de Linguagens Regulares
+ *  
+ *  Departamento de Informatica e Estatistica – Universidade Federal de Santa Catarina (UFSC)
+ *  Campus Reitor Joao David Ferreira Lima, 88.040-900 – Florianopolis – SC – Brasil
+ *  
+ *  brunohonnef@gmail.com pedroabcorte@gmail.com ricardoboing.ufsc@gmail.com
+ *  
+ *  Bruno Gilmar Honnef
+ *  Pedro Alexandre Barradas da Corte
+ *  Ricardo do Nascimento Boing
+ *  
+ *  11 de Outubro de 2018
+ */
 package janela.automato;
 
 import java.util.ArrayList;
@@ -68,7 +82,7 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		this.inputOperacao.setBounds(330, 420, 120, 25);
 		this.inputGerador1.setBounds(495, 420, 120, 25);
 		this.inputGerador2.setBounds(660, 422, 120, 25);
-		this.inputReconhecer.setBounds(530, 470, 120, 35);
+		this.inputReconhecer.setBounds(571, 470, 79, 35);
 		
 		this.loadButton();
 		
@@ -114,7 +128,7 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		this.buttonReconhecer.addActionListener(event);
 		
 		this.buttonSalvar.setBounds(541, 519, 110, 35);
-		this.buttonSalvarEmDisco.setBounds(541, 470, 239, 35);
+		this.buttonSalvarEmDisco.setBounds(380, 470, 180, 35);
 		this.buttonEditar.setBounds(541, 519, 110, 35);
 		this.buttonRemover.setBounds(660, 519, 120, 35);
 		this.buttonCancelar.setBounds(660, 519, 120, 35);
@@ -125,14 +139,14 @@ public class ViewEditarAutomato extends View implements IViewEditar {
 		
 		this.addComponent(this.buttonGerarGr);
 		this.addComponent(this.buttonSalvar);
-		//this.addComponent(this.buttonSalvarEmDisco);
+		this.addComponent(this.buttonSalvarEmDisco);
 		this.addComponent(this.buttonEditar);
 		this.addComponent(this.buttonRemover);
 		this.addComponent(this.buttonCancelar);
 		this.addComponent(this.buttonMinimizar);
 		this.addComponent(this.buttonDeterminizar);
-		this.addComponent(this.buttonReconhecer);
-		this.addComponent(this.inputReconhecer);
+		//this.addComponent(this.buttonReconhecer);
+		//this.addComponent(this.inputReconhecer);
 	}
 	
 	private void loadTable() {

@@ -1,3 +1,17 @@
+/*
+ *  Trabalho I: Algoritmos para Manipulacao de Linguagens Regulares
+ *  
+ *  Departamento de Informatica e Estatistica – Universidade Federal de Santa Catarina (UFSC)
+ *  Campus Reitor Joao David Ferreira Lima, 88.040-900 – Florianopolis – SC – Brasil
+ *  
+ *  brunohonnef@gmail.com pedroabcorte@gmail.com ricardoboing.ufsc@gmail.com
+ *  
+ *  Bruno Gilmar Honnef
+ *  Pedro Alexandre Barradas da Corte
+ *  Ricardo do Nascimento Boing
+ *  
+ *  11 de Outubro de 2018
+ */
 package expressao;
 
 import automato.Estado;
@@ -33,6 +47,8 @@ class EstadoDeSimone {
 			return;
 		}
 		
+		// Se o NoDeSimone for eh do grupo de simbolos que ja
+		// possui uma composicao existente
 		if (this.conjuntoAlfabeto.contains(simboloNo)) {
 			for (int c = 0; c < this.conjuntoAlfabeto.size(); c++) {
 				ComposicaoDeSimone composicao;
@@ -44,6 +60,7 @@ class EstadoDeSimone {
 					return;
 				}
 			}
+			// Se nao cria uma nova composicao
 		} else {
 			ComposicaoDeSimone novaComposicao;
 			novaComposicao = new ComposicaoDeSimone(simboloNo);
@@ -56,6 +73,7 @@ class EstadoDeSimone {
 		return;
 	}
 	
+	// Adiciona as composicoes do EstadoDeSimone no conjuntoGlobal de composicoes
 	public void atualizarConjuntoComposicao(ConjuntoObject<ComposicaoDeSimone> conjuntoComposicao) {
 		ConjuntoObject<ComposicaoDeSimone> conjuntoComposicaoFilho;
 		conjuntoComposicaoFilho = new ConjuntoObject<ComposicaoDeSimone>();
@@ -72,6 +90,7 @@ class EstadoDeSimone {
 	}
 	
 	public Estado gerarEstadoAf() {
+		// Gera um estado de automato de acordo com as composicoes
 		for (int c = 0; c < this.conjuntoComposicao.size(); c++) {
 			ComposicaoDeSimone composicao;
 			composicao = this.conjuntoComposicao.get(c);
@@ -96,10 +115,13 @@ class EstadoDeSimone {
 		EstadoDeSimone estadoEquals;
 		estadoEquals = (EstadoDeSimone) obj;
 		
+		// Se o conjunto de composicoes de um no for diferente do outro, entao os
+		// nos nao sao equivalentes
 		if (this.conjuntoComposicao.size() != estadoEquals.conjuntoComposicao.size()) {
 			return false;
 		}
 		
+		// Verifica se algum uma composicao de um no esta contido no outro no
 		for (int c = 0; c < this.conjuntoComposicao.size(); c++) {
 			ComposicaoDeSimone composicaoThis;
 			composicaoThis = this.conjuntoComposicao.get(c);
@@ -116,6 +138,8 @@ class EstadoDeSimone {
 					break;
 				}
 			}
+			// Se alguma composicao esta contido em um mas nao no outro, entao
+			// os nos nao sao equivalentes
 			if (!existeEquivalente) {
 				return false;
 			}

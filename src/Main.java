@@ -1,3 +1,17 @@
+/*
+ *  Trabalho I: Algoritmos para Manipulacao de Linguagens Regulares
+ *  
+ *  Departamento de Informatica e Estatistica – Universidade Federal de Santa Catarina (UFSC)
+ *  Campus Reitor Joao David Ferreira Lima, 88.040-900 – Florianopolis – SC – Brasil
+ *  
+ *  brunohonnef@gmail.com pedroabcorte@gmail.com ricardoboing.ufsc@gmail.com
+ *  
+ *  Bruno Gilmar Honnef
+ *  Pedro Alexandre Barradas da Corte
+ *  Ricardo do Nascimento Boing
+ *  
+ *  11 de Outubro de 2018
+ */
 import janela.principal.Window;
 
 public class Main {
@@ -10,31 +24,6 @@ public class Main {
 	 * 	[X] ER   -> AFD     (falta teste exaustivo; gerando estado duplicado)
 	 */
 	public static void main(String[] args) {
-		
-		Window w;
-		w = new Window();
-		/*
-		NoDeSimone no;
-		//no = new NoDeSimone("(ab|ac)*a?(ba?c)*");
-		//no = new NoDeSimone("(ab|ac)*a?|(ba?c)*");
-		no = new NoDeSimone("((((a)(b)(c | d) | e) | (f)))");
-		no = new NoDeSimone("((((a)(b)(c | d) | e) | (f)))*");
-		no = new NoDeSimone("(a|b)?g*");
-		//no = new NoDeSimone("(a|b).c");
-		//no = new NoDeSimone("1?1?(00?11?)*0?0?");
-		//no = new NoDeSimone("(a|b)?((ab)*(ba)*)*(a|b)?");
-		no.gerarArvoreSintatica();
-		
-		String value;
-		value = no.arvoreToString();
-		
-		System.out.println(value);
-		
-		Automato automato;
-		automato = no.gerarAutomato();
-		automato.print();
-		
-		*/
-		///q.addTransicao('',);
+		new Window();
 	}
 }

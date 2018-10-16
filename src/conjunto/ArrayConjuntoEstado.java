@@ -1,3 +1,17 @@
+/*
+ *  Trabalho I: Algoritmos para Manipulacao de Linguagens Regulares
+ *  
+ *  Departamento de Informatica e Estatistica – Universidade Federal de Santa Catarina (UFSC)
+ *  Campus Reitor Joao David Ferreira Lima, 88.040-900 – Florianopolis – SC – Brasil
+ *  
+ *  brunohonnef@gmail.com pedroabcorte@gmail.com ricardoboing.ufsc@gmail.com
+ *  
+ *  Bruno Gilmar Honnef
+ *  Pedro Alexandre Barradas da Corte
+ *  Ricardo do Nascimento Boing
+ *  
+ *  11 de Outubro de 2018
+ */
 package conjunto;
 
 import java.util.ArrayList;
@@ -22,6 +36,7 @@ public class ArrayConjuntoEstado {
 		return this.arrayConjuntoEstado.remove(conjuntoEstado);
 	}
 	
+	// Verifica se os estados pertencem a um mesmo conjunto
 	public boolean pertenceMesmoConjuntoEstado(Estado estado1, Estado estado2) {
 		ConjuntoEstado conjuntoEstado1;
 		conjuntoEstado1 = this.getConjuntoEstado(estado1);
@@ -36,6 +51,7 @@ public class ArrayConjuntoEstado {
 		
 		return false;
 	}
+	// Retorna o conjunto ao qual o estado pertence
 	public ConjuntoEstado getConjuntoEstado(Estado estado) {
 		for (int c = 0; c < this.arrayConjuntoEstado.size(); c++) {
 			ConjuntoEstado conjuntoEstado;

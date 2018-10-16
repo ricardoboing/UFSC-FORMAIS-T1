@@ -1,3 +1,17 @@
+/*
+ *  Trabalho I: Algoritmos para Manipulacao de Linguagens Regulares
+ *  
+ *  Departamento de Informatica e Estatistica – Universidade Federal de Santa Catarina (UFSC)
+ *  Campus Reitor Joao David Ferreira Lima, 88.040-900 – Florianopolis – SC – Brasil
+ *  
+ *  brunohonnef@gmail.com pedroabcorte@gmail.com ricardoboing.ufsc@gmail.com
+ *  
+ *  Bruno Gilmar Honnef
+ *  Pedro Alexandre Barradas da Corte
+ *  Ricardo do Nascimento Boing
+ *  
+ *  11 de Outubro de 2018
+ */
 package automato;
 
 import java.util.Iterator;
@@ -205,7 +219,8 @@ public class Automato implements Linguagem {
 		int i;
 		i = 1;
 		
-		// Altera o simbolo dos estados. Essa etapa nao pode ser realizada durante o mapeamento de "NaoTerminal" para "Estado"
+		// Altera o simbolo dos estados. Essa etapa nao pode ser realizada
+		// durante o mapeamento de "NaoTerminal" para "Estado"
 		for (int c = 0; c < this.conjuntoEstado.size(); c++) {
 			Estado estado;
 			estado = this.conjuntoEstado.get(c);
@@ -228,6 +243,9 @@ public class Automato implements Linguagem {
 		ConjuntoNaoTerminal conjuntoNaoTerminal;
 		conjuntoNaoTerminal = gramatica.getConjuntoNaoTerminal();
 		
+		/* 
+		 * 
+		 */
 		for (int c = 0; c < conjuntoNaoTerminal.size(); c++) {
 			NaoTerminal naoTerminal;
 			naoTerminal = conjuntoNaoTerminal.get(c);
@@ -236,6 +254,7 @@ public class Automato implements Linguagem {
 			estado = new Estado(naoTerminal.getSimbolo());
 			estado = this.addEstado(estado);
 			
+			// O primeiro naoTerminal da gramatica eh transformado em um estadoInicial
 			if (c == 0) {
 				estado.setInicial(true);
 				this.setEstadoInicial(estado);
@@ -251,6 +270,7 @@ public class Automato implements Linguagem {
 				Terminal terminal;
 				terminal = producao.getTerminal();
 				
+				// O estado eh final caso exista alguma producao do naoTerminal que va para epsilon
 				if (terminal.getCharSimbolo() == ManagerLinguagem.EPSILON) {
 					estado.setFinal(true);
 					continue;
@@ -261,9 +281,12 @@ public class Automato implements Linguagem {
 				
 				Estado estadoDestinoDaTransicao;
 				
+				// Transicao para producao do tipo S-> a
 				if (naoTerminalDaProducao == null) {
 					estadoDestinoDaTransicao = estadoFinal;
-				} else {
+				}
+				// Transicao para producao do tipo S-> aA
+				else {
 					estadoDestinoDaTransicao = new Estado(naoTerminalDaProducao.getSimbolo());
 					estadoDestinoDaTransicao = this.addEstado(estadoDestinoDaTransicao);
 				}
@@ -278,7 +301,7 @@ public class Automato implements Linguagem {
 			}
 		}
 		
-		// Altera a ordem dentro do conjunto
+		// Altera a ordem dentro do conjunto para que o estadoFinal seja o ultimo estado da lista
 		this.conjuntoEstado.remove(estadoFinal);
 		this.conjuntoEstado.add(estadoFinal);
 		
@@ -416,6 +439,7 @@ public class Automato implements Linguagem {
 	public ConjuntoEstado getConjuntoEstado() {
 		return this.conjuntoEstado;
 	}
+	// Cria um conjunto contendo apenas os estados finais
 	public ConjuntoEstado getConjuntoEstadoFinal() {
 		ConjuntoEstado conjuntoEstadoFinal;
 		conjuntoEstadoFinal = new ConjuntoEstado();
@@ -431,6 +455,7 @@ public class Automato implements Linguagem {
 		
 		return conjuntoEstadoFinal;
 	}
+	// Cria um conjunto contendo apenas os estados nao finais
 	public ConjuntoEstado getConjuntoEstadoNaoFinal() {
 		ConjuntoEstado conjuntoEstadoNaoFinal;
 		conjuntoEstadoNaoFinal = new ConjuntoEstado();
@@ -453,6 +478,7 @@ public class Automato implements Linguagem {
 	public ConjuntoObject<Transicao> getConjuntoTransicao() {
 		return this.conjuntoTransicao;
 	}
+	// Busca um estado pelo seu simbolo
 	public Estado getEstado(String simbolo) {
 		for (int c = 0; c < this.conjuntoEstado.size(); c++) {
 			Estado estado;
@@ -469,6 +495,8 @@ public class Automato implements Linguagem {
 	public boolean possuiEstadoInicial() {
 		return (this.estadoInicial != null);
 	}
+	// Metodo nao utilizado, mas vai permanecer
+	// para evitar possiveis erros de ultima hora
 	@Override
 	public boolean equals(Object object) {
 		Automato automato;
@@ -498,7 +526,7 @@ public class Automato implements Linguagem {
 	public String getGeradorPor1() {
 		return this.nomeOperacaoGerador1;
 	}
-	
+	// Escreve o automato no terminal
 	public void print() {
 		for (int c = 0; c < this.conjuntoEstado.size(); c++) {
 			Estado estado;
@@ -545,23 +573,22 @@ public class Automato implements Linguagem {
 		}
 	}
 	
-	// Implementar...
+	// Verifica se uma dada entrada eh reconhecida pelo automato
+	// Nao faz parte do trabalho e implementacao de ultima hora e duvidosa,
+	// portanto nao foi add na interface
 	public boolean reconhecerEntrada(String entrada) {
 		boolean possuiEstadoFinal;
 		possuiEstadoFinal = (this.getConjuntoEstadoFinal().size() != 0);
 		
 		if (entrada == null && (this.estadoInicial.isFinal() || !possuiEstadoFinal)) {
-			System.out.println("1. reconhece");
 			return true;
 		}
 		if (entrada.equals("") && (this.estadoInicial.isFinal() || !possuiEstadoFinal)) {
-			System.out.println("2. reconhece");
 			return true;
 		}
 		
 		for (int c = 0; c < entrada.length(); c++) {
 			if (!this.conjuntoAlfabeto.contains(entrada.charAt(c))) {
-				System.out.println("3. nao reconhece");
 				return false;
 			}
 		}

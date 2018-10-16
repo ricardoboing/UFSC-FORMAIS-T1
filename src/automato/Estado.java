@@ -1,3 +1,17 @@
+/*
+ *  Trabalho I: Algoritmos para Manipulacao de Linguagens Regulares
+ *  
+ *  Departamento de Informatica e Estatistica – Universidade Federal de Santa Catarina (UFSC)
+ *  Campus Reitor Joao David Ferreira Lima, 88.040-900 – Florianopolis – SC – Brasil
+ *  
+ *  brunohonnef@gmail.com pedroabcorte@gmail.com ricardoboing.ufsc@gmail.com
+ *  
+ *  Bruno Gilmar Honnef
+ *  Pedro Alexandre Barradas da Corte
+ *  Ricardo do Nascimento Boing
+ *  
+ *  11 de Outubro de 2018
+ */
 package automato;
 
 import conjunto.ConjuntoEstado;
@@ -105,23 +119,20 @@ public class Estado {
 		
 		return false;
 	}
+	// Verifica se uma dada entrada eh reconhecida pelo estado
+	// Nao faz parte do trabalho e implementacao de ultima hora e duvidosa,
+	// portanto nao foi add na interface
 	public boolean reconhece(String entrada) {
-		System.out.println(this.simbolo);
-		
 		if (entrada == null) {
 			if (this.isFinal) {
-				System.out.println("5. reconhece");
 				return true;
 			}
-			System.out.println("6. nao reconhece");
 			return false;
 		}
 		if (entrada.equals("")) {
 			if (this.isFinal) {
-				System.out.println("7. reconhece");
 				return true;
 			}
-			System.out.println("8. nao reconhece");
 			return false;
 		}
 		
@@ -140,19 +151,19 @@ public class Estado {
 			}
 			
 			if (estadoDestino.reconhece(entrada.substring(1))) {
-				System.out.println("9. reconhece");
 				return true;
 			}
 		}
 		
-		System.out.println("11. nao reconhece");
 		return false;
 	}
+	// Verifica a equivalencia entre dois estados
 	@Override
 	public boolean equals(Object object) {
 		Estado estado;
 		estado = (Estado)object;
 		
+		// Estados sao equivalentes se possuirem mesmo simbolo
 		if (!estado.simbolo.equals(this.simbolo)) {
 			return false;
 		}

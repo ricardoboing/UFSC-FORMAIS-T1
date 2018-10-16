@@ -1,3 +1,17 @@
+/*
+ *  Trabalho I: Algoritmos para Manipulacao de Linguagens Regulares
+ *  
+ *  Departamento de Informatica e Estatistica – Universidade Federal de Santa Catarina (UFSC)
+ *  Campus Reitor Joao David Ferreira Lima, 88.040-900 – Florianopolis – SC – Brasil
+ *  
+ *  brunohonnef@gmail.com pedroabcorte@gmail.com ricardoboing.ufsc@gmail.com
+ *  
+ *  Bruno Gilmar Honnef
+ *  Pedro Alexandre Barradas da Corte
+ *  Ricardo do Nascimento Boing
+ *  
+ *  11 de Outubro de 2018
+ */
 package expressao;
 
 import util.ELinguagem;
@@ -60,6 +74,8 @@ public class Expressao implements LinguagemGerador {
 			caracterAtual = this.expressaoConcatenacaoExplicita.charAt(c);
 			caracterPosterior = this.expressaoConcatenacaoExplicita.charAt(c+1);
 			
+			// Adiciona uma concatenacao caso seja algo como "ab", ou seja,
+			// ambos os caracteres nao sao reservados
 			if (!this.containsCaracter(caracteresPosterior, caracterPosterior) &&
 				!this.containsCaracter(caracteresAtual, caracterAtual)) {
 				expressaoExplicita += ".";
@@ -116,7 +132,7 @@ public class Expressao implements LinguagemGerador {
 		return ELinguagem.EXPRESSAO;
 	}
 	
-	// Implementar...
+	// Verifica se uma entrada eh valida
 	public static boolean entradaValida(String expressao) {
 		char valorInicial;
 		valorInicial = expressao.charAt(0);

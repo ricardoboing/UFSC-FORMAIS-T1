@@ -1,3 +1,17 @@
+/*
+ *  Trabalho I: Algoritmos para Manipulacao de Linguagens Regulares
+ *  
+ *  Departamento de Informatica e Estatistica – Universidade Federal de Santa Catarina (UFSC)
+ *  Campus Reitor Joao David Ferreira Lima, 88.040-900 – Florianopolis – SC – Brasil
+ *  
+ *  brunohonnef@gmail.com pedroabcorte@gmail.com ricardoboing.ufsc@gmail.com
+ *  
+ *  Bruno Gilmar Honnef
+ *  Pedro Alexandre Barradas da Corte
+ *  Ricardo do Nascimento Boing
+ *  
+ *  11 de Outubro de 2018
+ */
 package janela.automato;
 
 import javax.swing.JButton;
@@ -110,11 +124,9 @@ public class ViewOperarAutomato extends View {
 		viewTableAutomato.setVisible(true);
 	}
 	public void atualizarMostrarAutomato1() {
-		System.out.println("???oadsaudhaua");
 		this.atualizarMostrarAutomato(comboBoxAutomato1, this.viewTableAutomato1);
 	}
 	public void atualizarMostrarAutomato2() {
-		System.out.println("???aaaaaaaaaaasduhasdasduh");
 		this.atualizarMostrarAutomato(comboBoxAutomato2, this.viewTableAutomato2);
 	}
 	
@@ -132,17 +144,23 @@ public class ViewOperarAutomato extends View {
 		this.comboBoxAutomato2.setItensLinguagem( this.managerLinguagem.getConjuntoAutomato() );
 		this.comboBoxAutomato2.selecionar(index);
 	}
+	public void selecionarJCombox1(int index) {
+		this.comboBoxAutomato1.selecionar(index);
+	}
+	public void selecionarJCombox2(int index) {
+		this.comboBoxAutomato2.selecionar(index);
+	}
 	
 	public void unir() {
 		System.out.println("ViewOperarAutomato::Unir");
 		
 		Automato automato1, automato2;
 		automato1 = this.managerLinguagem.getAutomato(this.comboBoxAutomato1.getSelected());
-		automato2 = this.managerLinguagem.getAutomato(this.comboBoxAutomato1.getSelected());
+		automato2 = this.managerLinguagem.getAutomato(this.comboBoxAutomato2.getSelected());
 		
 		Automato novoAutomato;
 		novoAutomato = OperarAutomato.unir(automato1, automato2);
-		novoAutomato.setNome("U."+this.managerLinguagem.getNomeNovoAutomato());
+		novoAutomato.setNome("A.U."+this.managerLinguagem.getNomeNovoAutomato());
 		
 		this.managerLinguagem.gerarNomeNovoAutomato();
 		this.managerLinguagem.addAutomato(novoAutomato);
@@ -158,7 +176,7 @@ public class ViewOperarAutomato extends View {
 		
 		Automato novoAutomato;
 		novoAutomato = OperarAutomato.intersectar(automato1, automato2, this.managerLinguagem);
-		novoAutomato.setNome("I."+this.managerLinguagem.getNomeNovoAutomato());
+		novoAutomato.setNome("A.I."+this.managerLinguagem.getNomeNovoAutomato());
 		
 		this.managerLinguagem.gerarNomeNovoAutomato();
 		this.managerLinguagem.addAutomato(novoAutomato);
